@@ -250,8 +250,32 @@ Class EDB_MYSQLI {
 			return false;
 
 		$type = array_shift ($param);
-		if ( strlen ($type) != count ($param) )
+		$len = strlen ($type);
+		if ( $len != count ($param) )
 			return false;
+
+		for ( $i=0; $i<$len; $i++ ) {
+			switch ($type[$i]) {
+				case 'i' :
+					if ( gettype ($param[$i]) != "integer" ) {
+						$this->error = sprintf ('The %dth parameter type of query is not numeric type', $i + 1);
+						return false;
+					}
+					break;
+				case 'd' :
+					if ( gettype ($param[$i]) != "double" ) {
+						$this->error = sprintf ('The %dth parameter type of query is not double type', $i + 1);
+						return false;
+					}
+					break;
+				case 'b' :
+				case 's' :
+					break;
+				default :
+					$this->error = sprintf ('The %dth parameter type of query is unsupported type', $i + 1);
+					return false;
+			}
+		}
 
 		return true;
 	}
@@ -303,7 +327,8 @@ Class EDB_MYSQLI {
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->stmt->free_result ();
-			$this->error = 'Number of elements in query doesn\'t match number of bind variables';
+			if ( ! $this->error )
+				$this->error = 'Number of elements in query doesn\'t match number of bind variables';
 			return false;
 		}
 
