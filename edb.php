@@ -14,7 +14,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.org
  * @license     BSD
- * @version     SVN: $Id: $
+ * @version     SVN: $Id$
  * @link        http://pear.oops.org/package/EDB
  * @since       File available since release 0.0.1
  */

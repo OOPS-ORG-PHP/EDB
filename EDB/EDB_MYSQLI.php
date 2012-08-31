@@ -11,7 +11,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.org
  * @license     BSD
- * @version     SVN: $Id: $
+ * @version     SVN: $Id$
  */
 
 Class EDB_MYSQLI {
