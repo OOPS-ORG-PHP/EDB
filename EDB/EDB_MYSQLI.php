@@ -323,7 +323,7 @@ Class EDB_MYSQLI {
 			return false;
 		}
 
-		$this->bind_result ();
+		$this->bind_result ($sql);
 
 		return $this->stmt->affected_rows;
 	}
@@ -335,9 +335,9 @@ Class EDB_MYSQLI {
 	 *
 	 * @access private
 	 * @return void
-	 * @param  void
+	 * @param  string Query string
 	 */
-	private function bind_result () {
+	private function bind_result ($sql) {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return;
 
