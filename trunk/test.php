@@ -1,5 +1,5 @@
 <?php
-// $Id: $
+// $Id$
 require_once 'edb.php';
 
 $db = new EDB ('mysqli://localhost:/var/run/mysqld/mysql.sock', 'user', 'passwd', 'dbname');
