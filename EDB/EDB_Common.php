@@ -22,6 +22,12 @@ Class EDB_Common {
 	 * @var    boolean
 	 */
 	protected $free = false;
+	/**
+	 * DB result handler
+	 * @access private
+	 * @var    object
+	 */
+	static private $result;
 	// }}}
 
 	// {{{ (int) EDB_Common:: switch_freemark (void)
@@ -74,17 +80,18 @@ Class EDB_Common {
 			return false;
 
 		for ( $i=0; $i<$len; $i++ ) {
+			$no = $i + 1;
 			switch ($type[$i]) {
 				case 'i' :
 					if ( gettype ($param[$i]) != "integer" ) {
-						$this->error = sprintf ('The %dth parameter type of query is not numeric type', $i + 1);
+						throw new EDBException ("The ${no}th parameter type of query is not numeric type");
 						return false;
 					}
 					break;
 				case 'd' : // for mysql
 				case 'f' : // for sqlite
 					if ( gettype ($param[$i]) != "double" ) {
-						$this->error = sprintf ('The %dth parameter type of query is not double type', $i + 1);
+						throw new EDBException ("The ${no}th parameter type of query is not double type");
 						return false;
 					}
 					break;
@@ -93,12 +100,12 @@ Class EDB_Common {
 					break;
 				case 'n' :
 					if ( $param[$i] ) {
-						$this->error = sprintf ('The %dth parameter type of query is not null type', $i + 1);
+						throw new EDBException ("The ${no}th parameter type of query is not null type");
 						return false;
 					}
 					break;
 				default :
-					$this->error = sprintf ('The %dth parameter type of query is unsupported type', $i + 1);
+					throw new EDBException ("The ${no}th parameter type of query is unsupported type");
 					return false;
 			}
 		}
@@ -106,28 +113,61 @@ Class EDB_Common {
 		return true;
 	}
 	// }}}
-
 }
 
-function EDB_ErrorHandler ($errno, $errstr, $errfile, $errline) {
-	$errEvent = array (
-		E_ERROR => 'ERROR',
-		E_WARNING => 'WARNING'
-	);
+class EDBException extends Exception {
+	#public function __construct($message, $code = 0, Exception $previous = null) {
+	#	parent::__construct($message, $code, $previous);
+	#}
 
-	switch ( $errno ) {
-		case E_ERROR:
-		case E_WARNING:
-			if ( $errstr == 'Division by zero' )
-				break;
-			throw new Exception ($errEvent[$errno] . ':' . $errstr . ' in ' . preg_replace ('!.*/!', '', $errfile) . ':' . $errline);
-			break;
+	function EDB_getTrace () {
+		$r = $this->getPrevious ();
+		if ( $r instanceof Exception )
+			return $r->getTrace();
+
+		return $this->getTrace ();
+	}
+
+	function EDB_getPrevious () {
+		$r = $this->getPrevious ();
+		if ( $r instanceof Exception )
+			return $r->getPrevious ();
+
+		return $this->getPrevious ();
+	}
+
+	function EDB_getTraceAsString () {
+		$r = $this->getPrevious ();
+		if ( $r instanceof Exception )
+			return $r->getTraceAsString ();
+
+		return $this->getTraceAsString ();
+	}
+
+	function EDB_getTraceAsArray () {
+		$r = $this->getPrevious ();
+		if ( $r instanceof Exception )
+			$str = $r->getTraceAsString ();
+		else
+			$str = $this->getTraceAsString ();
+
+		$buf = preg_split ('/[\r\n]+/', $str);
+		$no = count ($buf) - 1;
+
+		for ( $i=$no, $j=0; $i>-1; $i--,$j++ ) {
+			$ret[$j] = preg_replace ('/^#[0-9]+[\s]*/', '', $buf[$i]);
+		}
+		return $ret;
 	}
 }
 
-function EDB_ExceptionHandler ($exception) {
-	echo "*** " . $exception->getMessage () . "\n";
-}
-
-set_error_handler('EDB_ErrorHandler');
-#set_exception_handler('EDB_ExceptionHandler');
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim: set filetype=php noet sw=4 ts=4 fdm=marker:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */
+?>

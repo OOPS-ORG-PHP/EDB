@@ -34,12 +34,6 @@ Class EDB
 	 * @var    object
 	 */
 	private $db;
-	/**
-	 * The error messages
-	 * @access public
-	 * @var    string or null
-	 */
-	public $error = null;
 	// }}}
 
 	// {{{ (void) EDB::__construct (void)
@@ -61,7 +55,7 @@ Class EDB
 		if ( preg_match ('!^([^:]+)://!', $argv[0], $matches) ) {
 			$dbtype = 'EDB_' . strtoupper ($matches[1]);
 			if ( ! file_exists ("EDB/{$dbtype}.php") ) {
-				$this->error = 'Unsupported DB ypte';
+				throw new EDBException ('Unsupported DB Engine');
 				return;
 			}
 		} else
@@ -69,7 +63,6 @@ Class EDB
 
 		require_once 'EDB/' . $dbtype . '.php';
 		$this->db = new $dbtype ($argv);
-		$this->error = $this->db->error;
 	}
 	// }}}
 
@@ -116,9 +109,6 @@ Class EDB
 	 */
 	function query () {
 		$r = $this->db->query (func_get_args ());
-		if ( $r === false )
-			$this->error = $this->db->error;
-
 		return $r;
 	}
 	// }}}
