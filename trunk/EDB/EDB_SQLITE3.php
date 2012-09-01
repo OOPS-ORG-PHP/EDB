@@ -22,17 +22,11 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	static private $db;
 	/**
-	 * DB result handler of EDB_SQLITE3 class
-	 * @access private
-	 * @var    object
-	 */
-	static private $stmt;
-	/**
 	 * SQLITE3 STMT object of EDB_SQLITE3 class
 	 * @access private
 	 * @var    object
 	 */
-	static private $_stmt;
+	static private $stmt;
 	/**
 	 * The number of query parameter
 	 * @access private
@@ -45,12 +39,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @var    integer
 	 */
 	static private $field = array ();
-	/**
-	 * The error messages
-	 * @access public
-	 * @var    string or null
-	 */
-	public $error = null;
 	// }}}
 
 	// {{{ (void) EDB_SQLITE3::__construct ($path, $db, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
@@ -63,21 +51,21 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  int     mysql database
 	 */
 	function __construct () {
-		$_argv = func_get_args ();
-		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
-
-		$o = (object) array (
-			'path' => preg_replace ('!^sqlite3://!', '', $argv[0]),
-			'flag' => $argv[2],
-		);
-
-		if ( ! $o->flag )
-			$o->flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
-
 		try {
+			$_argv = func_get_args ();
+			$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
+
+			$o = (object) array (
+				'path' => preg_replace ('!^sqlite3://!', '', $argv[0]),
+				'flag' => $argv[2],
+			);
+
+			if ( ! $o->flag )
+				$o->flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
+
 			$this->db = new SQLite3 ($o->path, $o->flag);
 		} catch ( Exception $e ) {
-			$this->error = $e->getMessage ();
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -91,7 +79,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  void
 	 */
 	function get_charset () {
-		return 'Unsupport on SQLite3 type';
+		throw new EDBException ('Unsupport on SQLITE3 engine');
 	}
 	// }}}
 
@@ -104,7 +92,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
-		return false;
+		throw new EDBException ('Unsupport on SQLITE3 engine');
 	}
 	// }}}
 
@@ -129,8 +117,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	function query () {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
-
-		$this->error = null;
 
 		$sql = array_shift ($argv);
 		$this->pno = $this->get_param_number ($sql);
@@ -160,7 +146,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		return $this->stmt->fetchArray ();
+		return $this->result->fetchArray ();
 	}
 	// }}}
 
@@ -176,7 +162,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 		$this->field = array ();
 		$rows = array ();
 
-		while ( ($row = $this->stmt->fetchArray (SQLITE3_ASSOC)) !== false )
+		while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
 			$rows[] = $row;
 
 		$this->free_result ();
@@ -196,9 +182,13 @@ Class EDB_SQLITE3 extends EDB_Common {
 	function free_result () {
 		if ( ! $this->free ) return;
 
-		$this->stmt->finalize ();
-		if ( $this->_stmt instanceof SQLite3Stmt )
-			$this->_stmt->clear ();
+		try {
+			$this->result->finalize ();
+			if ( $this->stmt instanceof SQLite3Stmt )
+				$this->stmt->clear ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		}
 
 		$this->switch_freemark ();
 	}
@@ -232,11 +222,11 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	private function no_bind_query ($sql) {
 		try {
-			$this->stmt = $this->db->query ($sql);
+			$this->result = $this->db->query ($sql);
 			$this->free = true;
 		} catch ( Exception $e ) {
-			$this->error = $e->getMessage ();
 			$this->free = false;
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -261,16 +251,14 @@ Class EDB_SQLITE3 extends EDB_Common {
 			unset ($param);
 
 		try {
-			$this->_stmt = $this->db->prepare ($sql);
+			$this->stmt = $this->db->prepare ($sql);
 		} catch ( Exception $e ) {
-			$this->error = $e->getMessage ();
-			return false;
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 		}
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			$this->_stmt->clear ();
-			if ( ! $this->error )
-				$this->error = 'Number of elements in query doesn\'t match number of bind variables';
+			$this->stmt->clear ();
+			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
 			return false;
 		}
 
@@ -280,13 +268,13 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		try {
 			for ( $i=1; $i<$this->pno+1; $i++ )
-				$this->_stmt->bindParam ($i, $param[$i]);
+				$this->stmt->bindParam ($i, $param[$i]);
 
-			$this->stmt = $this->_stmt->execute ();
+			$this->result = $this->stmt->execute ();
 		} catch ( Exception $e ) {
-			$this->_stmt->clear ();
-			$this->error = $e->getMessage ();
-			return false;
+			#$this->stmt->clear ();
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			#return false;
 		}
 
 		$this->switch_freemark ();
