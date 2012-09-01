@@ -51,6 +51,7 @@ class EDBException extends Exception {
 
 		return $this->getPrevious ();
 	}
+	// }}}
 
 	// {{{ (string) EDB_Exception::EDB_getTraceAsString (void)
 	/**
@@ -67,6 +68,7 @@ class EDBException extends Exception {
 
 		return $this->getTraceAsString ();
 	}
+	// }}}
 
 	// {{{ (array) EDB_Exception::EDB_getTraceAsArray (void)
 	/**
@@ -91,6 +93,7 @@ class EDBException extends Exception {
 		}
 		return $ret;
 	}
+	// }}}
 }
 
 /*
