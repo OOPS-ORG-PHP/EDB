@@ -96,6 +96,21 @@ class EDBException extends Exception {
 	// }}}
 }
 
+function EDB_ErrorHandler ($errno, $errstr, $errfile, $errline) {
+	switch ($errno ) {
+		case E_NOTICE :
+		case E_USER_NOTICE :
+		case E_STRICT :
+		case E_DEPRECATED :
+		case E_USER_DEPRECATED :
+			break;
+		default :
+			throw new Exception ($errstr, $errno);
+	}
+}
+
+set_error_handler('EDB_ErrorHandler');
+
 /*
  * Local variables:
  * tab-width: 4

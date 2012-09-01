@@ -20,19 +20,19 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @access private
 	 * @var    object
 	 */
-	static private $db;
+	private $db;
 	/**
 	 * The number of query parameter
 	 * @access private
 	 * @var    integer
 	 */
-	static private $pno = 0;
+	private $pno = 0;
 	/**
 	 * The number of query parameter
 	 * @access private
 	 * @var    integer
 	 */
-	static private $field = array ();
+	private $field = array ();
 	// }}}
 
 	// {{{ (void) EDB_MYSQLI::__construct ($host, $user, $pass, $db)
@@ -47,34 +47,31 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  mysql database
 	 */
 	function __construct () {
-		try {
-			$_argv = func_get_args ();
-			$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
+		$_argv = func_get_args ();
+		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
-			$o = (object) array (
-				'host' => preg_replace ('!^mysqli://!', '', $argv[0]),
-				'user' => $argv[1],
-				'pass' => $argv[2],
-				'db'   => $argv[3]
-			);
+		$o = (object) array (
+			'host' => preg_replace ('!^mysqli://!', '', $argv[0]),
+			'user' => $argv[1],
+			'pass' => $argv[2],
+			'db'   => $argv[3]
+		);
 
-			if ( preg_match ('/([^:]+):(.*)/', $o->host, $matches) ) {
-				$o->host = $matches[1];
-				$o->port = $matches[2];
-			} else
-				$o->port = 3306;
+		if ( preg_match ('/([^:]+):(.*)/', $o->host, $matches) ) {
+			$o->host = $matches[1];
+			$o->port = $matches[2];
+		} else
+			$o->port = 3306;
 
-			if ( ! is_numeric ($o->port) ) {
-				$o->sock = $o->port;
-				$o->port = 3306;
-			} else
-				$o->sock = null;
+		if ( ! is_numeric ($o->port) ) {
+			$o->sock = $o->port;
+			$o->port = 3306;
+		} else
+			$o->sock = null;
 
-			$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
-			#$this->error = mysqli_connect_error ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-		}
+		$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
+		if ( mysqli_connect_error () )
+			throw new EDBException (mysqli_connect_error (), E_ERROR);
 	}
 	// }}}
 
@@ -87,12 +84,8 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function get_charset () {
-		try {
-			if ( is_object ($this->db) )
-				return $this->db->character_set_name ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-		}
+		if ( $this->db instanceof mysqli )
+			return $this->db->character_set_name ();
 	}
 	// }}}
 
@@ -107,13 +100,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	function set_charset ($char) {
 		$r = false;
 
-		try {
-			if ( is_object ($this->db) ) {
-				if ( ($r = $this->db->set_charset ($char)) === false )
-					$this->error = $this->db->error;
-			}
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		if ( is_object ($this->db) ) {
+			if ( ($r = $this->db->set_charset ($char)) === false )
+				$this->error = $this->db->error;
 		}
 
 		return $r;
@@ -187,10 +176,11 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch_all () {
-		if ( $this->result instanceof mysqli_result )
+		if ( $this->result instanceof mysqli_result ) {
 			return $this->fetch_result_all ();
-		else if ( $this->result instanceof mysqli_stmt )
+		} else if ( $this->result instanceof mysqli_stmt ) {
 			return $this->fetch_stmt_all ();
+		}
 
 		return array ();
 	}
@@ -207,13 +197,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	function free_result () {
 		if ( ! $this->free ) return;
 
-		try {
-			$this->result->free_result ();
-			if ( $this->result instanceof mysqli_stmt )
-				$this->result->close ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-		}
+		$this->result->free_result ();
+		if ( $this->result instanceof mysqli_stmt )
+			$this->result->close ();
 
 		$this->switch_freemark ();
 	}
@@ -245,10 +231,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  The query strings
 	 */
 	private function no_bind_query ($sql) {
-		try {
-			$this->result = $this->db->query ($sql);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		$this->result = $this->db->query ($sql);
+		if ( $this->db->errno ) {
+			throw new EDBException ($e->getMessage (), E_WARNING);
 			return false;
 		}
 
@@ -276,16 +261,17 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( isset ($param) )
 			unset ($param);
 
-		try {
-			$this->result = $this->db->prepare ($sql);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		$this->result = $this->db->prepare ($sql);
+		$this->switch_freemark ();
+
+		if ( $this->db->errno || ! is_object ($this->result) ) {
+			throw new EDBException ($this->db->error, E_WARNING);
 			return false;
 		}
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			$this->result->free_result ();
-			throw new EDBExeption ('Number of elements in query doesn\'t match number of bind variables');
+			$this->free_result ();
+			throw new EDBExeption ('Number of elements in query doesn\'t match number of bind variables', E_WARNING);
 			return false;
 		}
 
@@ -293,23 +279,18 @@ Class EDB_MYSQLI extends EDB_Common {
 		for ( $i=0; $i<count ($params); $i++ )
 			$param[] = &$params[$i];
 
-		try {
-			call_user_func_array (array ($this->result, 'bind_param'), $param);
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		if ( call_user_func_array (array ($this->result, 'bind_param'), $param) === false ) {
+			$this->free_result ();
+			throw new EDBException ($this->result->error, E_WARNING);
 			return false;
 		}
 
-		try {
-			$this->result->execute ();
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		if ( $this->result->execute () === false ) {
+			$this->free_result ();
+			throw new EDBException ($this->result->error, E_WARNING);
 			return false;
 		}
 
-		$this->switch_freemark ();
 		$this->bind_result ($sql);
 
 		return $this->result->affected_rows;
@@ -328,21 +309,17 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return;
 
-		try {
-			$this->result->store_result ();
-			$var = array ();
-			$meta = $this->result->result_metadata ();
+		$this->result->store_result ();
+		$var = array ();
+		$meta = $this->result->result_metadata ();
 
-			while ( $fields = $meta->fetch_field () )
-				$var[] = &$this->field[$fields->name];
+		while ( $fields = $meta->fetch_field () )
+			$var[] = &$this->field[$fields->name];
 
-			$meta->free ();
-			call_user_func_array(array($this->result, 'bind_result'), $var);
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			if ( is_object ($meta) )
-				$meta->free ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		$meta->free ();
+		if ( call_user_func_array(array($this->result, 'bind_result'), $var) === false ) {
+			$this->free_result ();
+			throw new EDBException ($this->result->error, E_WARNING);
 		}
 	}
 	// }}}
@@ -356,14 +333,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	private function fetch_result () {
-		try {
+		if ( $this->result instanceof mysqli_result )
 			$r  = $this->result->fetch_object ();
-			return is_object ($r) ? $r : false;
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
+		return is_object ($r) ? $r : false;
 	}
 	// }}}
 
@@ -376,6 +348,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	private function fetch_stmt () {
+		if ( ! $this->result instanceof mysqli_stmt )
+			return false;
+
 		if ( $fetch_check = $this->result->fetch () ) {
 			foreach ( $this->field as $key => $val )
 				$retval->$key = $val;
@@ -395,19 +370,16 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	private function fetch_result_all () {
+		if ( ! $this->result instanceof mysqli_result )
+			return array ();
+
 		$this->field = array ();
 		$rows = array ();
 
-		try {
-			while ( ($row = $this->result->fetch_object ()) !== null )
-				$rows[] = $row;
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return array ();
-		}
+		while ( ($row = $this->result->fetch_object ()) !== null )
+			$rows[] = $row;
 
-		$this->result->free_result ();
+		$this->free_result ();
 		return $rows;
 	}
 	// }}}
@@ -421,22 +393,19 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	private function fetch_stmt_all () {
+		if ( ! $this->result instanceof mysqli_stmt )
+			return array ();
+
 		$r = array ();
 
-		try {
-			$i = 0;
-			while ( $this->result->fetch () ) {
-				foreach ( $this->field as $key => $val )
-					$r[$i]->$key = $val;
-				$i++;
-			}
-		} catch ( Exception $e ) {
-			$this->result->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return array ();
+		$i = 0;
+		while ( $this->result->fetch () ) {
+			foreach ( $this->field as $key => $val )
+				$r[$i]->$key = $val;
+			$i++;
 		}
 
-		$this->result->free_result ();
+		$this->free_result ();
 
 		return $r;
 	}
