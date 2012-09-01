@@ -7,18 +7,40 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB_SQLITE3
+ * @package     EDB_Common
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.org
  * @license     BSD
- * @version     SVN: $Id: EDB_SQLITE3.php 4 2012-08-31 19:14:39Z oops $
+ * @version     SVN: $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
  */
 
 Class EDB_Common {
-	/*
-	 * Priavte functions
+	// {{{ properties
+	/**
+	 * Result marking for free
+	 * @access private
+	 * @var    boolean
 	 */
-	// {{{ (int) EDB_SQLITE3:: get_param_number ($sql)
+	protected $free = false;
+	// }}}
+
+	// {{{ (int) EDB_Common:: switch_freemark (void)
+	/**
+	 * Change free marking
+	 *
+	 * @access public
+	 * @return void
+	 * @param  void
+	 */
+	function switch_freemark () {
+		if ( ! $this->free )
+			$this->free = true;
+		else
+			$this->free = false;
+	}
+	// }}}
+
+	// {{{ (int) EDB_Common:: get_param_number ($sql)
 	/**
 	 * Get number of query parameters
 	 *
@@ -31,7 +53,7 @@ Class EDB_Common {
 	}
 	// }}}
 
-	// {{{ (bool) EDB_SQLITE3::check_param ($parameters)
+	// {{{ (bool) EDB_Common::check_param ($parameters)
 	/**
 	 * Check parameter type and parameters
 	 *
@@ -87,11 +109,11 @@ function EDB_ErrorHandler ($errno, $errstr, $errfile, $errline) {
 	);
 
 	switch ( $errno ) {
-	case E_ERROR:
+		case E_ERROR:
 		case E_WARNING:
 			if ( $errstr == 'Division by zero' )
 				break;
-			throw new Exception ($errstr);
+			throw new Exception ($errEvent[$errno] . ':' . $errstr . ' in ' . preg_replace ('!.*/!', '', $errfile) . ':' . $errline);
 			break;
 	}
 }
@@ -101,4 +123,4 @@ function EDB_ExceptionHandler ($exception) {
 }
 
 set_error_handler('EDB_ErrorHandler');
-set_exception_handler('EDB_ExceptionHandler');
+#set_exception_handler('EDB_ExceptionHandler');
