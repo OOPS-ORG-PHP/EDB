@@ -141,6 +141,8 @@ Class EDB_MYSQLI extends EDB_Common {
 		$sql = array_shift ($argv);
 		$this->pno = $this->get_param_number ($sql);
 
+		if ( $this->free )
+			$this->free_result ();
 		/*
 		 * For no bind query
 		 */
@@ -198,9 +200,13 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function free_result () {
+		if ( ! $this->free ) return;
+
 		$this->stmt->free_result ();
 		if ( $this->stmt instanceof mysqli_stmt )
 			$this->stmt->close ();
+
+		$this->switch_freemark ();
 	}
 	// }}}
 
@@ -235,6 +241,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			$this->error = $this->db->error;
 			return false;
 		}
+		$this->switch_freemark ();
 
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) ) {
 			/* Insert or update, or delete query */
@@ -288,6 +295,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			return false;
 		}
 
+		$this->switch_freemark ();
 		$this->bind_result ($sql);
 
 		return $this->stmt->affected_rows;
@@ -395,7 +403,7 @@ Class EDB_MYSQLI extends EDB_Common {
 	// }}}
 
 	function __destruct () {
-		//@$this->free_result ();
+		$this->free_result ();
 		$this->close ();
 	}
 }
