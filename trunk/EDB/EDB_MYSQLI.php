@@ -14,7 +14,7 @@
  * @version     SVN: $Id$
  */
 
-Class EDB_MYSQLI {
+Class EDB_MYSQLI extends EDB_Common {
 	// {{{ prpperties
 	/**
 	 * db handler of EDB_MYSQLI class
@@ -221,66 +221,6 @@ Class EDB_MYSQLI {
 	/*
 	 * Priavte functions
 	 */
-	// {{{ private (int) EDB_MYSQLI:: get_param_number ($sql)
-	/**
-	 * Get number of query parameters
-	 *
-	 * @access private
-	 * @return integer The number of parameters
-	 * @param  string Bind query string
-	 */
-	private function get_param_number ($sql) {
-		return strlen (preg_replace ('/[^?]/', '', $sql));
-	}
-	// }}}
-
-	// {{{ private (bool) EDB_MYSQLI::check_param ($parameters)
-	/**
-	 * Check parameter type and parameters
-	 *
-	 * @access private
-	 * @return bool
-	 * @param  array The parameter of bind query
-	 */
-	private function check_param ($param) {
-		if ( ! is_array ($param) )
-			return false;
-
-		if ( count ($param) < 2 )
-			return false;
-
-		$type = array_shift ($param);
-		$len = strlen ($type);
-		if ( $len != count ($param) )
-			return false;
-
-		for ( $i=0; $i<$len; $i++ ) {
-			switch ($type[$i]) {
-				case 'i' :
-					if ( gettype ($param[$i]) != "integer" ) {
-						$this->error = sprintf ('The %dth parameter type of query is not numeric type', $i + 1);
-						return false;
-					}
-					break;
-				case 'd' :
-					if ( gettype ($param[$i]) != "double" ) {
-						$this->error = sprintf ('The %dth parameter type of query is not double type', $i + 1);
-						return false;
-					}
-					break;
-				case 'b' :
-				case 's' :
-					break;
-				default :
-					$this->error = sprintf ('The %dth parameter type of query is unsupported type', $i + 1);
-					return false;
-			}
-		}
-
-		return true;
-	}
-	// }}}
-
 	// {{{ private (int) EDB_MYSQLI::no_bind_query ($sql)
 	/** 
 	 * Performs a query on the database
