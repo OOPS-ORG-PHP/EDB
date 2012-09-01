@@ -10,7 +10,7 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     krisp
+ * @package     EDB
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.org
  * @license     BSD
