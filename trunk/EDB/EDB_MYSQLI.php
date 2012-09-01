@@ -15,7 +15,6 @@
  */
 
 Class EDB_MYSQLI extends EDB_Common {
-	// {{{ prpperties
 	/**
 	 * db handler of EDB_MYSQLI class
 	 * @access private
@@ -125,10 +124,16 @@ Class EDB_MYSQLI extends EDB_Common {
 	/** 
 	 * Performs a query on the database
 	 *
+	 * See also http://php.net/manual/en/mysqli-stmt.bind-param.php
+	 *
 	 * @access public
 	 * @return integer The number of affected rows or false
 	 * @param  string  The query strings
 	 * @param  string  (optional) Bind parameter type
+	 *                            i => integer
+	 *                            d => double
+	 *                            s => string
+	 *                            b => blob
 	 * @param  mixed   (optional) Bind parameter 1
 	 * @param  mixed   (optional) Bind parameter 2 ..
 	 */
@@ -335,7 +340,8 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	private function fetch_result () {
-		return $this->stmt->fetch_object ();
+		$r  = $this->stmt->fetch_object ();
+		return is_object ($r) ? $r : false;
 	}
 	// }}}
 
@@ -352,7 +358,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			foreach ( $this->field as $key => $val )
 				$retval->$key = $val;
 		} else
-			$retval = null;
+			$retval = false;
 
 		return $retval;
 	}
