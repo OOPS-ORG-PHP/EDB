@@ -55,7 +55,7 @@ Class EDB
 
 		if ( preg_match ('!^([^:]+)://!', $argv[0], $matches) ) {
 			$dbtype = 'EDB_' . strtoupper ($matches[1]);
-			if ( ! file_exists ("EDB/{$dbtype}.php") ) {
+			if ( ! EDB_Common::file_exists ("EDB/{$dbtype}.php") ) {
 				throw new EDBException ('Unsupported DB Engine');
 				return;
 			}

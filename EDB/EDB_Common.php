@@ -30,6 +30,38 @@ Class EDB_Common {
 	protected $result;
 	// }}}
 
+	// {{{ (bool) EDB_Common:: file_exists (void)
+	/**
+	 * Checks whether a file or directory exists
+	 * 
+	 * If don't find file, and re-search include_path
+	 *
+	 * @access public
+	 * @return boolean Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
+	 * @param  string  Path to the file or directory.
+	 */
+	function file_exists ($file) {
+		if ( file_exists ($file) )
+			return true;
+
+		try {
+			$buf = ini_get ('include_path');
+		} catch ( Exception $e ) {
+			# for AnNyung LInux
+			$buf = ___ini_get ('include_path');
+		}
+
+		$path = preg_split ('/:/', $buf);
+		array_shift ($path);
+		foreach ( $path as $dir ) {
+			if ( file_exists ($dir . '/' . $file) )
+				return true;
+		}
+
+		return false;
+	}
+	// }}}
+
 	// {{{ (int) EDB_Common:: switch_freemark (void)
 	/**
 	 * Change free marking
