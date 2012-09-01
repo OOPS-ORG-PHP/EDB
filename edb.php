@@ -19,6 +19,8 @@
  * @since       File available since release 0.0.1
  */
 
+require_once 'EDB/EDB_Common.php';
+
 /**
  * Base class for EDB API
  * @package     EDB
@@ -67,6 +69,7 @@ Class EDB
 
 		require_once 'EDB/' . $dbtype . '.php';
 		$this->db = new $dbtype ($argv);
+		$this->error = $this->db->error;
 	}
 	// }}}
 
