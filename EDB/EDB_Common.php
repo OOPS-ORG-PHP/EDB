@@ -81,18 +81,25 @@ Class EDB_Common {
 						return false;
 					}
 					break;
-				case 'd' :
+				case 'd' : // for mysql
+				case 'f' : // for sqlite
 					if ( gettype ($param[$i]) != "double" ) {
 						$this->error = sprintf ('The %dth parameter type of query is not double type', $i + 1);
 						return false;
 					}
 					break;
 				case 'b' :
-					case 's' :
-						break;
-					default :
-						$this->error = sprintf ('The %dth parameter type of query is unsupported type', $i + 1);
+				case 's' :
+					break;
+				case 'n' :
+					if ( $param[$i] ) {
+						$this->error = sprintf ('The %dth parameter type of query is not null type', $i + 1);
 						return false;
+					}
+					break;
+				default :
+					$this->error = sprintf ('The %dth parameter type of query is unsupported type', $i + 1);
+					return false;
 			}
 		}
 
