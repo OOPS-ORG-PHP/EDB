@@ -19,6 +19,7 @@
  * @since       File available since release 0.0.1
  */
 
+require_once 'EDB/EDB_Exception.php';
 require_once 'EDB/EDB_Common.php';
 
 /**
@@ -91,7 +92,7 @@ Class EDB
 	 * @return bool
 	 * @param  string charset name that is supported database
 	 */
-	function set_charset ($char) {
+	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
 	}
 	// }}}

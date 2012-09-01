@@ -20,25 +20,25 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @access private
 	 * @var    object
 	 */
-	static private $db;
+	private $db;
 	/**
 	 * SQLITE3 STMT object of EDB_SQLITE3 class
 	 * @access private
 	 * @var    object
 	 */
-	static private $stmt;
+	private $stmt;
 	/**
 	 * The number of query parameter
 	 * @access private
 	 * @var    integer
 	 */
-	static private $pno = 0;
+	private $pno = 0;
 	/**
 	 * The number of query parameter
 	 * @access private
 	 * @var    integer
 	 */
-	static private $field = array ();
+	private $field = array ();
 	// }}}
 
 	// {{{ (void) EDB_SQLITE3::__construct ($path, $db, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
@@ -79,7 +79,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  void
 	 */
 	function get_charset () {
-		throw new EDBException ('Unsupport on SQLITE3 engine');
+		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -91,8 +91,8 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return bool    The name of character set that is supported on database
 	 * @param  string  name of character set that supported from database
 	 */
-	function set_charset ($char) {
-		throw new EDBException ('Unsupport on SQLITE3 engine');
+	function set_charset () {
+		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 

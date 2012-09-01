@@ -27,7 +27,7 @@ Class EDB_Common {
 	 * @access private
 	 * @var    object
 	 */
-	static private $result;
+	protected $result;
 	// }}}
 
 	// {{{ (int) EDB_Common:: switch_freemark (void)
@@ -84,14 +84,14 @@ Class EDB_Common {
 			switch ($type[$i]) {
 				case 'i' :
 					if ( gettype ($param[$i]) != "integer" ) {
-						throw new EDBException ("The ${no}th parameter type of query is not numeric type");
+						throw new EDBException ("The ${no}th parameter type of query is not numeric type", E_ERROR);
 						return false;
 					}
 					break;
 				case 'd' : // for mysql
 				case 'f' : // for sqlite
 					if ( gettype ($param[$i]) != "double" ) {
-						throw new EDBException ("The ${no}th parameter type of query is not double type");
+						throw new EDBException ("The ${no}th parameter type of query is not double type", E_ERROR);
 						return false;
 					}
 					break;
@@ -100,12 +100,12 @@ Class EDB_Common {
 					break;
 				case 'n' :
 					if ( $param[$i] ) {
-						throw new EDBException ("The ${no}th parameter type of query is not null type");
+						throw new EDBException ("The ${no}th parameter type of query is not null type", E_ERROR);
 						return false;
 					}
 					break;
 				default :
-					throw new EDBException ("The ${no}th parameter type of query is unsupported type");
+					throw new EDBException ("The ${no}th parameter type of query is unsupported type", E_ERROR);
 					return false;
 			}
 		}
