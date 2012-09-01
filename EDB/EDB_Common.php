@@ -115,52 +115,6 @@ Class EDB_Common {
 	// }}}
 }
 
-class EDBException extends Exception {
-	#public function __construct($message, $code = 0, Exception $previous = null) {
-	#	parent::__construct($message, $code, $previous);
-	#}
-
-	function EDB_getTrace () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			return $r->getTrace();
-
-		return $this->getTrace ();
-	}
-
-	function EDB_getPrevious () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			return $r->getPrevious ();
-
-		return $this->getPrevious ();
-	}
-
-	function EDB_getTraceAsString () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			return $r->getTraceAsString ();
-
-		return $this->getTraceAsString ();
-	}
-
-	function EDB_getTraceAsArray () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			$str = $r->getTraceAsString ();
-		else
-			$str = $this->getTraceAsString ();
-
-		$buf = preg_split ('/[\r\n]+/', $str);
-		$no = count ($buf) - 1;
-
-		for ( $i=$no, $j=0; $i>-1; $i--,$j++ ) {
-			$ret[$j] = preg_replace ('/^#[0-9]+[\s]*/', '', $buf[$i]);
-		}
-		return $ret;
-	}
-}
-
 /*
  * Local variables:
  * tab-width: 4
