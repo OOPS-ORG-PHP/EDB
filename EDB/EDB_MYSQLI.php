@@ -1,16 +1,16 @@
 <?php
 /**
- * PHP Version 5
+ * Project: EDB_MYSQLI :: MySQLi abstraction layer
+ * File:    EDB_MYSQLI.php
  *
- * Copyright (c) 1997-2012 JoungKyun.Kim
- *
- * LICENSE: BSD
+ * The EDB_MYSQLI class is mysql abstraction layer that used internally
+ * on EDB class.
  *
  * @category    Database
  * @package     EDB
  * @subpackage  EDB_MYSQLI
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 1997-2012 OOPS.org
+ * @copyright   (c) 2012, JoungKyun.Kim
  * @license     BSD License
  * @version     $Id$
  * @link        http://pear.oops.org/package/EDB

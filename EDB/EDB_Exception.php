@@ -1,5 +1,11 @@
 <?php
 /**
+ * Project: EDBException :: Exception API for EDB class
+ * File:    EDB_Exception.php
+ *
+ * The EDBException class is exception api that used internally
+ * on EDB class.
+ *
  * PHP Version 5
  *
  * Copyright (c) 1997-2012 JoungKyun.Kim
@@ -12,7 +18,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 1997-2012 OOPS.org
  * @license     BSD License
- * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @version     $Id: EDBException.php 4 2012-08-31 19:14:39Z oops $
  * @link        http://pear.oops.org/package/EDB
  * @filesource
  */

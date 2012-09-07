@@ -1,16 +1,16 @@
 <?php
 /**
- * PHP Version 5
+ * Project: EDB_Common :: Common API for EDB class
+ * File:    EDB_Common.php
  *
- * Copyright (c) 1997-2012 JoungKyun.Kim
- *
- * LICENSE: BSD
+ * The EDB_Common class is common api that used internally
+ * on EDB class.
  *
  * @category    Database
  * @package     EDB
  * @subpackage  EDB_Common
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 1997-2012 OOPS.org
+ * @copyright   (c) 2012 JoungKyun.Kim
  * @license     BSD License
  * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
  * @link        http://pear.oops.org/package/EDB
