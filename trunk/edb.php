@@ -3,11 +3,7 @@
  * Project: EDB :: Extended DB class
  * File:    edb.php
  *
- * PHP Version 5
- *
- * Copyright (c) 1997-2012 JoungKyun.Kim
- *
- * LICENSE: BSD
+ * This class is support various db abstraction layer.
  *
  * @category    Database
  * @package     EDB

@@ -1,16 +1,16 @@
 <?php
 /**
- * PHP Version 5
+ * Project: EDB_SQLITE3 :: SQLITE3 abstraction layer
+ * File:    EDB_SQLITE3.php
  *
- * Copyright (c) 1997-2012 JoungKyun.Kim
- *
- * LICENSE: BSD
+ * The EDB_SQLITE3 class is mysql abstraction layer that used internally
+ * on EDB class.
  *
  * @category    Database
  * @package     EDB
  * @subpackage  EDB_SQLITE3
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 1997-2012 OOPS.org
+ * @copyright   (c) 2012 JoungKyun.Kim
  * @license     BSD License
  * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
  * @link        http://pear.oops.org/package/EDB
