@@ -7,44 +7,63 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB_MYSQLI
+ * @package     EDB
+ * @subpackage  EDB_MYSQLI
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2012 OOPS.org
- * @license     BSD
- * @version     SVN: $Id$
+ * @copyright   (c) 1997-2012 OOPS.org
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/EDB
+ * @filesource
  */
 
+/**
+ * MySQLi engine for EDB API
+ *
+ * This class support abstracttion DB layer for MySQLi Engine
+ *
+ * @package     EDB
+ */
 Class EDB_MYSQLI extends EDB_Common {
+	// {{{ properties
+	/**#@+
+	 * @access private
+	 */
 	/**
 	 * db handler of EDB_MYSQLI class
-	 * @access private
 	 * @var    object
 	 */
 	private $db;
 	/**
 	 * The number of query parameter
-	 * @access private
 	 * @var    integer
 	 */
 	private $pno = 0;
 	/**
 	 * The number of query parameter
-	 * @access private
 	 * @var    integer
 	 */
 	private $field = array ();
+	/**#@-*/
 	// }}}
 
-	// {{{ (void) EDB_MYSQLI::__construct ($host, $user, $pass, $db)
+	// {{{ (object) EDB_MYSQLI::__construct ($host, $user, $pass, $db)
 	/** 
-	 * Initialize EDB_MYSQLI class
+	 * Instantiates an EDB_MYSQLI object and opens an mysql database
+	 *
+	 * For examples:
+	 * <code>
+	 * $db = new EDB_MYSQLI ('mysqli://localhost', 'user', 'host', 'database');
+	 * $db = new EDB_MYSQLI ('mysqli://localhost:3306', 'user', 'host', 'database');
+	 * $db = new EDB_MYSQLI ('mysqli://localhost:/var/run/mysqld/mysql.socl', 'user', 'host', 'database');
+	 * </code>
 	 *
 	 * @access public
 	 * @return object
-	 * @param  string  mysql host, format is 'mysqli://localhost[:[port|sockfile]]'
-	 * @param  string  mysql user
-	 * @param  string  mysql password
-	 * @param  string  mysql database
+	 * @param  string  $hostname mysql host
+	 * @param  string  $user     mysql user
+	 * @param  string  $password mysql password
+	 * @param  string  $database mysql database
 	 */
 	function __construct () {
 		$_argv = func_get_args ();
@@ -80,8 +99,7 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * Get character set of current database
 	 *
 	 * @access public
-	 * @return string Current character set name
-	 * @param  void
+	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
 		if ( $this->db instanceof mysqli )
@@ -113,18 +131,19 @@ Class EDB_MYSQLI extends EDB_Common {
 	/** 
 	 * Performs a query on the database
 	 *
-	 * See also http://php.net/manual/en/mysqli-stmt.bind-param.php
-	 *
 	 * @access public
 	 * @return integer The number of affected rows or false
-	 * @param  string  The query strings
-	 * @param  string  (optional) Bind parameter type
-	 *                            i => integer
-	 *                            d => double
-	 *                            s => string
-	 *                            b => blob
-	 * @param  mixed   (optional) Bind parameter 1
-	 * @param  mixed   (optional) Bind parameter 2 ..
+	 * @param  string  $query The query strings
+	 * @param  string  $type  (optional) Bind parameter type. See also
+	 * {@link http://php.net/manual/en/mysqli-stmt.bind-param.php mysqli_stmt::bind_param}.
+	 * <code>
+	 * i => integer
+	 * d => double
+	 * s => string
+	 * b => blob
+	 * </code>
+	 * @param  mixed   $param1 (optional) Bind parameter 1
+	 * @param  mixed   $param2,... (optional) Bind parameter 2 ..
 	 */
 	function query () {
 		$_argv = func_get_args ();

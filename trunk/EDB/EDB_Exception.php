@@ -7,19 +7,38 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB_Exception
+ * @package     EDB
+ * @subpackage  EDBException
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2012 OOPS.org
- * @license     BSD
- * @version     SVN: $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @copyright   (c) 1997-2012 OOPS.org
+ * @license     BSD License
+ * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @link        http://pear.oops.org/package/EDB
+ * @filesource
  */
 
+/**
+ * Contorl EDB error messages with PHP exception
+ *
+ * @package EDB
+ */
 class EDBException extends Exception {
+	// {{{ (object) EDBException::__construct ($message, $code, Exception $previous = null)
+	/** 
+	 * Initialize EDBException class
+	 *
+	 * @access public
+	 * @return object
+	 * @param  string error messages
+	 * @param  string error code
+	 * @param  string previous exception object
+	 */
 	public function __construct($message, $code = 0, Exception $previous = null) {
 		parent::__construct($message, $code, $previous);
 	}
+	// }}}
 
-	// {{{ (array) EDB_Exception::EDB_getTrace (void)
+	// {{{ (array) EDBException::EDB_getTrace (void)
 	/**
 	 * Returns the Exception stack trace.
 	 *
@@ -36,7 +55,7 @@ class EDBException extends Exception {
 	}
 	// }}}
 
-	// {{{ (object) EDB_Exception::EDB_getPrevious (void)
+	// {{{ (object) EDBException::EDB_getPrevious (void)
 	/**
 	 * Returns previous Exception (the third parameter of EDBException::__construct()).
 	 *
@@ -53,7 +72,7 @@ class EDBException extends Exception {
 	}
 	// }}}
 
-	// {{{ (string) EDB_Exception::EDB_getTraceAsString (void)
+	// {{{ (string) EDBException::EDB_getTraceAsString (void)
 	/**
 	 * Returns the Exception stack trace as a string.
 	 *
@@ -70,7 +89,7 @@ class EDBException extends Exception {
 	}
 	// }}}
 
-	// {{{ (array) EDB_Exception::EDB_getTraceAsArray (void)
+	// {{{ (array) EDBException::EDB_getTraceAsArray (void)
 	/**
 	 * Returns the Exception stack trace as a array
 	 *
@@ -96,6 +115,10 @@ class EDBException extends Exception {
 	// }}}
 }
 
+/**
+ * User defined error handler for EDB class
+ */
+// {{{ (void) EDB_ErrorHandler ($errno, $errstr, $errfile, $errline)
 function EDB_ErrorHandler ($errno, $errstr, $errfile, $errline) {
 	switch ($errno ) {
 		case E_NOTICE :
@@ -108,7 +131,13 @@ function EDB_ErrorHandler ($errno, $errstr, $errfile, $errline) {
 			throw new Exception ($errstr, $errno);
 	}
 }
+// }}}
 
+/**
+ * Set php error handler to EDB_ErrorHandler api.
+ *
+ * This action is affects whole codes that is include EDB class
+ */
 set_error_handler('EDB_ErrorHandler');
 
 /*

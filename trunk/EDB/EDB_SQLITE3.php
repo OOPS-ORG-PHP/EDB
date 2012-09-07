@@ -7,48 +7,66 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB_SQLITE3
+ * @package     EDB
+ * @subpackage  EDB_SQLITE3
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2012 OOPS.org
- * @license     BSD
- * @version     SVN: $Id: EDB_SQLITE3.php 4 2012-08-31 19:14:39Z oops $
+ * @copyright   (c) 1997-2012 OOPS.org
+ * @license     BSD License
+ * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @link        http://pear.oops.org/package/EDB
+ * @filesource
  */
 
+/**
+ * SQLite3 engine for EDB API
+ *
+ * This class support abstracttion DB layer for SQLite3 Engine
+ *
+ * @package     EDB
+ */
 Class EDB_SQLITE3 extends EDB_Common {
+	// {{{ properties
+	/**#@+
+	 * @access private
+	 */
 	/**
 	 * db handler of EDB_SQLITE3 class
-	 * @access private
 	 * @var    object
 	 */
 	private $db;
 	/**
 	 * SQLITE3 STMT object of EDB_SQLITE3 class
-	 * @access private
 	 * @var    object
 	 */
 	private $stmt;
 	/**
 	 * The number of query parameter
-	 * @access private
 	 * @var    integer
 	 */
 	private $pno = 0;
 	/**
 	 * The number of query parameter
-	 * @access private
 	 * @var    integer
 	 */
 	private $field = array ();
+	/**#@-*/
 	// }}}
 
-	// {{{ (void) EDB_SQLITE3::__construct ($path, $db, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
+	// {{{ (object) EDB_SQLITE3::__construct ($path, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
 	/** 
-	 * Initialize EDB_SQLITE3 class
+	 * Instantiates an EDB_SQLITE3 object and opens an SQLite 3 database
+	 *
+	 * For examples:
+	 * <code>
+	 * $db = new EDB_SQLITE3 ('sqlite3:///path/file.db');
+	 * $db = new EDB_SQLITE3 ('sqlite3:///path/file.db', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+	 * $db = new EDB_SQLITE3 ('sqlite3://:memory:', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+	 * </code>
 	 *
 	 * @access public
 	 * @return object
-	 * @param  string  sqlite3 database file, format is 'sqlite3:///path/file.db'
-	 * @param  int     mysql database
+	 * @param  string  $path  sqlite3 database file
+	 * @param  int     $flags (optinal) open flags of sqlite3. See also {@link http://manual.phpdoc.org/HTMLSmartyConverter/PHP/phpDocumentor/tutorial_tags.inlinelink.pkg.html SQLite3::__construct}.
 	 */
 	function __construct () {
 		try {
@@ -74,9 +92,10 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Get character set of current database
 	 *
+	 * This method is not allow on SQLite3 Engine
+	 *
 	 * @access public
 	 * @return string Current character set name
-	 * @param  void
 	 */
 	function get_charset () {
 		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
@@ -87,9 +106,11 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Set character set of current database
 	 *
+	 * This method is not allow on SQLite3 Engine
+	 *
 	 * @access public
-	 * @return bool    The name of character set that is supported on database
-	 * @param  string  name of character set that supported from database
+	 * @return bool   The name of character set that is supported on database
+	 * @param  string $char name of character set that supported from database
 	 */
 	function set_charset () {
 		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
@@ -100,19 +121,23 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Performs a query on the database
 	 *
-	 * http://www.php.net/manual/en/sqlite3stmt.bindparam.php
+	 * Executes an SQL query, returning number of affected rows
 	 *
 	 * @access public
-	 * @return integer The number of affected rows or false
-	 * @param  string  (optional) The query strings
-	 *                            i => integer SQLITE3_INTEGER
-	 *                            d => double  SQLITE3_FLOAT
-	 *                            s => string  SQLITE3_TEXT
-	 *                            b => blob    SQLITE3_BLOB
-	 *                            n => null    SQLITE3_NULL
-	 * @param  string  (optional) Bind parameter type
-	 * @param  mixed   (optional) Bind parameter 1
-	 * @param  mixed   (optional) Bind parameter 2 ..
+	 * @return integer The number of affected rows or false. If is not delete/insert/update 
+	 *                 query, always returns 0.
+	 * @param  string $query  The query strings
+	 * @param  string $type   (optional) Bind parameter type. See also
+	 * {@link http://www.php.net/manual/en/sqlite3stmt.bindparam.php SQLite3Stmt::bindparam()}.
+	 * <code>
+	 * i => integer SQLITE3_INTEGER
+	 * d => double  SQLITE3_FLOAT
+	 * s => string  SQLITE3_TEXT
+	 * b => blob    SQLITE3_BLOB
+	 * n => null    SQLITE3_NULL
+	 * </code>
+	 * @param  mixed  $param1 (optional) Bind parameter 1
+	 * @param  mixed  $param2,... (optional) Bind parameter 2 ..
 	 */
 	function query () {
 		$_argv = func_get_args ();
@@ -143,7 +168,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
-	 * @param  void
 	 */
 	function fetch () {
 		return $this->result->fetchArray ();
@@ -156,7 +180,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
 	 */
 	function fetch_all () {
 		$this->field = array ();
@@ -177,7 +200,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  void
 	 */
 	function free_result () {
 		if ( ! $this->free ) return;
@@ -200,7 +222,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  void
 	 */
 	function close () {
 		if ( is_object ($this->db) )
@@ -291,8 +312,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 		$this->close ();
 	}
 }
-
-
 
 /*
  * Local variables:
