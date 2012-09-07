@@ -12,18 +12,26 @@
  * @category    Database
  * @package     EDB
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2012 OOPS.org
- * @license     BSD
+ * @copyright   (c) 1997-2012 OOPS.org
+ * @license     BSD License
  * @version     SVN: $Id$
  * @link        http://pear.oops.org/package/EDB
  * @since       File available since release 0.0.1
+ * @filesource
  */
 
+/**
+ * import EDBException class
+ */
 require_once 'EDB/EDB_Exception.php';
+/**
+ * import EDB_Common class
+ */
 require_once 'EDB/EDB_Common.php';
 
 /**
  * Base class for EDB API
+ *
  * @package     EDB
  */
 Class EDB
@@ -41,13 +49,24 @@ Class EDB
 	/**
 	 * Initialize EDB class
 	 *
+	 * The supported db abstraction layer is mysqli and sqlite3.
+	 *
+	 * The examples:
+	 *
+	 * <code>
+	 * # mysqli
+	 * $db = new EDB ('mysqli://localhost', 'username', 'password', 'database');
+	 *
+	 * # sqlite3
+	 * $db = new EDB ('sqlite3:///file/path', $flag);
+	 * </code>
+	 *
+	 * @see EDB_MYSQLI::__construct()
+	 * @see EDB_SQLITE3::__construct()
 	 * @access public
 	 * @return object
-	 * @param  string Database host [Example: mysqli://db.host.com]
-	 *                The current Supported db type is mysqli
-	 * @param  string Database user
-	 * @param  string Database password
-	 * @param  string Database name
+	 * @param  string $host     Database host
+	 * @param  string $...
 	 */
 	function __construct () {
 		$argc = func_num_args ();
@@ -62,6 +81,9 @@ Class EDB
 		} else
 			$dbtype = 'EDB_MYSQLI';
 
+		/**
+		 * import Abstract DB array class
+		 */
 		require_once 'EDB/' . $dbtype . '.php';
 		$this->db = new $dbtype ($argv);
 	}
@@ -75,7 +97,6 @@ Class EDB
 	 *
 	 * @access public
 	 * @return string The name of current charset
-	 * @param  void
 	 */
 	function get_charset () {
 		return $this->db->get_charset ();
@@ -90,7 +111,7 @@ Class EDB
 	 *
 	 * @access public
 	 * @return bool
-	 * @param  string charset name that is supported database
+	 * @param  string $char charset name that is supported database
 	 */
 	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
@@ -103,10 +124,10 @@ Class EDB
 	 *
 	 * @access public
 	 * @return integer The number of affected rows of false
-	 * @param  string  The query strings
-	 * @param  string  (optional) Bind parameter type
-	 * @param  mixed   (optional) Bind parameter 1
-	 * @param  mixed   (optional) Bind parameter 2 ..
+	 * @param  string  $query  The query strings
+	 * @param  string  $type   (optional) Bind parameter type
+	 * @param  mixed   $param1 (optional) Bind parameter 1
+	 * @param  mixed   $param2,... (optional) Bind parameter 2
 	 */
 	function query () {
 		$r = $this->db->query (func_get_args ());
@@ -120,20 +141,18 @@ Class EDB
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
-	 * @param  void
 	 */
 	function fetch () {
 		return $this->db->fetch ();
 	}
 	// }}}
 
-	// {{{ (void) EDB::fetch_all (void)
+	// {{{ arrayvoid) EDB::fetch_all (void)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
 	 */
 	function fetch_all () {
 		return $this->db->fetch_all ();
@@ -146,7 +165,6 @@ Class EDB
 	 *
 	 * @access public
 	 * @return void
-	 * @param  void
 	 */
 	function free_result () {
 		$this->db->free_result();

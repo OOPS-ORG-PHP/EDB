@@ -7,13 +7,21 @@
  * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB_Common
+ * @package     EDB
+ * @subpackage  EDB_Common
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2012 OOPS.org
- * @license     BSD
- * @version     SVN: $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @copyright   (c) 1997-2012 OOPS.org
+ * @license     BSD License
+ * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
+ * @link        http://pear.oops.org/package/EDB
+ * @filesource
  */
 
+/**
+ * Common API of EDB
+ *
+ * @package EDB
+ */
 Class EDB_Common {
 	// {{{ properties
 	/**
