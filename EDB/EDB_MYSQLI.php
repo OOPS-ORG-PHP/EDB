@@ -1,7 +1,7 @@
 <?php
 /**
  * Project: EDB_MYSQLI :: MySQLi abstraction layer
- * File:    EDB_MYSQLI.php
+ * File:    EDB/EDB_MYSQLI.php
  *
  * The EDB_MYSQLI class is mysql abstraction layer that used internally
  * on EDB class.

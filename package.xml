@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-09-02</date>
-	<time>04:49:23</time>
+	<date>2012-09-08</date>
+	<time>15:13:34</time>
 	<version>
 		<release>1.0.0</release>
 		<api>1.0.0</api>
@@ -26,11 +26,11 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="320f56e7059dd7a16047e9c836cdb1a7" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="dc549daa32f8a4557e3afd2b97883fe5" name="EDB/EDB_Exception.php" />
-			<file role="php" md5sum="e5c2f781cfe04b11496e901c498a5821" name="EDB/EDB_MYSQLI.php" />
-			<file role="php" md5sum="2901200109ebfc4128e117ab66b54cb5" name="EDB/EDB_SQLITE3.php" />
-			<file role="php" md5sum="361decba83c332887d1f1c253f065c74" name="edb.php" />
+			<file role="php" md5sum="fcd773e4e01edf2df94167be2b2d0633" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="3496465ff9ec33c2c6309455c5cccfcd" name="EDB/EDB_Exception.php" />
+			<file role="php" md5sum="158c72981705c5b4fb7fad0b67532da9" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="a587812decfe8e022c9a5d5ec9e98c29" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="c57c074c288bc5fd7ead7a35d13f6cd2" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -54,7 +54,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2012-09-02</date>
+			<date>2012-09-08</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* initialized
 </notes>
