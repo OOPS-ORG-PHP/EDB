@@ -13,6 +13,8 @@
  * @version     SVN: $Id$
  * @link        http://pear.oops.org/package/EDB
  * @since       File available since release 0.0.1
+ * @example	    pear_EDB/tests/mysqli.php Sample code of mysqli abstraction layer
+ * @example	    pear_EDB/tests/sqlite3.php Sample code of sqlite3 abstraction layer
  * @filesource
  */
 
