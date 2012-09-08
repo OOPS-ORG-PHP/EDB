@@ -1,7 +1,7 @@
 <?php
 /**
  * Project: EDB_Common :: Common API for EDB class
- * File:    EDB_Common.php
+ * File:    EDB/EDB_Common.php
  *
  * The EDB_Common class is common api that used internally
  * on EDB class.

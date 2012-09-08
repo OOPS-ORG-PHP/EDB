@@ -16,6 +16,6 @@ curtime=$(date +'%H:%M:%S')
 perl -pi -e "s!\@curdate\@!${curdate}!g" ./package.xml
 perl -pi -e "s!\@curtime\@!${curtime}!g" ./package.xml
 
-phpdoc -s on -o HTML:Smarty:PHP -f edb.php,EDB/*.php -t docs
+#phpdoc -s on -o HTML:Smarty:PHP -f edb.php,EDB/*.php -t docs
 
 [ -z "$1" ] && pear package
