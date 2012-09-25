@@ -88,9 +88,14 @@ Class EDB_MYSQLI extends EDB_Common {
 		} else
 			$o->sock = null;
 
-		$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
-		if ( mysqli_connect_error () )
-			throw new EDBException (mysqli_connect_error (), E_ERROR);
+		try {
+			$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
+		} catch ( Exception $e ) {
+			if ( mysqli_connect_error () )
+				throw new EDBException (mysqli_connect_error (), E_ERROR);
+			else
+				throw new EDBException ($e->getMessage (), E_ERROR);
+		}
 	}
 	// }}}
 
