@@ -31,27 +31,48 @@ require_once 'edb.php';
 function get_bind_select () {
 	global $db;
 
-	$db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
+	$n = $db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
 	$r = $db->fetch_all ();
 	$db->free_result ();
 
 	print_r ($r);
+	echo "*** selected affected Rows is $n\n";
 }
 
 function get_select () {
 	global $db;
 
-	$db->query ('SELECT * FROM ttt WHERE no > 0 ORDER by no DESC');
+	$n = $db->query ('SELECT * FROM ttt WHERE no > 0 ORDER by no DESC');
 	$r = $db->fetch_all ();
 	$db->free_result ();
 
 	print_r ($r);
+	echo "*** selected affected Rows is $n\n";
 }
+
+$create_table = <<<EOF
+CREATE TABLE ttt (
+	no integer NOT NULL PRIMARY KEY,
+	nid char(30) UNIQUE NOT NULL,
+	name char(30) NOT NULL
+);
+EOF;
+
+if ( file_exists ('test.db') )
+	unlink ('test.db');
 
 try {
 
 	$i=0;
 	$db = new EDB ('sqlite3://test.db');
+
+	##############################################################################
+	# Create table test
+	##############################################################################
+	echo "\n\n*** Create table\n";
+	$r = $db->query ($create_table);
+	printf ("*** Affected Rows is %d\n", $r);
+
 
 	##############################################################################
 	# Insert test
@@ -104,6 +125,10 @@ try {
 	#echo $e->EDB_getTraceAsString () . "\n";
 	print_r ($e->EDB_getTraceAsArray ()) . "\n";
 }
+
+if ( file_exists ('test.db') )
+	unlink ('test.db');
+
 
 /*
  * Local variables:
