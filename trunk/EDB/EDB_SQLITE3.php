@@ -88,7 +88,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_SQLITE3::get_charset (void)
+	// {{{ (string) EDB_SQLITE3::get_charset (void)
 	/** 
 	 * Get character set of current database
 	 *
@@ -247,13 +247,42 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/*
 	 * Priavte functions
 	 */
+
+	// {{{ private (int) EDB_SQLITE3::num_rows ()
+	/**
+	 * Returns the number of rows in the result set
+	 *
+	 * SQLite3 extension don't support num_rows method. Why???
+	 *
+	 * @access private
+	 * @return integer
+	 */
+	function num_rows () {
+		try {
+			$r = &$this->result;
+
+			$i = 0;
+			while ( ($r->fetchArray (SQLITE3_ASSOC)) !== false )
+				$i++;
+
+			unset ($r);
+
+			return $i;
+		} catch ( Exception $e ) {
+			$this->free = false;
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
 	// {{{ private (int) EDB_SQLITE3::no_bind_query ($sql)
 	/** 
 	 * Performs a query on the database
 	 *
 	 * @access private
 	 * @return integer The number of affected rows or false only update|insert|delete.
-	 *                 selected row is returned -1.
+	 *                 other row is returned -1.
 	 * @param  string  The query strings
 	 */
 	private function no_bind_query ($sql) {
@@ -268,8 +297,10 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return $this->db->changes ();
+		else if ( preg_match ('/^create/i', trim ($sql)) ) 
+			return 1;
 
-		return -1;
+		return $this->num_rows ();
 	}
 	// }}}
 
@@ -315,10 +346,12 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		$this->switch_freemark ();
 
-		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
+		if ( preg_match ('/^(create|update|insert|delete)/i', trim ($sql)) )
 			return $this->db->changes ();
+		else if ( preg_match ('/^create/i', trim ($sql)) )
+			return 1;
 
-		return -1;
+		return $this->num_rows ();
 	}
 	// }}}
 
