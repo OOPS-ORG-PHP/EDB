@@ -153,6 +153,31 @@ Class EDB_Common {
 		return true;
 	}
 	// }}}
+
+	// {{{ (string) EDB_Common::bind_query ($sql, $param)
+	/**
+	 * replace bind parameters to parameter's value
+	 * 
+	 * @access public
+	 * @return string
+	 * @param  string SQL query statement
+	 * @param  array  array of parameter values
+	 */
+	function bind_param ($sql, $params) {
+		if ( ! is_array ($params) )
+			return $sql;
+
+		array_shift ($params);
+		$c = count ($params);
+
+		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
+		for ( $i=0; $i<$c; $i++ )
+			$sql = preg_replace ('/\?/', "'{$params[$i]}'", $sql, 1);
+		$sql = preg_replace ('/=-=-/', '\\?', $sql);
+
+		return $sql;
+	}
+	// }}}
 }
 
 /*
