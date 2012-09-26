@@ -1,9 +1,9 @@
 <?php
 /**
- * Project: EDB :: Extended DB class
+ * Project: EDB :: 확장 DB 추상화 layer<br>
  * File:    edb.php
  *
- * This class is support various db abstraction layer.
+ * 이 패키지는 mysqli, sqlite3의 DB 추상화 계층을 제공한다.
  *
  * @category    Database
  * @package     EDB
@@ -28,7 +28,9 @@ require_once 'EDB/EDB_Exception.php';
 require_once 'EDB/EDB_Common.php';
 
 /**
- * Base class for EDB API
+ * 확장 DB 추상화 layer
+ *
+ * 이 패키지는 mysqli, sqlite3의 DB 추상화 계층을 제공한다.
  *
  * @package     EDB
  */
@@ -36,7 +38,7 @@ Class EDB
 {
 	// {{{ prpperties
 	/**
-	 * DB handler of EDB class
+	 * EDB class의 DB 핸들러
 	 * @access private
 	 * @var    object
 	 */
@@ -45,11 +47,11 @@ Class EDB
 
 	// {{{ (void) EDB::__construct (void)
 	/**
-	 * Initialize EDB class
+	 * EDB 클래스 초기화
 	 *
-	 * The supported db abstraction layer is mysqli and sqlite3.
+	 * 지원되는 추상화 계층으로는 mysqli와 sqlite3을 지원한다.
 	 *
-	 * The examples:
+	 * 예제:
 	 *
 	 * <code>
 	 * # mysqli
@@ -63,8 +65,7 @@ Class EDB
 	 * @see EDB_SQLITE3::__construct()
 	 * @access public
 	 * @return object
-	 * @param  string $host     Database host
-	 * @param  string $...
+	 * @param  string $host,... 데이터베이스 호스트
 	 */
 	function __construct () {
 		$argc = func_num_args ();
@@ -80,21 +81,23 @@ Class EDB
 			$dbtype = 'EDB_MYSQLI';
 
 		/**
-		 * import Abstract DB array class
+		 * DB 추상화 계층 class를 로드
 		 */
 		require_once 'EDB/' . $dbtype . '.php';
 		$this->db = new $dbtype ($argv);
 	}
 	// }}}
 
-	// {{{ (array) EDB::get_charset (void)
+	// {{{ (string) EDB::get_charset (void)
 	/**
 	 * Get current db charset.
+	 * 현재의 db 문자셋을 가져온다.
 	 *
-	 * This function is under control database type.
+	 * 이 method는 실 DBMS에 의하여 제약이 있다.
+	 * sqlite는 지원하지 않는다.
 	 *
 	 * @access public
-	 * @return string The name of current charset
+	 * @return string 현재 문자셋 이름 반환
 	 */
 	function get_charset () {
 		return $this->db->get_charset ();
@@ -104,12 +107,14 @@ Class EDB
 	// {{{ (bool) EDB::set_charset ($charset)
 	/**
 	 * Set database charset.
+	 * DB 문자셋을 설정/변경 한다.
 	 *
-	 * This function is under control database type.
+	 * 이 method는 실 DB의 영향을 받는다. sqlite는
+	 * 지원하지 않는다.
 	 *
 	 * @access public
 	 * @return bool
-	 * @param  string $char charset name that is supported database
+	 * @param  string DB가 지원하는 문자셋 이름
 	 */
 	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
@@ -118,14 +123,14 @@ Class EDB
 
 	// {{{ (int) EDB::query ($query, $param_type, $param1, $param2 ...)
 	/**
-	 * Performs a query on the database
+	 * 데이터베이스상에서 쿼리를 실행한다.
 	 *
 	 * @access public
-	 * @return integer The number of affected rows of false
-	 * @param  string  $query  The query strings
-	 * @param  string  $type   (optional) Bind parameter type
-	 * @param  mixed   $param1 (optional) Bind parameter 1
-	 * @param  mixed   $param2,... (optional) Bind parameter 2
+	 * @return integer|false   실제 적용된 row 수
+	 * @param  string  $query  실행할 쿼리
+	 * @param  string  $type   (optional) bind 파라미터 형식
+	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
+	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
 	 */
 	function query () {
 		$r = $this->db->query (func_get_args ());
@@ -135,22 +140,22 @@ Class EDB
 
 	// {{{ (object) EDB::fetch (void)
 	/**
-	 * Fetch a result row as an associative object
+	 * associative 개체로 result row를 가져온다.
 	 *
 	 * @access public
-	 * @return object The object of fetched a result row or false
+	 * @return object|false result row로 가져온 object
 	 */
 	function fetch () {
 		return $this->db->fetch ();
 	}
 	// }}}
 
-	// {{{ arrayvoid) EDB::fetch_all (void)
+	// {{{ array) EDB::fetch_all (void)
 	/**
-	 * Fetch all result rows as an associative object
+	 * associative 개체로 모든 result row를 가져온다.
 	 *
 	 * @access public
-	 * @return array The fetched result rows
+	 * @return array 가져온 result row 배열 반환
 	 */
 	function fetch_all () {
 		return $this->db->fetch_all ();
@@ -159,7 +164,7 @@ Class EDB
 
 	// {{{ (void) EDB::free_result (void)
 	/**
-	 * Frees stored result memory for the given statement handle
+	 * 주어진 문장 핸들에 대하여 메모리에 저장된 결과를 해제
 	 *
 	 * @access public
 	 * @return void
