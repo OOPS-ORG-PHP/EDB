@@ -51,17 +51,8 @@ Class EDB
 	 *
 	 * 지원되는 추상화 계층으로는 mysqli와 sqlite3을 지원한다.
 	 *
-	 * 예제:
-	 *
-	 * <code>
-	 * # mysqli
-	 * $db = new EDB ('mysqli://localhost', 'username', 'password', 'database');
-	 *
-	 * # sqlite3
-	 * $db = new EDB ('sqlite3:///file/path', $flag);
-	 * </code>
-	 *
 	 * @see EDB_MYSQLI::__construct()
+	 * @see EDB_SQLITE2::__construct()
 	 * @see EDB_SQLITE3::__construct()
 	 * @access public
 	 * @return object
@@ -94,7 +85,7 @@ Class EDB
 	 * 현재의 db 문자셋을 가져온다.
 	 *
 	 * 이 method는 실 DBMS에 의하여 제약이 있다.
-	 * sqlite는 지원하지 않는다.
+	 * sqlite3은 지원하지 않는다.
 	 *
 	 * @access public
 	 * @return string 현재 문자셋 이름 반환
@@ -110,7 +101,7 @@ Class EDB
 	 * Set database charset.
 	 * DB 문자셋을 설정/변경 한다.
 	 *
-	 * 이 method는 실 DB의 영향을 받는다. sqlite는
+	 * 이 method는 실 DB의 영향을 받는다. sqlite2/sqlite3은
 	 * 지원하지 않는다.
 	 *
 	 * @access public
@@ -134,6 +125,7 @@ Class EDB
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
 	 * @see    EDB_MYSQLI::query()
+	 * @see    EDB_SQLITE2::query()
 	 * @see    EDB_SQLITE3::query()
 	 */
 	function query () {
