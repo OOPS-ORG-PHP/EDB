@@ -98,6 +98,7 @@ Class EDB
 	 *
 	 * @access public
 	 * @return string 현재 문자셋 이름 반환
+	 * @see    EDB_MYSQLI::get_charset()
 	 */
 	function get_charset () {
 		return $this->db->get_charset ();
@@ -115,6 +116,7 @@ Class EDB
 	 * @access public
 	 * @return bool
 	 * @param  string DB가 지원하는 문자셋 이름
+	 * @see    EDB_MYSQLI::set_charset()
 	 */
 	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
@@ -131,10 +133,25 @@ Class EDB
 	 * @param  string  $type   (optional) bind 파라미터 형식
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
+	 * @see    EDB_MYSQLI::query()
+	 * @see    EDB_SQLITE3::query()
 	 */
 	function query () {
 		$r = $this->db->query (func_get_args ());
 		return $r;
+	}
+	// }}}
+
+	// {{{ (void) EDB::seek ($offset)
+	/**
+	 * result row 포인터를 이동한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param  integer 0부터 <b>전체 반환 row수 - 1</b> 까지의 범위
+	 */
+	function seek ($offset) {
+		return $this->db->seek ($offset);
 	}
 	// }}}
 

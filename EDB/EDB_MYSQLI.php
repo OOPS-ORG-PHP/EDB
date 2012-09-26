@@ -8,7 +8,7 @@
  *
  * @category    Database
  * @package     EDB
- * @subpackage  EDB_MYSQLI
+ * @subpackage  EDB_ABSTRACT
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2012, JoungKyun.Kim
  * @license     BSD License
@@ -173,6 +173,18 @@ Class EDB_MYSQLI extends EDB_Common {
 		return $this->bind_query ($sql, $argv);
 	}
 	// }}}
+
+	// {{{ (void) EDB_MYSQLI::seek ($offset)
+	/**
+	 * Adjusts the result pointer to an arbitrary row in the result
+	 *
+	 * @access public
+	 * @return void
+	 * @param  integer Must be between zero and the total number of rows minus one
+	 */
+	function seek ($offset) {
+		$this->data_seek ($offset);
+	}
 
 	// {{{ (object) EDB_MYSQLI::fetch (void)
 	/**
