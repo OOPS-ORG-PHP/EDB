@@ -69,6 +69,9 @@ Class EDB_MYSQLI extends EDB_Common {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
+		if ( ! extension_loaded ('mysqli') )
+			throw new EDBException ('MySQLi extension is not loaded on PHP!', E_ERROR);
+
 		$o = (object) array (
 			'host' => preg_replace ('!^mysqli://!', '', $argv[0]),
 			'user' => $argv[1],
@@ -99,7 +102,7 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_MYSQLI::get_charset (void)
+	// {{{ (string) EDB_MYSQLI::get_charset (void)
 	/** 
 	 * Get character set of current database
 	 *
@@ -185,6 +188,7 @@ Class EDB_MYSQLI extends EDB_Common {
 	function seek ($offset) {
 		$this->data_seek ($offset);
 	}
+	// }}}
 
 	// {{{ (object) EDB_MYSQLI::fetch (void)
 	/**

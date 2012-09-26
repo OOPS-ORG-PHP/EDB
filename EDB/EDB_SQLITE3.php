@@ -69,6 +69,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  int     $flags (optinal) open flags of sqlite3. See also {@link http://manual.phpdoc.org/HTMLSmartyConverter/PHP/phpDocumentor/tutorial_tags.inlinelink.pkg.html SQLite3::__construct}.
 	 */
 	function __construct () {
+		if ( ! extension_loaded ('sqlite3') )
+			throw new EDBException ('sqlite3 extension is not loaded on PHP!', E_ERROR);
+
 		try {
 			$_argv = func_get_args ();
 			$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
