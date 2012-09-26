@@ -51,6 +51,7 @@ Class EDB
 	 *
 	 * 지원되는 추상화 계층으로는 mysqli와 sqlite3을 지원한다.
 	 *
+	 * @see EDB_MYSQL::__construct()
 	 * @see EDB_MYSQLI::__construct()
 	 * @see EDB_SQLITE2::__construct()
 	 * @see EDB_SQLITE3::__construct()
@@ -124,6 +125,7 @@ Class EDB
 	 * @param  string  $type   (optional) bind 파라미터 형식
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
+	 * @see    EDB_MYSQL::query()
 	 * @see    EDB_MYSQLI::query()
 	 * @see    EDB_SQLITE2::query()
 	 * @see    EDB_SQLITE3::query()
