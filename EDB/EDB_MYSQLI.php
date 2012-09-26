@@ -186,7 +186,8 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		$this->data_seek ($offset);
+		if ( is_object ($this->result) )
+			$this->result->data_seek ($offset);
 	}
 	// }}}
 
@@ -278,15 +279,18 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  The query strings
 	 */
 	private function no_bind_query ($sql) {
-		$this->result = $this->db->query ($sql);
-		if ( $this->db->errno ) {
-			throw new EDBException ($this->db->error, E_WARNING);
+		try {
+			$this->result = $this->db->query ($sql);
+		} catch ( Exception $e ) {
+			$this->free = false;
+			$err = $this->db->errno ? $this->db->error : $e->getMessage ();
+			throw new EDBException ($err, $e->getCode(), $e);
 			return false;
 		}
 
 		$this->switch_freemark ();
 
-		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) ) {
+		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) ) {
 			/* Insert or update, or delete query */
 			return $this->db->affected_rows;
 		} else if ( preg_match ('/create|drop/i', trim ($sql)) ) {
