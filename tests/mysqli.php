@@ -1,6 +1,6 @@
 <?php
 /*
- * pear_EDB sqlite3 tests
+ * pear_EDB mysqli tests
  *
  * $Id$
  */
