@@ -97,7 +97,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			if ( mysqli_connect_error () )
 				throw new EDBException (mysqli_connect_error (), E_ERROR);
 			else
-				throw new EDBException ($e->getMessage (), E_ERROR);
+				throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -237,9 +237,16 @@ Class EDB_MYSQLI extends EDB_Common {
 	function free_result () {
 		if ( ! $this->free ) return;
 
-		$this->result->free_result ();
-		if ( $this->result instanceof mysqli_stmt )
-			$this->result->close ();
+		try {
+			if ( is_object ($this->result) )
+				$this->result->free_result ();
+
+			if ( $this->result instanceof mysqli_stmt )
+				$this->result->close ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 
 		$this->switch_freemark ();
 	}
@@ -273,7 +280,7 @@ Class EDB_MYSQLI extends EDB_Common {
 	private function no_bind_query ($sql) {
 		$this->result = $this->db->query ($sql);
 		if ( $this->db->errno ) {
-			throw new EDBException ($e->getMessage (), E_WARNING);
+			throw new EDBException ($this->db->error, E_WARNING);
 			return false;
 		}
 
@@ -282,6 +289,8 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) ) {
 			/* Insert or update, or delete query */
 			return $this->db->affected_rows;
+		} else if ( preg_match ('/create|drop/i', trim ($sql)) ) {
+			return 1;
 		}
 
 		return $this->result->num_rows;
