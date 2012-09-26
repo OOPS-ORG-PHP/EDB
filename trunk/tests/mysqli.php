@@ -1,6 +1,6 @@
 <?php
 /*
- * pear_EDB mysqli tests
+ * pear_EDB sqlite3 tests
  *
  * $Id$
  */
@@ -25,21 +25,51 @@ if ( $ccwd == 'tests' ) {
 	___ini_set ('include_path', $oldpath . ':' . $newpath);
 }
 
-
 require_once 'edb.php';
+
+function get_bind_select () {
+	global $db;
+
+	$n = $db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
+	$r = $db->fetch_all ();
+	$db->free_result ();
+
+	print_r ($r);
+	echo "*** selected affected Rows is $n\n";
+}
+
+function get_select () {
+	global $db;
+
+	$n = $db->query ('SELECT * FROM ttt WHERE no > 0 ORDER by no DESC');
+	$r = array ();
+	while ( ($f = $db->fetch ()) )
+		$r[] = $f;
+	$db->free_result ();
+
+	print_r ($r);
+	echo "*** selected affected Rows is $n\n";
+}
+
+$create_table = <<<EOF
+CREATE TABLE ttt (
+	no int(6) NOT NULL auto_increment,
+	nid char(30) NOT NULL default '',
+	name char(30) NOT NULL default '',
+	PRIMARY KEY  (no),
+	UNIQUE KEY nid (nid)
+) CHARSET=utf8;
+EOF;
 
 $host = 'mysqli://localhost:/var/run/mysqld/mysql.sock';
 $user = 'user';
 $pass = 'password';
 $db   = 'database';
 
-$query = 'SELECT no, num, idx FROM jsboard_oopsQnA ' .
-		'WHERE no > 1113 and no < 1118 ORDER by no DESC';
-
-$bind_query = 'SELECT no, num, idx FROM jsboard_oopsQnA ' .
-		'WHERE no > ? and no < ? ORDER by no DESC';
 
 try {
+
+	$i=0;
 	$db = new EDB ($host, $user, $pass, $db);
 
 	##############################################################################
@@ -52,44 +82,62 @@ try {
 	$db->set_charset ('utf8');
 	printf ("   + Change charset  : %s\n", $db->get_charset ());
 
-	##############################################################################
-	# Bind select test
-	##############################################################################
-	echo "\n\n*** Bind select query test\n";
-	echo "   + QEURY: {$bind_query}\n";
-	$no = $db->query ($bind_query, 'ii', 1113, 1118);
-	printf ("    + Affected Rows is %d\n", $r);
 
 	##############################################################################
-	# Result fetch test
+	# Create table test
 	##############################################################################
-	echo "\n\n*** Result fetch test\n";
+	echo "\n\n*** Create table\n";
+	#$r = $db->query ('drop table ttt');
+	$r = $db->query ($create_table);
+	printf ("*** Affected Rows is %d\n", $r);
 
-	$i = 0;
-	while ( ($f = $db->fetch ()) ) {
-		$r[$i++] = $f;
-	}
 
+	##############################################################################
+	# Insert test
+	##############################################################################
+	echo "\n\n*** Insert test\n";
+	$r = $db->query (
+		"INSERT INTO ttt (nid, name) values (?, ?)",
+		'ss',
+		'Blah Blah~3',
+		'admin@host.com'
+	);
+	printf ("*** Affected Rows is %d\n", $r);
 	$db->free_result ();
 
-	print_r ($r);
+	get_select ();
 
 	##############################################################################
-	# Nomal select test
+	# Update test
 	##############################################################################
-	echo "\n\n*** Bind select query test\n";
+	echo "\n\n*** Update date\n";
+	$r = $db->query (
+		"UPDATE ttt SET name = ? WHERE nid = ?",
+		'ss',
+		'Blar Blar~31',
+		'Blah Blah~3');
+	printf ("*** Affected Rows is %d\n", $r);
+	$db->free_result ();
 
-	echo "   + QEURY: {$query}\n";
-	$no = $db->query ($query);
-	printf ("    + Affected Rows is %d\n", $r);
+	get_bind_select ();
 
 	##############################################################################
-	# Result fetch_all test
+	# Delete test
 	##############################################################################
-	echo "\n\n*** Result fetch_all test\n";
+	echo "\n\n*** Delete test\n";
+	$r = $db->query ("DELETE FROM ttt WHERE nid = ?", 's', 'Blah Blah~3');
+	printf ("*** Affected Rows is %d\n", $r);
+	$db->free_result ();
 
-	$r = $db->fetch_all ();
-	print_r ($r);
+	get_select ();
+
+	##############################################################################
+	# Delete table
+	##############################################################################
+	echo "\n\n*** Delete table\n";
+	$r = $db->query ("DROP TABLE ttt");
+	printf ("*** Affected Rows is %d\n", $r);
+	$db->free_result ();
 
 } catch ( EDBException $e ) {
 	fprintf (
@@ -98,10 +146,10 @@ try {
 		preg_replace ('!.*/!', '', $e->getFile ()),
 		$e->getLine ()
 	);
-	print_r ($e);
+	#print_r ($e);
 	#print_r ($e->EDB_getTrace ());
-	echo $e->EDB_getTraceAsString () . "\n";
-	#print_r ($e->EDB_getTraceAsArray ()) . "\n";
+	#echo $e->EDB_getTraceAsString () . "\n";
+	print_r ($e->EDB_getTraceAsArray ()) . "\n";
 }
 
 /*
