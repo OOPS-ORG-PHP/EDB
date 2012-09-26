@@ -8,7 +8,7 @@
  *
  * @category    Database
  * @package     EDB
- * @subpackage  EDB_SQLITE3
+ * @subpackage  EDB_ABSTRACT
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2012 JoungKyun.Kim
  * @license     BSD License
@@ -98,7 +98,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return string Current character set name
 	 */
 	function get_charset () {
-		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
+		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -113,7 +113,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @param  string $char name of character set that supported from database
 	 */
 	function set_charset () {
-		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
+		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -159,6 +159,21 @@ Class EDB_SQLITE3 extends EDB_Common {
 		 * For bind query
 		 */
 		return $this->bind_query ($sql, $argv);
+	}
+	// }}}
+
+	// {{{ (void) EDB_SQLITE3::seek ($offset)
+	/**
+	 * Adjusts the result pointer to an arbitrary row in the result
+	 *
+	 * This method don't support on SQLITE3 engine
+	 *
+	 * @access public
+	 * @return void
+	 * @param  integer Must be between zero and the total number of rows minus one
+	 */
+	function seek ($offset) {
+		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
