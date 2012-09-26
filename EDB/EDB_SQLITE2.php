@@ -257,9 +257,9 @@ Class EDB_SQLITE2 extends EDB_Common {
 			return false;
 		}
 
-		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
+		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) )
 			return sqlite_changes ($this->db);
-		if ( ! strncasecmp ('create', trim ($sql), 6) )
+		if ( ! strncasecmp ('create|drop', trim ($sql), 6) )
 			return 1;
 
 		return sqlite_num_rows ($this->result);

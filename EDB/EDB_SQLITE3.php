@@ -298,9 +298,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 			return false;
 		}
 
-		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
+		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) )
 			return $this->db->changes ();
-		else if ( preg_match ('/^create/i', trim ($sql)) ) 
+		else if ( preg_match ('/^create|drop/i', trim ($sql)) ) 
 			return 1;
 
 		return $this->num_rows ();
