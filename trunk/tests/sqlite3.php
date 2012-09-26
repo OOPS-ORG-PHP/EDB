@@ -25,6 +25,8 @@ if ( $ccwd == 'tests' ) {
 	___ini_set ('include_path', $oldpath . ':' . $newpath);
 }
 
+if ( file_exists ('test.db') )
+	unlink ('test.db');
 
 require_once 'edb.php';
 
@@ -58,13 +60,11 @@ CREATE TABLE ttt (
 );
 EOF;
 
-if ( file_exists ('test.db') )
-	unlink ('test.db');
 
 try {
 
 	$i=0;
-	$db = new EDB ('sqlite3://test.db');
+	$db = new EDB ('sqlite3://test.db', 0644);
 
 	##############################################################################
 	# Create table test
@@ -128,7 +128,6 @@ try {
 
 if ( file_exists ('test.db') )
 	unlink ('test.db');
-
 
 /*
  * Local variables:
