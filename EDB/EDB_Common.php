@@ -94,8 +94,20 @@ Class EDB_Common {
 	 * @return integer The number of parameters
 	 * @param  string Bind query string
 	 */
-	function get_param_number ($sql) {
-		return strlen (preg_replace ('/[^?]/', '', $sql));
+	function get_param_number (&$sql, $type = '') {
+		$r = strlen (preg_replace ('/[^?]/', '', $sql));
+
+		switch ($type) {
+			case 'pgsql' :
+				$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
+				for ( $i=0; $i<$r; $i++ ) {
+					$sql = preg_replace ('/\?/', '$' . ($i+1), $sql);
+				}
+				$sql = preg_replace ('/=-=-/', '\\?', $sql);
+				break;
+		}
+
+		return $r;
 	}
 	// }}}
 
