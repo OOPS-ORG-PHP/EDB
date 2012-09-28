@@ -50,7 +50,7 @@ Class EDB_MYSQL extends EDB_Common {
 	 * <code>
 	 * $db = new EDB_MYSQL ('mysql://localhost', 'user', 'host', 'database');
 	 * $db = new EDB_MYSQL ('mysql://localhost:3306', 'user', 'host', 'database');
-	 * $db = new EDB_MYSQL ('mysql://localhost:/var/run/mysqld/mysql.socl', 'user', 'host', 'database');
+	 * $db = new EDB_MYSQL ('mysql://localhost:/var/run/mysqld/mysql.sock', 'user', 'host', 'database');
 	 * </code>
 	 *
 	 * If you add prefix 'p~' before host, you can connect with persistent
