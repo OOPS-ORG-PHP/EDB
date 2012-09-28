@@ -264,6 +264,63 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MYSQLI::field_name ($index)
+	/**
+	 * Get the name of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The field number. This value must be in the
+	 *                 range from 0 to number of fields - 1.
+	 */
+	function field_name ($index) {
+		try {
+			$r = $this->field_info ($index, 'type');
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return $r;
+	}
+	// }}}
+
+	// {{{ (string) EDB_MYSQLI::field_type ($index)
+	/**
+	 * Get the type of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numerical field offset. The field_offset starts
+	 *                 at 0. If field_offset does not exist, return false
+	 *                 and an error of level E_WARNING is also issued.
+	 * @see http://php.net/manual/en/mysqli.constants.php Predefined Constants
+	 */
+	function field_type ($index) {
+		try {
+			$r = $this->field_info ($index, 'type');
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return $this->file_type_string ($r);
+	}
+	// }}}
+
+	// {{{ (int) EDB_MYSQLI::num_fields (void)
+	/**
+	 * Returns the number of columns for the most recent query
+	 *
+	 * @access public
+	 * @return integer An integer representing the number of fields in a result set.
+	 * @see http://php.net/manual/en/mysqli.field-count.php mysqli::$field_count
+	 */
+	function num_fields () {
+		return $this->db->field_count;
+	}
+	// }}}
+
 	// {{{ (void) EDB_MYSQLI::close (void)
 	/**
 	 * Close the db handle
@@ -472,6 +529,103 @@ Class EDB_MYSQLI extends EDB_Common {
 		$this->free_result ();
 
 		return $r;
+	}
+	// }}}
+
+	// {{{ private (mixed) EDB_MYSQLI::field_info ($index)
+	/**
+	 * Get the type of the specified field in a result
+	 *
+	 * @access public
+	 * @return mixed|false
+	 * @param  integer The numerical field offset. The field_offset starts
+	 *                 at 0. If field_offset does not exist, return false
+	 *                 and an error of level E_WARNING is also issued.
+	 */
+	private function field_info ($index, $type = 'name') {
+		$r = false;
+
+		if ( $this->result instanceof mysqli_result ) {
+			if ( ($o = $this->result->fetch_field_direct ($index)) === false )
+				return false;
+			$r = $o->$type;
+		} else if ( $this->result instanceof mysqli_stmt ) {
+			if ( ($result = $this->result->result_metadata ()) === false )
+				return false;
+
+			for ( $i=0; $i<=$index; $i++ )
+				$o = $result->fetch_field ();
+			$r = $o->$type;
+			$result->free_result ();
+		}
+
+		return $r;
+	}
+	// }}}
+
+	// {{{ private (string) file_type_string ($type) {
+	private function file_type_string ($type) {
+		switch ($type) {
+			case MYSQLI_TYPE_DECIMAL :
+				return 'DECIMAL';
+			//Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up)
+			case MYSQLI_TYPE_NEWDECIMAL :
+				return 'NUMERIC';
+			case MYSQLI_TYPE_BIT :
+				return 'BIT (MySQL 5.0.3 and up)';
+			case MYSQLI_TYPE_TINY :
+				return 'TINYINT';
+			case MYSQLI_TYPE_SHORT :
+				return 'SMALLINT';
+			case MYSQLI_TYPE_LONG :
+				return 'INT';
+			case MYSQLI_TYPE_FLOAT :
+				return 'FLOAT';
+			case MYSQLI_TYPE_DOUBLE :
+				return 'DOUBLE';
+			case MYSQLI_TYPE_NULL :
+				return 'DEFAULT NULL';
+			case MYSQLI_TYPE_TIMESTAMP :
+				return 'TIMESTAMP';
+			case MYSQLI_TYPE_LONGLONG :
+				return 'BIGINT';
+			case MYSQLI_TYPE_INT24 :
+				return 'MEDIUMINT';
+			case MYSQLI_TYPE_DATE :
+				return 'DATE';
+			case MYSQLI_TYPE_TIME :
+				return 'TIME';
+			case MYSQLI_TYPE_DATETIME :
+				return 'DATETIME';
+			case MYSQLI_TYPE_YEAR :
+				return 'YEAR';
+			case MYSQLI_TYPE_NEWDATE :
+				return 'DATE';
+			case MYSQLI_TYPE_INTERVAL :
+				return 'INTERVAL';
+			case MYSQLI_TYPE_ENUM :
+				return 'ENUM';
+			case MYSQLI_TYPE_SET :
+				return 'SET';
+			case MYSQLI_TYPE_TINY_BLOB :
+				return 'TINYBLOB';
+			case MYSQLI_TYPE_MEDIUM_BLOB :
+				return 'MEDIUMBLOB';
+			case MYSQLI_TYPE_LONG_BLOB :
+				return 'LONGBLOB';
+			case MYSQLI_TYPE_BLOB :
+				return 'BLOB';
+			case MYSQLI_TYPE_VAR_STRING :
+				return 'VARCHAR';
+			case MYSQLI_TYPE_STRING :
+				return 'STRING';
+			case MYSQLI_TYPE_CHAR :
+				return 'CHAR';
+			case MYSQLI_TYPE_GEOMETRY :
+				return 'GEOMETRY';
+			default:
+				return 'UNKNOWN';
+		}
 	}
 	// }}}
 

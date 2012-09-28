@@ -238,6 +238,73 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_SQLITE2::field_name ($index)
+	/**
+	 * Get the name of the specified field in a result
+	 *
+	 * Given the ordinal column number, field_index, sqlite_field_name()
+	 * returns the name of that field in the result set result.
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numerical field offset. The index starts at 0.
+	 * @see http://php.net/manual/en/function.sqlite-field-name.php sqlite_field_name()
+	 */
+	function field_name ($index) {
+		try {
+			if ( ! is_resource ($this->result) )
+				return false;
+			return sqlite_field_name ($this->result, $index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
+	// {{{ (string) EDB_SQLITE2::field_type ($index, $table)
+	/**
+	 * Get the type of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numerical field offset. The index starts at 0.
+	 * @param  string  name of table
+	 * @see http://php.net/manual/en/function.sqlite-fetch-column-types.php sqlite_fetch_column_types()
+	 */
+	function field_type ($index, $table) {
+		try {
+			if ( ($r = sqlite_fetch_column_types ($table, $this->db, SQLITE_NUM)) === false )
+				return false;
+
+			return $r[$index];
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
+	// {{{ (int) EDB_SQLITE2::num_fields (void)
+	/**
+	 * Returns the number of fields in the result set.
+	 *
+	 * @access public
+	 * @return integer|false
+	 */
+	function num_fields () {
+		try {
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return sqlite_num_fields ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
 	// {{{ (void) EDB_SQLITE2::close (void)
 	/**
 	 * Close the db handle

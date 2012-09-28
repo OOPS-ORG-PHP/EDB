@@ -51,6 +51,7 @@ Class EDB
 	 *
 	 * 지원되는 추상화 계층으로는 mysqli와 sqlite3을 지원한다.
 	 *
+	 * @see EDB_PGSQL::__construct()
 	 * @see EDB_MYSQL::__construct()
 	 * @see EDB_MYSQLI::__construct()
 	 * @see EDB_SQLITE2::__construct()
@@ -125,6 +126,7 @@ Class EDB
 	 * @param  string  $type   (optional) bind 파라미터 형식
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
+	 * @see    EDB_PGSQL::query()
 	 * @see    EDB_MYSQL::query()
 	 * @see    EDB_MYSQLI::query()
 	 * @see    EDB_SQLITE2::query()
@@ -170,6 +172,55 @@ Class EDB
 	 */
 	function fetch_all () {
 		return $this->db->fetch_all ();
+	}
+	// }}}
+
+	// {{{ (string) EDB::field_name ($index)
+	/**
+	 * 지정한 n번째의 컬럼 이름을 반환한다.
+	 *
+	 * @access public
+	 * @return string
+	 * @param  integer 0부터 시작하는 컬럼 인덱스 번호
+	 * @see EDB_PGSQL::field_name()
+	 * @see EDB_MYSQL::field_name()
+	 * @see EDB_MYSQLI::field_name()
+	 * @see EDB_SQLITE2::field_name()
+	 * @see EDB_SQLITE3::field_name()
+	 */
+	function field_name ($index) {
+		return $this->db->field_name ($index);
+	}
+	// }}}
+
+	// {{{ (string) EDB::field_type ($field_index[, $table = '')
+	/**
+	 * 지정한 n번째의 컬럼 유형을 반환한다.
+	 *
+	 * @access public
+	 * @return string  db engine에 따라 자료형이 다르다.
+	 * @param  integer 0부터 시작하는 컬럼 인덱스 번호
+	 * @param  string  (optional) sqlite engine에서만 사용
+	 * @see EDB_PGSQL::field_type()
+	 * @see EDB_MYSQL::field_type()
+	 * @see EDB_MYSQLI::field_type()
+	 * @see EDB_SQLITE2::field_type()
+	 * @see EDB_SQLITE3::field_type()
+	 */
+	function field_type ($index, $table = '') {
+		return $this->db->field_type ($index, $table);
+	}
+	// }}}
+
+	// {{{ (int) EDB::num_fields (void)
+	/**
+	 * 해당 row의 field 수를 반환한다.
+	 *
+	 * @access public
+	 * @return integer
+	 */
+	function num_fields () {
+		return $this->db->num_fields ();
 	}
 	// }}}
 
