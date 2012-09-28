@@ -84,6 +84,10 @@ Class EDB_SQLITE3 extends EDB_Common {
 			if ( ! $o->flag )
 				$o->flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
 
+			// for persistent connection. sqlite3 don't support
+			if ( preg_match ('!^p~!', $o->path) )
+				$o->path = preg_replace ('!^p~!', '', $o->path);
+
 			$this->db = new SQLite3 ($o->path, $o->flag);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);

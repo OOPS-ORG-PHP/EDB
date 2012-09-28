@@ -53,6 +53,14 @@ Class EDB_MYSQL extends EDB_Common {
 	 * $db = new EDB_MYSQL ('mysql://localhost:/var/run/mysqld/mysql.socl', 'user', 'host', 'database');
 	 * </code>
 	 *
+	 * If you add prefix 'p~' before host, you can connect with persistent
+	 * connection.
+	 *
+	 * For Examples:
+	 * <code>
+	 * $db = new EDB_MYSQL ('mysql://p~localhost', 'user', 'host', 'database');
+	 * </code>
+	 *
 	 * @access public
 	 * @return object
 	 * @param  string  $hostname mysql host
@@ -80,8 +88,14 @@ Class EDB_MYSQL extends EDB_Common {
 		} else
 			$o->host .= ':3306';
 
+		if ( preg_match ('/^p~/', $o->host) ) {
+			$func = 'mysql_pconnect';
+			$o->host = preg_replace ('/^p~/', '', $o->host);
+		} else
+			$func = 'mysql_connect';
+
 		try {
-			$this->db = mysql_connect ($o->host, $o->user, $o->pass);
+			$this->db = $func ($o->host, $o->user, $o->pass);
 			mysql_select_db ($o->db, $this->db);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);

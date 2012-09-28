@@ -82,6 +82,14 @@ Class EDB_PGSQL extends EDB_Common {
 	 * {@link http://www.postgresql.org/docs/8.3/static/libpq-connect.html}를
 	 * 참조하도록 한다.
 	 *
+	 * 만약 persistent connection을 사용하고 싶다면 host 앞에 'p~' prefix를
+	 * 붙이면 된다.
+	 *
+	 * For Examples:
+	 * <code>
+	 * $db = new EDB_PGSQL ('pgsql://p~localhost', 'user', 'host', 'database');
+	 * </code>
+	 *
 	 * @access public
 	 * @return object
 	 * @param  string  $hostname pgsql host[:port] 또는 unix socket 경로
@@ -107,6 +115,12 @@ Class EDB_PGSQL extends EDB_Common {
 
 		foreach ( $o as $key => $val ) {
 			if ( $key == 'host' ) {
+				if ( preg_match ('/^p~/', $val) ) {
+					$func = 'pg_pconnect';
+					$val = preg_replace ('/^p~/', '', $val);
+				} else
+					$func = 'pg_connect';
+
 				// 파일이 존재하면 host를 unix socket으로 지정
 				if ( file_exists ($val) ) {
 					$cstring = sprintf ('host=%s', $val);
@@ -132,7 +146,7 @@ Class EDB_PGSQL extends EDB_Common {
 		}
 
 		try {
-			$this->db = pg_connect ($cstring, PGSQL_CONNECT_FORCE_NEW);
+			$this->db = $func ($cstring, PGSQL_CONNECT_FORCE_NEW);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 		}
