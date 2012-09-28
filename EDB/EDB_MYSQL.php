@@ -202,7 +202,7 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		return mysql_fetch_assoc ($this->result);
+		return mysql_fetch_object ($this->result);
 	}
 	// }}}
 
