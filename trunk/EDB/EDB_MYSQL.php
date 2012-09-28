@@ -247,6 +247,81 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MYSQL::field_name ($index)
+	/**
+	 * Get the name of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numerical field offset. The field_offset starts
+	 *                 at 0. If field_offset does not exist, return false
+	 *                 and an error of level E_WARNING is also issued.
+	 * @see http://php.net/manual/en/function.mysql-field-type.php mysql_field_name()
+	 */
+	function field_name ($index) {
+		$r = false;
+
+		try {
+			if ( is_resource ($this->result) )
+				$r = mysql_field_name ($this->result, $index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return $r;
+	}
+	// }}}
+
+	// {{{ (string) EDB_MYSQL::field_type ($index)
+	/**
+	 * Get the type of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numerical field offset. The field_offset starts
+	 *                 at 0. If field_offset does not exist, return false
+	 *                 and an error of level E_WARNING is also issued.
+	 * @see http://php.net/manual/en/function.mysql-field-type.php mysql_field_type()
+	 */
+	function field_type ($index) {
+		$r = false;
+
+		try {
+			if ( is_resource ($this->result) )
+				$r = mysql_field_type ($this->result, $index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return $r;
+	}
+	// }}}
+
+	// {{{ (int) EDB_MYSQL::num_fields (void)
+	/**
+	 * Get number of fields in result
+	 *
+	 * @access public
+	 * @return integer|false
+	 * @see http://php.net/manual/en/function.mysql-num-fields.php mysql_num_fields()
+	 */
+	function num_fields () {
+		$r = false;
+
+		try {
+			if ( is_resource ($this->result) )
+				$r = mysql_num_fields ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return $r;
+	}
+	// }}}
+
 	// {{{ (void) EDB_MYSQL::close (void)
 	/**
 	 * Close the db handle
@@ -291,7 +366,6 @@ Class EDB_MYSQL extends EDB_Common {
 			return 1;
 		}
 
-		print_r ($this->result);
 		return mysql_num_rows ($this->result);
 	}
 	// }}}

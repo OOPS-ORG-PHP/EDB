@@ -302,6 +302,77 @@ Class EDB_PGSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_PGSQL::field_name ($index)
+	/**
+	 * Get the name of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer Field number, starting from 0.
+	 * @see http://php.net/manual/en/function.pg-field-name.php pg_field_name()
+	 */
+	function field_name ($index) {
+		try {
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return pg_field_name ($this->result, $index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return false;
+	}
+	// }}}
+
+	// {{{ (string) EDB_PGSQL::field_type ($index)
+	/**
+	 * Returns the type name for the corresponding field number
+	 *
+	 * returns a string containing the base type name of the given
+	 * field_number in the given PostgreSQL result resource.
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer Field number, starting from 0.
+	 */
+	function field_type ($index) {
+		try {
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return pg_field_type ($this->result, $index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
+	// {{{ (int) EDB_PGSQL::num_fields (void)
+	/**
+	 * Returns the number of fields in a result
+	 *
+	 * @access public
+	 * @return integer|false
+	 * @see http://php.net/manual/en/function.pg-num-fields.php pg_num_fields()
+	 */
+	function num_fields () {
+		$r = false;
+
+		try {
+			if ( is_resource ($this->result) )
+				$r = pg_num_fields ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
+		return ($r != -1) ? $r : false;
+	}
+	// }}}
+
 	// {{{ (void) EDB_PGSQL::close (void)
 	/**
 	 * Close the db handle

@@ -34,11 +34,17 @@ function get_bind_select () {
 	global $db;
 
 	$n = $db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
-	$r = $db->fetch_all ();
-	$db->free_result ();
 
+	echo '*** Current columns are';
+	$no = $db->num_fields ();
+	for ( $i=0; $i<$no; $i++ )
+		echo ' ' . $db->field_name ($i) . '(' . $db->field_type ($i, 'ttt') . ')';
+	echo "\n\n";
+
+	$r = $db->fetch_all ();
 	print_r ($r);
 	echo "*** selected affected Rows is $n\n";
+	$db->free_result ();
 }
 
 function get_select () {

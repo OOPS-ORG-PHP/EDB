@@ -192,7 +192,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return object The object of fetched a result row or false
 	 */
 	function fetch () {
-		return $this->result->fetchArray ();
+		return $this->result->fetchArray (SQLITE3_ASSOC);
 	}
 	// }}}
 
@@ -235,6 +235,84 @@ Class EDB_SQLITE3 extends EDB_Common {
 		}
 
 		$this->switch_freemark ();
+	}
+	// }}}
+
+	// {{{ (string) EDB_SQLITE3::field_name ($index)
+	/**
+	 * Returns the name of the column specified by the column_number.
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numeric zero-based index of the column.
+	 */
+	function field_name ($index) {
+		try {
+			if ( ! is_object ($this->result) )
+				return false;
+			return $this->result->columnName ($index);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
+	// {{{ (string) EDB_SQLITE3::field_type ($index)
+	/**
+	 * Get the type of the specified field in a result
+	 *
+	 * @access public
+	 * @return string|false
+	 * @param  integer The numeric zero-based index of the column.
+	 */
+	function field_type ($field_index) {
+		try {
+			if ( ! is_object ($this->result) )
+				return false;
+
+			$r = $this->result->columnType ($index);
+
+			switch ($r) {
+				case SQLITE3_INTEGER :
+					return 'int';
+				case SQLITE3_FLOAT :
+					return 'float';
+				case SQLITE3_TEXT :
+					return 'string';
+				case SQLITE3_BLOB :
+					return 'blob';
+				case SQLITE3_NULL :
+					return 'null';
+				default :
+					throw new EDBException ('Unknown. This is libsqlite3 bug!', E_WARNING);
+					return false;
+					//return 'unknown, maybe libsqlite3 bug?';
+			}
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+	}
+	// }}}
+
+	// {{{ (int) EDB_SQLITE3::num_fields (void)
+	/**
+	 * Get number of fields in result
+	 *
+	 * @access public
+	 * @return integer|false
+	 */
+	function num_fields () {
+		try {
+			if ( ! is_object ($this->result) )
+				return false;
+
+			return $this->result->numColumns ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
