@@ -52,6 +52,14 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 * $db = new EDB_SQLITE2 ('sqlite2:///path/file.db', 0666)
 	 * </code>
 	 *
+	 * If you add prefix 'p~' before host, you can connect with persistent
+	 * connection.
+	 *
+	 * For Examples:
+	 * <code>
+	 * $db = new EDB_SQLTE2 ('sqlite2://p~/path/file.db');
+	 * </code>
+	 *
 	 * @access public
 	 * @return object
 	 * @param  string  $path  sqlite2 database file
@@ -77,7 +85,14 @@ Class EDB_SQLITE2 extends EDB_Common {
 			if ( ! $o->flag )
 				$o->mode = 0666;
 
-			$this->db = sqlite_open ($o->path, $o->mode, $error);
+			// for persistent connection
+			if ( preg_match ('!^p~!', $o->path) ) {
+				$o->path = preg_replace ('!^p~!', '', $o->path);
+				$func = 'sqlite_popen';
+			} else
+				$func = 'sqlite_open';
+
+			$this->db = $func ($o->path, $o->mode, $error);
 		} catch ( Exception $e ) {
 			if ( $error )
 				throw new EDBException ($error, $e->getCode(), $e);

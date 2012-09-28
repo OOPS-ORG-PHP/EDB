@@ -58,6 +58,14 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * $db = new EDB_MYSQLI ('mysqli://localhost:/var/run/mysqld/mysql.socl', 'user', 'host', 'database');
 	 * </code>
 	 *
+	 * If you add prefix 'p~' before host, you can connect with persistent
+	 * connection.
+	 *
+	 * For Examples:
+	 * <code>
+	 * $db = new EDB_MYSQLI ('mysqli://p~localhost', 'user', 'host', 'database');
+	 * </code>
+	 *
 	 * @access public
 	 * @return object
 	 * @param  string  $hostname mysql host
@@ -90,6 +98,9 @@ Class EDB_MYSQLI extends EDB_Common {
 			$o->port = 3306;
 		} else
 			$o->sock = null;
+
+		// set persistent connect
+		$o->host = preg_replace ('/^p~/', 'p:', $o->host);
 
 		try {
 			$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
