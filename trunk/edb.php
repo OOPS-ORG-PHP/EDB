@@ -235,6 +235,18 @@ Class EDB
 		$this->db->free_result();
 	}
 	// }}}
+
+	// {{{ (void) EDB::close (void)
+	/**
+	 * DB 핸들을 종료한다.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function close () {
+		$this->db->close ();
+	}
+	// }}}
 }
 
 /*
