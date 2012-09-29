@@ -179,17 +179,24 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_MYSQL::seek ($offset)
+	// {{{ (boo) EDB_MYSQL::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		if ( is_resource ($this->result) )
-			mysql_data_seek ($this->result, $offset);
+		if ( ! is_resource ($this->result) )
+			return false;
+
+		try {
+			return mysql_data_seek ($this->result, $offset);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -224,26 +231,27 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_MYSQL::free_result (void)
+	// {{{ (bool) EDB_MYSQL::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		try {
-			if ( is_resource ($this->result) )
-				mysql_free_result ($this->result);
+			if ( ! is_resource ($this->result) )
+				return true;
+
+			return mysql_free_result ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		$this->switch_freemark ();
 	}
 	// }}}
 

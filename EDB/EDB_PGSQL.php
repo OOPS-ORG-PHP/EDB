@@ -231,17 +231,24 @@ Class EDB_PGSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_PGSQL::seek ($offset)
+	// {{{ (bool) EDB_PGSQL::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		if ( is_resource ($this->result) )
-			pg_result_seek ($this->result, $offset);
+		if ( ! is_resource ($this->result) )
+			return false;
+
+		try {
+			return pg_result_seek ($this->result, $offset);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -279,26 +286,27 @@ Class EDB_PGSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_PGSQL::free_result (void)
+	// {{{ (bool) EDB_PGSQL::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		try {
-			if ( is_resource ($this->result) )
-				pg_free_result ($this->result);
+			if ( ! is_resource ($this->result) )
+				return true;
+
+			return pg_free_result ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		$this->switch_freemark ();
 	}
 	// }}}
 

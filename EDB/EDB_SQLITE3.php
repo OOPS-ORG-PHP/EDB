@@ -169,18 +169,19 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_SQLITE3::seek ($offset)
+	// {{{ (bool) EDB_SQLITE3::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
 	 * This method don't support on SQLITE3 engine
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean always return true.
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		return true;
+		//throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -216,15 +217,16 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_SQLITE3::free_result (void)
+	// {{{ (bool) EDB_SQLITE3::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean always returns true
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		try {
 			$this->result->finalize ();
@@ -234,7 +236,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 		}
 
-		$this->switch_freemark ();
+		return true;
 	}
 	// }}}
 
