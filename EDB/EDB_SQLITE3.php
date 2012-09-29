@@ -105,7 +105,8 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return string Current character set name
 	 */
 	function get_charset () {
-		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		return 'unsupport';
+		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -113,14 +114,16 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Set character set of current database
 	 *
-	 * This method is not allow on SQLite3 Engine
+	 * This method is not allow on SQLite3 Engine, and always
+	 * returns true.
 	 *
 	 * @access public
-	 * @return bool   The name of character set that is supported on database
+	 * @return bool   always retuns true
 	 * @param  string $char name of character set that supported from database
 	 */
 	function set_charset () {
-		throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		return true;
+		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -150,22 +153,27 @@ Class EDB_SQLITE3 extends EDB_Common {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
-		$sql = array_shift ($argv);
-		$this->pno = $this->get_param_number ($sql);
+		try {
+			$sql = array_shift ($argv);
+			$this->pno = $this->get_param_number ($sql);
 
-		if ( $this->free )
-			$this->free_result ();
+			if ( $this->free )
+				$this->free_result ();
 
-		/*
-		 * For no bind query
-		 */
-		if ( $this->pno++ == 0 )
-			return $this->no_bind_query ($sql);
+			/*
+			 * For no bind query
+			 */
+			if ( $this->pno++ == 0 )
+				return $this->no_bind_query ($sql);
 
-		/*
-		 * For bind query
-		 */
-		return $this->bind_query ($sql, $argv);
+			/*
+			 * For bind query
+			 */
+			return $this->bind_query ($sql, $argv);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -193,7 +201,12 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return object The object of fetched a result row or false
 	 */
 	function fetch () {
-		return $this->result->fetchArray (SQLITE3_ASSOC);
+		try {
+			return $this->result->fetchArray (SQLITE3_ASSOC);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -208,10 +221,15 @@ Class EDB_SQLITE3 extends EDB_Common {
 		$this->field = array ();
 		$rows = array ();
 
-		while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
-			$rows[] = $row;
+		try {
+			while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
+				$rows[] = $row;
 
-		$this->free_result ();
+			$this->free_result ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return array ();
+		}
 
 		return $rows;
 	}
@@ -234,6 +252,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 				$this->stmt->clear ();
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
 		}
 
 		return true;

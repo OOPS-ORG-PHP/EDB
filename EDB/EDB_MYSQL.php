@@ -113,7 +113,8 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
-		throw new EDBException ('Unsupported method on MySQL engine', E_ERROR);
+		return 'Unsupport'
+		#throw new EDBException ('Unsupported method on MySQL engine', E_ERROR);
 	}
 	// }}}
 
@@ -126,14 +127,19 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
-		$r = false;
+		try {
+			$r = false;
 
-		if ( is_resource ($this->db) ) {
-			if ( ($r = mysql_set_charset ($char, $this->db)) == false )
-				$this->error = mysql_error ($this->db);
+			if ( is_resource ($this->db) ) {
+				if ( ($r = mysql_set_charset ($char, $this->db)) == false )
+					$this->error = mysql_error ($this->db);
+			}
+
+			return $r;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 
@@ -209,7 +215,15 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		return mysql_fetch_object ($this->result);
+		if ( ! is_resource ($this->result) )
+			return false;
+
+		try {
+			return mysql_fetch_object ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -243,10 +257,10 @@ Class EDB_MYSQL extends EDB_Common {
 		if ( ! $this->free ) return true;
 		$this->free = false;
 
-		try {
-			if ( ! is_resource ($this->result) )
-				return true;
+		if ( ! is_resource ($this->result) )
+			return true;
 
+		try {
 			return mysql_free_result ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -267,17 +281,15 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @see http://php.net/manual/en/function.mysql-field-name.php mysql_field_name()
 	 */
 	function field_name ($index) {
-		$r = false;
-
 		try {
-			if ( is_resource ($this->result) )
-				$r = mysql_field_name ($this->result, $index);
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return mysql_field_name ($this->result, $index);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 
@@ -293,17 +305,15 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @see http://php.net/manual/en/function.mysql-field-type.php mysql_field_type()
 	 */
 	function field_type ($index) {
-		$r = false;
-
 		try {
-			if ( is_resource ($this->result) )
-				$r = mysql_field_type ($this->result, $index);
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return mysql_field_type ($this->result, $index);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 
@@ -316,17 +326,15 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @see http://php.net/manual/en/function.mysql-num-fields.php mysql_num_fields()
 	 */
 	function num_fields () {
-		$r = false;
-
 		try {
-			if ( is_resource ($this->result) )
-				$r = mysql_num_fields ($this->result);
+			if ( ! is_resource ($this->result) )
+				return false;
+
+			return mysql_num_fields ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 

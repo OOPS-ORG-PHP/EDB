@@ -119,7 +119,12 @@ Class EDB_CUBRID extends EDB_Common {
 	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
-		return cubrid_get_charset ($this->db);
+		try {
+			return cubrid_get_charset ($this->db);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -185,7 +190,7 @@ Class EDB_CUBRID extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (boolean) EDB_CUBRID::seek ($offset)
+	// {{{ (bool) EDB_CUBRID::seek ($offset)
 	/**
 	 * Move the cursor in the result
 	 *
@@ -218,12 +223,17 @@ Class EDB_CUBRID extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		$r = cubrid_fetch ($this->result, CUBRID_OBJECT);
+		try {
+			$r = cubrid_fetch ($this->result, CUBRID_OBJECT);
 
-		if ( $r === null )
-			$r = false;
+			if ( $r === null )
+				$r = false;
 
-		return $r;
+			return $r;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 

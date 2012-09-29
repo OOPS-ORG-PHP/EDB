@@ -121,8 +121,12 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
-		if ( $this->db instanceof mysqli )
+		try {
 			return $this->db->character_set_name ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -135,14 +139,14 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
-		$r = false;
-
-		if ( is_object ($this->db) ) {
-			if ( ($r = $this->db->set_charset ($char)) === false )
-				$this->error = $this->db->error;
+		try {
+			if ( ! is_object ($this->db) )
+				return false;
+			return $this->db->set_charset ($char);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 
@@ -218,10 +222,15 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		if ( $this->result instanceof mysqli_result )
-			return $this->fetch_result ();
-		else if ( $this->result instanceof mysqli_stmt )
-			return $this->fetch_stmt ();
+		try {
+			if ( $this->result instanceof mysqli_result )
+				return $this->fetch_result ();
+			else if ( $this->result instanceof mysqli_stmt )
+				return $this->fetch_stmt ();
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 		return false;
 	}
 	// }}}
@@ -235,10 +244,15 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch_all () {
-		if ( $this->result instanceof mysqli_result ) {
-			return $this->fetch_result_all ();
-		} else if ( $this->result instanceof mysqli_stmt ) {
-			return $this->fetch_stmt_all ();
+		try {
+			if ( $this->result instanceof mysqli_result ) {
+				return $this->fetch_result_all ();
+			} else if ( $this->result instanceof mysqli_stmt ) {
+				return $this->fetch_stmt_all ();
+			}
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return array ();
 		}
 
 		return array ();
@@ -325,7 +339,12 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @see http://php.net/manual/en/mysqli.field-count.php mysqli::$field_count
 	 */
 	function num_fields () {
-		return $this->db->field_count;
+		try {
+			return $this->db->field_count;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -408,15 +427,12 @@ Class EDB_MYSQLI extends EDB_Common {
 		for ( $i=0; $i<count ($params); $i++ )
 			$param[] = &$params[$i];
 
-		if ( call_user_func_array (array ($this->result, 'bind_param'), $param) === false ) {
+		try {
+			call_user_func_array (array ($this->result, 'bind_param'), $param);
+			$this->result->execute ();
+		} catch ( Exception $e ) {
 			$this->free_result ();
-			throw new EDBException ($this->result->error, E_WARNING);
-			return false;
-		}
-
-		if ( $this->result->execute () === false ) {
-			$this->free_result ();
-			throw new EDBException ($this->result->error, E_WARNING);
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -438,17 +454,20 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return;
 
-		$this->result->store_result ();
-		$var = array ();
-		$meta = $this->result->result_metadata ();
+		try {
+			$this->result->store_result ();
+			$var = array ();
+			$meta = $this->result->result_metadata ();
 
-		while ( $fields = $meta->fetch_field () )
-			$var[] = &$this->field[$fields->name];
+			while ( $fields = $meta->fetch_field () )
+				$var[] = &$this->field[$fields->name];
 
-		$meta->free ();
-		if ( call_user_func_array(array($this->result, 'bind_result'), $var) === false ) {
+			$meta->free ();
+			call_user_func_array(array($this->result, 'bind_result'), $var);
+		} catch ( Exception $e ) {
 			$this->free_result ();
-			throw new EDBException ($this->result->error, E_WARNING);
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
 		}
 	}
 	// }}}
@@ -544,34 +563,46 @@ Class EDB_MYSQLI extends EDB_Common {
 	/**
 	 * Get the type of the specified field in a result
 	 *
-	 * @access public
+	 * @access private
 	 * @return mixed|false
 	 * @param  integer The numerical field offset. The field_offset starts
 	 *                 at 0. If field_offset does not exist, return false
 	 *                 and an error of level E_WARNING is also issued.
 	 */
 	private function field_info ($index, $type = 'name') {
-		$r = false;
+		try {
+			$r = false;
 
-		if ( $this->result instanceof mysqli_result ) {
-			if ( ($o = $this->result->fetch_field_direct ($index)) === false )
-				return false;
-			$r = $o->$type;
-		} else if ( $this->result instanceof mysqli_stmt ) {
-			if ( ($result = $this->result->result_metadata ()) === false )
-				return false;
+			if ( $this->result instanceof mysqli_result ) {
+				if ( ($o = $this->result->fetch_field_direct ($index)) === false )
+					return false;
+				$r = $o->$type;
+			} else if ( $this->result instanceof mysqli_stmt ) {
+				if ( ($result = $this->result->result_metadata ()) === false )
+					return false;
 
-			for ( $i=0; $i<=$index; $i++ )
-				$o = $result->fetch_field ();
-			$r = $o->$type;
-			$result->free_result ();
+				for ( $i=0; $i<=$index; $i++ )
+					$o = $result->fetch_field ();
+				$r = $o->$type;
+				$result->free_result ();
+			}
+
+			return $r;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
 		}
-
-		return $r;
 	}
 	// }}}
 
 	// {{{ private (string) file_type_string ($type) {
+	/**
+	 * change mysqli filed type to strings
+	 *
+	 * @access private
+	 * @return string
+	 * @param  integer mysqli field type
+	 */
 	private function file_type_string ($type) {
 		switch ($type) {
 			case MYSQLI_TYPE_DECIMAL :
