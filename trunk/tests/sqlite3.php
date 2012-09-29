@@ -19,10 +19,11 @@ function get_bind_select () {
 	echo '*** Current columns are';
 	$no = $db->num_fields ();
 	for ( $i=0; $i<$no; $i++ )
-		echo ' ' . $db->field_name ($i);
-		//echo ' ' . $db->field_name ($i) . '(' . $db->field_type ($i) . ')';
+		echo ' ' . $db->field_name ($i) . '(' . $db->field_type ($i) . ')';
 	echo "\n\n";
 
+	echo "*** move data couror to 2\n";
+	$db->seek (2);
 	$r = $db->fetch_all ();
 	$db->free_result ();
 
@@ -67,12 +68,13 @@ try {
 	# Insert test
 	##############################################################################
 	echo "\n\n*** Insert test\n";
-	$r = $db->query (
-		"INSERT INTO ttt (nid, name) values (?, ?)",
-		'ss',
-		'Blah Blah~3',
-		'admin@host.com'
-	);
+	for ( $i=0; $i<4; $i++ )
+		$r = $db->query (
+			"INSERT INTO ttt (nid, name) values (?, ?)",
+			'ss',
+			"Blah Blah~$i",
+			'admin@host.com'
+		);
 	printf ("*** Affected Rows is %d\n", $r);
 	$db->free_result ();
 
