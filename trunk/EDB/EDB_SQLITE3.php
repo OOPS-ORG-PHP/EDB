@@ -306,9 +306,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 				case SQLITE3_NULL :
 					return 'null';
 				default :
-					throw new EDBException ('Unknown. This is libsqlite3 bug!', E_WARNING);
-					return false;
-					//return 'unknown, maybe libsqlite3 bug?';
+					//throw new EDBException ('Unknown. This is libsqlite3 bug!', E_WARNING);
+					//return false;
+					return 'unknown, maybe libsqlite3 bug?';
 			}
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
