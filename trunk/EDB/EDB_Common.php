@@ -134,30 +134,25 @@ Class EDB_Common {
 		for ( $i=0; $i<$len; $i++ ) {
 			$no = $i + 1;
 			switch ($type[$i]) {
-				case 'i' :
+				case 'i' : // integer
 					if ( gettype ($param[$i]) != "integer" ) {
 						throw new EDBException ("The ${no}th parameter type of query is not numeric type", E_ERROR);
 						return false;
 					}
 					break;
-				case 'd' : // for mysql
-				case 'f' : // for sqlite
+				case 'f' : // float, double
 					if ( gettype ($param[$i]) != "double" ) {
 						throw new EDBException ("The ${no}th parameter type of query is not double type", E_ERROR);
 						return false;
 					}
 					break;
-				case 'b' : // blob
-				case 'c' : // clob
-				case 'o' : // object
-				case 's' : // string
-					// by pass
-					break;
-				case 'n' :
+				case 'n' : // null
 					if ( $param[$i] ) {
 						throw new EDBException ("The ${no}th parameter type of query is not null type", E_ERROR);
 						return false;
 					}
+					break;
+				case 's' : // string. by pass
 					break;
 				default :
 					throw new EDBException ("The ${no}th parameter type of query is unsupported type", E_ERROR);

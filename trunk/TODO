@@ -1,2 +1,4 @@
-filed name
-filed num
+method 반환 형식 통일하기
+mssql support
+oracle support
+blob/clob 가능한지 확인 필요!
