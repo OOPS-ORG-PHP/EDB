@@ -161,7 +161,12 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
-		return pg_client_encoding ($this->db);
+		try {
+			return pg_client_encoding ($this->db);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -169,16 +174,21 @@ Class EDB_PGSQL extends EDB_Common {
 	/** 
 	 * Set character set of current database
 	 *
+	 * Postgresql don't support set characterset and always returns true
+	 *
 	 * @access public
-	 * @return bool    The name of character set that is supported on database
+	 * @return bool    always returns true
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
+		return true;
+		/*
 		$string = "Unsupported method on MySQL engine.\n" .
 			"If you want to set your charset, use 5th parameter ".
 			"'options' of EDB::connect()";
 
 		throw new EDBException ($string, E_ERROR);
+		 */
 	}
 	// }}}
 
@@ -206,28 +216,33 @@ Class EDB_PGSQL extends EDB_Common {
 
 		$this->error = null;
 
-		$sql = array_shift ($argv);
-		$this->pno = $this->get_param_number ($sql);
+		try {
+			$sql = array_shift ($argv);
+			$this->pno = $this->get_param_number ($sql);
 
-		if ( $this->free )
-			$this->free_result ();
+			if ( $this->free )
+				$this->free_result ();
 
-		if ( $this->pno++ == 0 )
-			$r = $this->no_bind_query ($sql);
-		else
-			$r = $this->bind_query ($sql, $argv);
+			if ( $this->pno++ == 0 )
+				$r = $this->no_bind_query ($sql);
+			else
+				$r = $this->bind_query ($sql, $argv);
 
-		if ( $r === false )
+			if ( $r === false )
+				return false;
+
+			if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) ) {
+				/* Insert or update, or delete query */
+				return pg_affected_rows ($this->result);
+			} else if ( preg_match ('/create|drop/i', trim ($sql)) ) {
+				return 1;
+			}
+
+			return pg_num_rows ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
-
-		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) ) {
-			/* Insert or update, or delete query */
-			return pg_affected_rows ($this->result);
-		} else if ( preg_match ('/create|drop/i', trim ($sql)) ) {
-			return 1;
 		}
-
-		return pg_num_rows ($this->result);
 	}
 	// }}}
 
@@ -264,8 +279,13 @@ Class EDB_PGSQL extends EDB_Common {
 		if ( ! is_resource ($this->result ) )
 			return false;
 
-		$r = pg_fetch_object ($this->result);
-		return is_object ($r) ? $r : false;
+		try {
+			$r = pg_fetch_object ($this->result);
+			return is_object ($r) ? $r : false;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -367,11 +387,10 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @see http://php.net/manual/en/function.pg-num-fields.php pg_num_fields()
 	 */
 	function num_fields () {
-		$r = false;
-
 		try {
-			if ( is_resource ($this->result) )
-				$r = pg_num_fields ($this->result);
+			if ( ! is_resource ($this->result) )
+				return false;
+			$r = pg_num_fields ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;

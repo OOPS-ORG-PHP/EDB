@@ -123,14 +123,15 @@ Class EDB_SQLITE2 extends EDB_Common {
 	/** 
 	 * Set character set of current database
 	 *
-	 * This method is not allow on SQLite2 Engine
+	 * This method is not allow on SQLite2 Engine, and always
+	 * returns true
 	 *
 	 * @access public
-	 * @return bool   The name of character set that is supported on database
+	 * @return bool   always returns true
 	 * @param  string $char name of character set that supported from database
 	 */
 	function set_charset () {
-		throw new EDBException ('Unsupported method on SQLITE2 engine', E_ERROR);
+		return true;
 	}
 	// }}}
 
@@ -160,22 +161,27 @@ Class EDB_SQLITE2 extends EDB_Common {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
-		$sql = array_shift ($argv);
-		$this->pno = $this->get_param_number ($sql);
+		try {
+			$sql = array_shift ($argv);
+			$this->pno = $this->get_param_number ($sql);
 
-		if ( $this->free )
-			$this->free_result ();
+			if ( $this->free )
+				$this->free_result ();
 
-		/*
-		 * For no bind query
-		 */
-		if ( $this->pno++ == 0 )
-			return $this->no_bind_query ($sql);
+			/*
+			 * For no bind query
+			 */
+			if ( $this->pno++ == 0 )
+				return $this->no_bind_query ($sql);
 
-		/*
-		 * For bind query
-		 */
-		return $this->bind_query ($sql, $argv);
+			/*
+			 * For bind query
+			 */
+			return $this->bind_query ($sql, $argv);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -208,7 +214,12 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 * @return object The object of fetched a result row or false
 	 */
 	function fetch () {
-		return sqlite_fetch_object ($this->result);
+		try {
+			return sqlite_fetch_object ($this->result);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -220,10 +231,15 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 * @return array The fetched result rows
 	 */
 	function fetch_all () {
-		$rows = sqlite_fetch_all ($this->result, SQLITE_ASSOC);
-		$this->free_result ();
+		try {
+			$rows = sqlite_fetch_all ($this->result, SQLITE_ASSOC);
+			$this->free_result ();
 
-		return $rows;
+			return $rows;
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return array ();
+		}
 	}
 	// }}}
 
