@@ -3,7 +3,15 @@
  * Project: EDB :: 확장 DB 추상화 layer<br>
  * File:    edb.php
  *
- * 이 패키지는 mysqli, sqlite3의 DB 추상화 계층을 제공한다.
+ * 이 패키지는 다음의 DB 추상화 계층을 제공한다.
+ *
+ * - CUBRID
+ * - MYSQL
+ * - MYSQLi
+ * - PostgreSQL
+ * - SQLite2
+ * - SQLite3
+ *
  *
  * @category    Database
  * @package     EDB
