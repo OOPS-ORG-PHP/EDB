@@ -20,7 +20,7 @@
 /**
  * CUBRID engine for EDB API
  *
- * This class support abstracttion DB layer for CUBRIDi Engine
+ * This class support abstracttion DB layer for CUBRID Engine
  *
  * @package     EDB
  */
