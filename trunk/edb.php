@@ -147,12 +147,12 @@ Class EDB
 	}
 	// }}}
 
-	// {{{ (void) EDB::seek ($offset)
+	// {{{ (bool) EDB::seek ($offset)
 	/**
 	 * result row 포인터를 이동한다.
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  integer 0부터 <b>전체 반환 row수 - 1</b> 까지의 범위
 	 */
 	function seek ($offset) {
@@ -174,10 +174,10 @@ Class EDB
 
 	// {{{ (array) EDB::fetch_all (void)
 	/**
-	 * associative 개체로 모든 result row를 가져온다.
+	 * associative 개체로 모든 result object row를 배열로 반환한다.
 	 *
 	 * @access public
-	 * @return array 가져온 result row 배열 반환
+	 * @return array  result object rows 배열
 	 */
 	function fetch_all () {
 		return $this->db->fetch_all ();
@@ -233,15 +233,15 @@ Class EDB
 	}
 	// }}}
 
-	// {{{ (void) EDB::free_result (void)
+	// {{{ (bool) EDB::free_result (void)
 	/**
 	 * 주어진 문장 핸들에 대하여 메모리에 저장된 결과를 해제
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean sqlite, sqlite3, mysqli는 항상 true를 반환한다.
 	 */
 	function free_result () {
-		$this->db->free_result();
+		return $this->db->free_result();
 	}
 	// }}}
 
@@ -249,10 +249,17 @@ Class EDB
 	/**
 	 * DB 핸들을 종료한다.
 	 *
+	 * 기본적으로 EDB는 페이지가 종료될 때 각 DB class의 __destruct에서
+	 * close를 하기 때문에 따로 호출을 할 필요가 없다.
+	 *
+	 * 크드 중간에서 close를 명시적으로 해야할 필요가 있을 경우에 사용을
+	 * 하면 된디.
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function close () {
+		$this->db->free_result ();
 		$this->db->close ();
 	}
 	// }}}

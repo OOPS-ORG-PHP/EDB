@@ -179,16 +179,24 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_SQLITE2::seek ($offset)
+	// {{{ (bool) EDB_SQLITE2::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		return sqlite_seek ($this->result, $offset);
+		if ( ! is_resource ($this->result) )
+			return false;
+
+		try {
+			return sqlite_seek ($this->result, $offset);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -219,22 +227,23 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_SQLITE2::free_result (void)
+	// {{{ (bool) EDB_SQLITE2::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean always returns true
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		if ( isset ($this->result) )
 			unset ($this->result);
 
 		$this->result = null;
 
-		$this->switch_freemark ();
+		return true;
 	}
 	// }}}
 

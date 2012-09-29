@@ -188,17 +188,24 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_MYSQLI::seek ($offset)
+	// {{{ (bool) EDB_MYSQLI::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
-		if ( is_object ($this->result) )
-			$this->result->data_seek ($offset);
+		if ( ! is_object ($this->result) )
+			return false;
+
+		try {
+			return $this->result->data_seek ($offset);
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
 	}
 	// }}}
 
@@ -238,16 +245,17 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_MYSQLI::free_result (void)
+	// {{{ (bool) EDB_MYSQLI::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		try {
 			if ( is_object ($this->result) )
@@ -260,7 +268,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			return false;
 		}
 
-		$this->switch_freemark ();
+		return true;
 	}
 	// }}}
 

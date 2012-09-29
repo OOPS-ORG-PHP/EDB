@@ -245,27 +245,28 @@ Class EDB_CUBRID extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_CUBRID::free_result (void)
+	// {{{ (bool) EDB_CUBRID::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return;
+		if ( ! $this->free ) return true;
+		$this->free = false;
 
 		try {
-			if ( is_resource ($this->result) )
-				cubrid_close_request ($this->result);
-				#cubrid_free_result ($this->result);
+			if ( ! is_resource ($this->result) )
+				return true;
+
+			#return cubrid_free_result ($this->result);
+			return cubrid_close_request ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
-
-		$this->switch_freemark ();
 	}
 	// }}}
 
