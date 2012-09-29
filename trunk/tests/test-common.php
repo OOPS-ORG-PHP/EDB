@@ -3,7 +3,7 @@
 /*
  * Test common codes
  *
- * $Id: $
+ * $Id$
  */
 
 if ( ! function_exists ('___ini_get') ) {

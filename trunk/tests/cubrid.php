@@ -2,7 +2,7 @@
 /*
  * pear_EDB cubrid tests
  *
- * $Id: mysql.php 28 2012-09-26 18:02:24Z oops $
+ * $Id$
  */
 
 require_once './test-common.php';

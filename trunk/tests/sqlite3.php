@@ -2,7 +2,7 @@
 /*
  * pear_EDB sqlite3 tests
  *
- * $Id: $
+ * $Id$
  */
 
 if ( file_exists ('test.db') )
