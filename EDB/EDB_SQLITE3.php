@@ -49,6 +49,11 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @var    integer
 	 */
 	private $field = array ();
+	/**
+	 * number of query result rows
+	 * @var    integer
+	 */
+	private $nums = 0;
 	/**#@-*/
 	// }}}
 
@@ -181,15 +186,36 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
 	 *
-	 * This method don't support on SQLITE3 engine
-	 *
 	 * @access public
-	 * @return boolean always return true.
+	 * @return boolean
 	 * @param  integer Must be between zero and the total number of rows minus one
 	 */
 	function seek ($offset) {
+		try {
+			if ( ! is_object ($this->result) )
+				return false;
+
+			$this->result->reset ();
+
+			if ( $offset == 0 )
+				return true;
+
+			if ( $offset >= $this->nums )
+				$offset = $this->nums;
+
+			$i = 0;
+			$offset--;
+			while ( $this->result->fetchArray (SQLITE3_ASSOC) !== false ) {
+				if ( $i == $offset )
+					break;
+				$i++;
+			}
+		} catch ( Exception $e ) {
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			return false;
+		}
+
 		return true;
-		//throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -364,16 +390,18 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return integer
 	 */
 	function num_rows () {
+		$this->nums = 0;
+
 		try {
 			$r = &$this->result;
 
 			$i = 0;
 			while ( ($r->fetchArray (SQLITE3_ASSOC)) !== false )
-				$i++;
+				$this->nums++;
 
 			unset ($r);
 
-			return $i;
+			return $this->nums;
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
