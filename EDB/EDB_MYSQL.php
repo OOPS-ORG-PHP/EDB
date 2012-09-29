@@ -256,7 +256,7 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @param  integer The numerical field offset. The field_offset starts
 	 *                 at 0. If field_offset does not exist, return false
 	 *                 and an error of level E_WARNING is also issued.
-	 * @see http://php.net/manual/en/function.mysql-field-type.php mysql_field_name()
+	 * @see http://php.net/manual/en/function.mysql-field-name.php mysql_field_name()
 	 */
 	function field_name ($index) {
 		$r = false;
