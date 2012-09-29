@@ -113,7 +113,7 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @return string Current character set name on DB
 	 */
 	function get_charset () {
-		return 'Unsupport'
+		return 'Unsupport';
 		#throw new EDBException ('Unsupported method on MySQL engine', E_ERROR);
 	}
 	// }}}
