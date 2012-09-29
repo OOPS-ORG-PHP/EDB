@@ -5,26 +5,7 @@
  * $Id: mysql.php 28 2012-09-26 18:02:24Z oops $
  */
 
-if ( ! function_exists ('___ini_get') ) {
-	function ___ini_get ($var) {
-		return ini_get ($var);
-	}
-}
-
-if ( ! function_exists ('___ini_set') ) {
-	function ___ini_set ($var, $value) {
-		return ini_set ($var, $value);
-	}
-}
-
-$cwd = getcwd ();
-$ccwd = basename ($cwd);
-if ( $ccwd == 'tests' ) {
-	$oldpath = ___ini_get ('include_path');
-	$newpath = preg_replace ("!/{$ccwd}!", '', $cwd);
-	___ini_set ('include_path', $oldpath . ':' . $newpath);
-}
-
+require_once './test-common.php';
 require_once 'edb.php';
 
 function get_bind_select () {
