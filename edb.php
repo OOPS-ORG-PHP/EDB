@@ -124,13 +124,18 @@ Class EDB
 	 * @return integer|false   실제 적용된 row 수
 	 * @param  string  $query  실행할 쿼리
 	 * @param  string  $type   (optional) bind 파라미터 형식
+	 *
+	 *         bind parameter 형식은 각 DB 엔진의 영향을 받지 않으며 EDB
+	 *         패키지가 직접 테스트를 하고, engine으로 전달이 되지는 않는다.
+	 *
+	 *         EDB 패키지에서 지원하는 형식은 다음과 같다.
+	 *
+	 *         - <b>i</b> integer
+	 *         - <b>f</b> float, double
+	 *         - <b>n</b> null
+	 *         - <b>s</b> string 검사를 하지 않고 bypass.
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
-	 * @see    EDB_PGSQL::query()
-	 * @see    EDB_MYSQL::query()
-	 * @see    EDB_MYSQLI::query()
-	 * @see    EDB_SQLITE2::query()
-	 * @see    EDB_SQLITE3::query()
 	 */
 	function query () {
 		$r = $this->db->query (func_get_args ());
