@@ -669,8 +669,10 @@ Class EDB_MYSQLI extends EDB_Common {
 	// }}}
 
 	function __destruct () {
-		$this->free_result ();
-		$this->close ();
+		try {
+			$this->free_result ();
+			$this->close ();
+		} catch ( Exception $e ) { }
 	}
 }
 

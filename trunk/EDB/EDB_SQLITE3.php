@@ -110,7 +110,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return string Current character set name
 	 */
 	function get_charset () {
-		return 'unsupport';
+		return 'Unsupport';
 		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
@@ -490,8 +490,10 @@ Class EDB_SQLITE3 extends EDB_Common {
 	// }}}
 
 	function __destruct () {
-		@$this->free_result ();
-		$this->close ();
+		try {
+			@$this->free_result ();
+			$this->close ();
+		} catch ( Exception $e ) { }
 	}
 }
 

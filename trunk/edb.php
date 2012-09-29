@@ -53,8 +53,10 @@ Class EDB
 	/**
 	 * EDB 클래스 초기화
 	 *
-	 * 지원되는 추상화 계층으로는 mysqli와 sqlite3을 지원한다.
+	 * 지원되는 추상화 계층으로는 cubrid, mysql, mysqli, pgsql,
+	 * sqlite2, sqlite3를 지원한다.
 	 *
+	 * @see EDB_CUBRID::__construct()
 	 * @see EDB_PGSQL::__construct()
 	 * @see EDB_MYSQL::__construct()
 	 * @see EDB_MYSQLI::__construct()
@@ -91,11 +93,10 @@ Class EDB
 	 * 현재의 db 문자셋을 가져온다.
 	 *
 	 * 이 method는 실 DBMS에 의하여 제약이 있다.
-	 * sqlite3은 지원하지 않는다.
+	 * mysql, sqlite3는 <b>Unsupport</b>를 반환한다.
 	 *
 	 * @access public
 	 * @return string 현재 문자셋 이름 반환
-	 * @see    EDB_MYSQLI::get_charset()
 	 */
 	function get_charset () {
 		return $this->db->get_charset ();
@@ -107,13 +108,14 @@ Class EDB
 	 * Set database charset.
 	 * DB 문자셋을 설정/변경 한다.
 	 *
-	 * 이 method는 실 DB의 영향을 받는다. sqlite2/sqlite3은
-	 * 지원하지 않는다.
+	 * 이 method는 실 DB의 영향을 받는다.
+	 *
+	 * mysql과 mysqli만 지원을 하며, 나머지는 모두 아무런 동작 없이
+	 * 항상 true만 반환한다.
 	 *
 	 * @access public
 	 * @return bool
 	 * @param  string DB가 지원하는 문자셋 이름
-	 * @see    EDB_MYSQLI::set_charset()
 	 */
 	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
@@ -137,7 +139,9 @@ Class EDB
 	 *         - <b>i</b> integer
 	 *         - <b>f</b> float, double
 	 *         - <b>n</b> null
-	 *         - <b>s</b> string 검사를 하지 않고 bypass.
+	 *         - <b>s</b> string
+	 *          - 검사를 하지 않고 bypass.
+	 *          - ifn 외의 형식은 모두 s로 지정을 하면 무난하게 통과된다.
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
 	 */
@@ -150,6 +154,11 @@ Class EDB
 	// {{{ (bool) EDB::seek ($offset)
 	/**
 	 * result row 포인터를 이동한다.
+	 *
+	 * sqlite/sqlite3의 경우 무조건 처음으로 돌아가서 원하는 offset까지
+	 * 이동을 하므로 속도 저하가 발생할 수 있다.
+	 *
+	 * offset이 row num보다 클경우에는 마지막 row로 이동을 한다.
 	 *
 	 * @access public
 	 * @return boolean
@@ -191,11 +200,6 @@ Class EDB
 	 * @access public
 	 * @return string
 	 * @param  integer 0부터 시작하는 컬럼 인덱스 번호
-	 * @see EDB_PGSQL::field_name()
-	 * @see EDB_MYSQL::field_name()
-	 * @see EDB_MYSQLI::field_name()
-	 * @see EDB_SQLITE2::field_name()
-	 * @see EDB_SQLITE3::field_name()
 	 */
 	function field_name ($index) {
 		return $this->db->field_name ($index);
@@ -206,15 +210,15 @@ Class EDB
 	/**
 	 * 지정한 n번째의 컬럼 유형을 반환한다.
 	 *
+	 * sqlite3의 경우 null을 제외하고는 빈 값을 반환하므로,
+	 * EDB package에서는 <b>unknown, maybe libsqlite3 bug?</b>로
+	 * 반환한다.
+	 *
 	 * @access public
 	 * @return string  db engine에 따라 자료형이 다르다.
 	 * @param  integer 0부터 시작하는 컬럼 인덱스 번호
-	 * @param  string  (optional) sqlite engine에서만 사용
-	 * @see EDB_PGSQL::field_type()
-	 * @see EDB_MYSQL::field_type()
-	 * @see EDB_MYSQLI::field_type()
-	 * @see EDB_SQLITE2::field_type()
-	 * @see EDB_SQLITE3::field_type()
+	 * @param  string  (optional) table 이름. sqlite2 engine에서만
+	 *                 지정한다.
 	 */
 	function field_type ($index, $table = '') {
 		return $this->db->field_type ($index, $table);
@@ -259,8 +263,10 @@ Class EDB
 	 * @return void
 	 */
 	function close () {
-		$this->db->free_result ();
-		$this->db->close ();
+		try {
+			$this->db->free_result ();
+			$this->db->close ();
+		} catch ( Exception $e ) { }
 	}
 	// }}}
 }
