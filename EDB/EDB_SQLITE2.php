@@ -18,7 +18,7 @@
  */
 
 /**
- * SQLite3 engine for EDB API
+ * SQLite2 engine for EDB API
  *
  * This class support abstracttion DB layer for SQLite3 Engine
  *
