@@ -168,7 +168,7 @@ Class EDB
 	}
 	// }}}
 
-	// {{{ array) EDB::fetch_all (void)
+	// {{{ (array) EDB::fetch_all (void)
 	/**
 	 * associative 개체로 모든 result row를 가져온다.
 	 *
