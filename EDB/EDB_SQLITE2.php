@@ -3,7 +3,7 @@
  * Project: EDB_SQLITE2 :: SQLITE2 abstraction layer
  * File:    EDB/EDB_SQLITE2.php
  *
- * The EDB_SQLITE2 class is mysql abstraction layer that used internally
+ * The EDB_SQLITE2 class is sqlite2 abstraction layer that used internally
  * on EDB class.
  *
  * @category    Database
