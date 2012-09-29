@@ -289,18 +289,22 @@ Class EDB_PGSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_PGSQL::fetch_all (void)
+	// {{{ (array) EDB_PGSQL::fetch_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	function fetch_all () {
+	function fetch_all ($free = true) {
 		$r = array ();
 		while ( ($row = $this->fetch ()) !== false )
 			$r[] = $row; 
+
+		if ( $free )
+			$this->free_result ();
 
 		return $r;
 	}

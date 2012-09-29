@@ -181,15 +181,21 @@ Class EDB
 	}
 	// }}}
 
-	// {{{ (array) EDB::fetch_all (void)
+	// {{{ (array) EDB::fetch_all ($free = true)
 	/**
-	 * associative 개체로 모든 result object row를 배열로 반환한다.
+	 * 모든 result row를 associative object 배열로 반환한다.
+	 *
+	 * fetch_all method는 fetch를 수행후 result rows를 free한다.
+	 * 만약 free하고 싶지 않다면, 첫번째 aurgument값으로 false를
+	 * 지정하도록 한다.
 	 *
 	 * @access public
-	 * @return array  result object rows 배열
+	 * @return array  associative object 배열
+	 * @param  boolean (optional) fetch 수행후 result를 free 한다.
+	 *                 (기본값: true)
 	 */
-	function fetch_all () {
-		return $this->db->fetch_all ();
+	function fetch_all ($free = true) {
+		return $this->db->fetch_all ($free);
 	}
 	// }}}
 

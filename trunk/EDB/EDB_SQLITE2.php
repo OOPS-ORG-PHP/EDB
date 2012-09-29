@@ -223,17 +223,20 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_SQLITE2::fetch_all (void)
+	// {{{ (array) EDB_SQLITE2::fetch_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	function fetch_all () {
+	function fetch_all ($free = true) {
 		try {
 			$rows = sqlite_fetch_all ($this->result, SQLITE_ASSOC);
-			$this->free_result ();
+			if ( $free )
+				$this->free_result ();
 
 			return $rows;
 		} catch ( Exception $e ) {

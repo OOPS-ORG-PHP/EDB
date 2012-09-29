@@ -227,19 +227,23 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_MYSQL::fetch_all (void)
+	// {{{ (array) EDB_MYSQL::fetch_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	function fetch_all () {
+	function fetch_all ($true = true) {
 		$row = array ();
 
 		while ( ($r = $this->fetch ()) !== false )
 			$row[] = $r;
+
+		if ( $true )
+			$this->free_result ();
 
 		return $row;
 	}

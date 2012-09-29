@@ -235,20 +235,21 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_MYSQLI::fetch_all (void)
+	// {{{ (array) EDB_MYSQLI::fetch_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	function fetch_all () {
+	function fetch_all ($free = true) {
 		try {
 			if ( $this->result instanceof mysqli_result ) {
-				return $this->fetch_result_all ();
+				return $this->fetch_result_all ($free);
 			} else if ( $this->result instanceof mysqli_stmt ) {
-				return $this->fetch_stmt_all ();
+				return $this->fetch_stmt_all ($free);
 			}
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -509,15 +510,16 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ private (array) EDB_MYSQLI::fetch_result_all (void)
+	// {{{ private (array) EDB_MYSQLI::fetch_result_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access private 
 	 * @return array The fetched result rows
-	 * @param  void
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	private function fetch_result_all () {
+	private function fetch_result_all ($free = true) {
 		if ( ! $this->result instanceof mysqli_result )
 			return array ();
 
@@ -527,20 +529,22 @@ Class EDB_MYSQLI extends EDB_Common {
 		while ( ($row = $this->result->fetch_object ()) !== null )
 			$rows[] = $row;
 
-		$this->free_result ();
+		if ( $free )
+			$this->free_result ();
 		return $rows;
 	}
 	// }}}
 
-	// {{{ private (array) EDB_MYSQLI::fetch_stmt_all (void)
+	// {{{ private (array) EDB_MYSQLI::fetch_stmt_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  void
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	private function fetch_stmt_all () {
+	private function fetch_stmt_all ($free = true) {
 		if ( ! $this->result instanceof mysqli_stmt )
 			return array ();
 
@@ -553,7 +557,8 @@ Class EDB_MYSQLI extends EDB_Common {
 			$i++;
 		}
 
-		$this->free_result ();
+		if ( $free)
+			$this->free_result ();
 
 		return $r;
 	}

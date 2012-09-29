@@ -236,14 +236,16 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (array) EDB_SQLITE3::fetch_all (void)
+	// {{{ (array) EDB_SQLITE3::fetch_all ($free = true)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
+	 * @param  boolean (optional) free result set after fetch.
+	 *                 Defaluts is true.
 	 */
-	function fetch_all () {
+	function fetch_all ($free = true) {
 		$this->field = array ();
 		$rows = array ();
 
@@ -251,7 +253,8 @@ Class EDB_SQLITE3 extends EDB_Common {
 			while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
 				$rows[] = $row;
 
-			$this->free_result ();
+			if ( $free )
+				$this->free_result ();
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return array ();
