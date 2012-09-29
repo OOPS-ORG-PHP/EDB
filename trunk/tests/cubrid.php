@@ -1,8 +1,8 @@
 <?php
 /*
- * pear_EDB mysqli tests
+ * pear_EDB cubrid tests
  *
- * $Id$
+ * $Id: mysql.php 28 2012-09-26 18:02:24Z oops $
  */
 
 require_once './test-common.php';
@@ -11,7 +11,7 @@ require_once 'edb.php';
 function get_bind_select () {
 	global $db;
 
-	$n = $db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
+	$n = $db->query ('SELECT * FROM ttt WHERE num > ? ORDER by num DESC', 'i', 0);
 
 	echo '*** Current columns are';
 	$no = $db->num_fields ();
@@ -19,17 +19,21 @@ function get_bind_select () {
 		echo ' ' . $db->field_name ($i) . '(' . $db->field_type ($i, 'ttt') . ')';
 	echo "\n\n";
 
+	/*
+	$r = $db->fetch ();
+	$db->seek (0);
+	 */
 	$r = $db->fetch_all ();
 	$db->free_result ();
 
 	print_r ($r);
-	echo "*** selected affected Rows is $n\n";
+	echo "*** bind selected affected Rows is $n\n";
 }
 
 function get_select () {
 	global $db;
 
-	$n = $db->query ('SELECT * FROM ttt WHERE no > 0 ORDER by no DESC');
+	$n = $db->query ('SELECT * FROM ttt WHERE num > 0 ORDER by num DESC');
 	$r = array ();
 	while ( ($f = $db->fetch ()) )
 		$r[] = $f;
@@ -41,18 +45,16 @@ function get_select () {
 
 $create_table = <<<EOF
 CREATE TABLE ttt (
-	no int(6) NOT NULL auto_increment,
-	nid char(30) NOT NULL default '',
-	name char(30) NOT NULL default '',
-	PRIMARY KEY  (no),
-	UNIQUE KEY nid (nid)
-) CHARSET=utf8;
+	num INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nid CHAR(30) NOT NULL UNIQUE DEFAULT '',
+	name CHAR(30) NOT NULL DEFAULT ''
+);
 EOF;
 
-$host = 'mysqli://localhost:/var/run/mysqld/mysql.sock';
-$user = 'user';
-$pass = 'password';
-$db   = 'database';
+$host = 'cubrid://localhost:33000';
+$user = 'dba';
+#$pass = 'password';
+$db   = 'testdb';
 
 
 try {
@@ -65,9 +67,8 @@ try {
 	##############################################################################
 	echo "*** Charset test\n";
 	printf ("   + Current Charset : %s\n", $db->get_charset ());
+	# cubrid는 set_charset이 동작하지 않음
 	$db->set_charset ('euckr');
-	printf ("   + Change charset  : %s\n", $db->get_charset ());
-	$db->set_charset ('utf8');
 	printf ("   + Change charset  : %s\n", $db->get_charset ());
 
 
@@ -139,6 +140,8 @@ try {
 	#echo $e->EDB_getTraceAsString () . "\n";
 	print_r ($e->EDB_getTraceAsArray ()) . "\n";
 }
+
+$db->close ();
 
 /*
  * Local variables:
