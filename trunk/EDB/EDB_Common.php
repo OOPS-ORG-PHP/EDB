@@ -147,8 +147,11 @@ Class EDB_Common {
 						return false;
 					}
 					break;
-				case 'b' :
-				case 's' :
+				case 'b' : // blob
+				case 'c' : // clob
+				case 'o' : // object
+				case 's' : // string
+					// by pass
 					break;
 				case 'n' :
 					if ( $param[$i] ) {
