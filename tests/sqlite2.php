@@ -2,7 +2,7 @@
 /*
  * pear_EDB sqlite2 tests
  *
- * $Id: $
+ * $Id$
  */
 
 require_once './test-common.php';
