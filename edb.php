@@ -6,11 +6,13 @@
  * 이 패키지는 다음의 DB 추상화 계층을 제공한다.
  *
  * - CUBRID
+ * - MSSQL (Not yet testing)
  * - MYSQL
  * - MYSQLi
- * - PostgreSQL
+ * - PostgreSQL (Not yet testing)
  * - SQLite2
  * - SQLite3
+ * - SQLRelay (Not yet testing)
  *
  *
  * @category    Database
@@ -45,6 +47,7 @@ require_once 'EDB/EDB_Common.php';
  * 이 패키지는 다음의 DB 추상화 계층을 제공한다.
  *
  * - CUBRID
+ * - MSSQL ((Not yet testing)
  * - MYSQL
  * - MYSQLi
  * - PostgreSQL (Not yet testing)
@@ -73,6 +76,7 @@ Class EDB
 	 * sqlite2, sqlite3를 지원한다.
 	 *
 	 * @see EDB_CUBRID::__construct()
+	 * @see EDB_MSSQL::__construct()
 	 * @see EDB_PGSQL::__construct()
 	 * @see EDB_MYSQL::__construct()
 	 * @see EDB_MYSQLI::__construct()
