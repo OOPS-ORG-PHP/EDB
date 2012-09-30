@@ -47,9 +47,10 @@ require_once 'EDB/EDB_Common.php';
  * - CUBRID
  * - MYSQL
  * - MYSQLi
- * - PostgreSQL
+ * - PostgreSQL (Not yet testing)
  * - SQLite2
  * - SQLite3
+ * - SQLRelay (Not yet testing)
  *
  * @package     EDB
  */
