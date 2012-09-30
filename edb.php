@@ -149,14 +149,27 @@ Class EDB
 	 *         bind parameter 형식은 각 DB 엔진의 영향을 받지 않으며 EDB
 	 *         패키지가 직접 테스트를 하고, engine으로 전달이 되지는 않는다.
 	 *
+	 *         단, blob과 clob의 경우 해당 DB API에서 관련 API를 제공을 할
+	 *         경우에는 해댱 API를 이용 하게 된다.
+	 *
 	 *         EDB 패키지에서 지원하는 형식은 다음과 같다.
 	 *
+	 *         - <b>b</b> blob
+	 *         - <b>c</b> clob
 	 *         - <b>i</b> integer
 	 *         - <b>f</b> float, double
 	 *         - <b>n</b> null
 	 *         - <b>s</b> string
 	 *          - 검사를 하지 않고 bypass.
-	 *          - ifn 외의 형식은 모두 s로 지정을 하면 무난하게 통과된다.
+	 *          - bcifn 외의 형식은 모두 s로 지정을 하면 무난하게 통과된다.
+	 *
+	 *         blob와 clob type으로 지정했을 경우 bind parameter 값은 data
+	 *         멤버와 len 멤버를 가진 object로 주어져야 한다.
+	 *
+	 *         <code>
+	 *         $param = (object) array ('data' => 'value', 'len' => 'value');
+	 *         </code>
+	 *
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
 	 */
