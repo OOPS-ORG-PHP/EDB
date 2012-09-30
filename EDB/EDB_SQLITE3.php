@@ -471,8 +471,26 @@ Class EDB_SQLITE3 extends EDB_Common {
 			$param[] = &$params[$i];
 
 		try {
-			for ( $i=1; $i<$this->pno+1; $i++ )
-				$this->stmt->bindParam ($i, $param[$i]);
+			for ( $i=1; $i<$this->pno+1; $i++ ) {
+				switch ($param[0][$i-1]) {
+					case 'b' :
+					case 'c' :
+						$this->stmt->bindParam ($i, $param[$i], SQLITE3_BLOB);
+						break;
+					case 'i' :
+						$this->stmt->bindParam ($i, $param[$i], SQLITE3_INTEGER);
+						break;
+					case 'd' :
+					case 'f' :
+						$this->stmt->bindParam ($i, $param[$i], SQLITE3_FLOAT);
+						break;
+					case 'n' :
+						$this->stmt->bindParam ($i, $param[$i], SQLITE3_NULL);
+						break;
+					default :
+						$this->stmt->bindParam ($i, $param[$i]);
+				}
+			}
 
 			$this->result = $this->stmt->execute ();
 		} catch ( Exception $e ) {

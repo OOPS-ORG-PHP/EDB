@@ -408,8 +408,16 @@ Class EDB_CUBRID extends EDB_Common {
 		try {
 			$this->result = cubrid_prepare ($this->db, $sql);
 
-			for ( $i=1; $i<$this->pno; $i++ )
-				cubrid_bind ($this->result, $i, $params[$i]);
+			for ( $i=1; $i<$this->pno; $i++ ) {
+				switch ($params[0][$i-1]) {
+					case 'b' :
+						cubrid_lob2_bind ($this->result, $i, $params[$i], 'BLOB');
+					case 'c' :
+						cubrid_lob2_bind ($this->result, $i, $params[$i], 'CLOB');
+					default :
+						cubrid_bind ($this->result, $i, $params[$i]);
+				}
+			}
 
 			cubrid_execute ($this->result);
 
