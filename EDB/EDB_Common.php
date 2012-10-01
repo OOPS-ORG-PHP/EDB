@@ -105,13 +105,13 @@ Class EDB_Common {
 				}
 				$sql = preg_replace ('/=-=-/', '\\?', $sql);
 				break;
-			case 'sqlrelay' :
-				$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-				for ( $i=0; $i<$r; $i++ ) {
-					$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql);
-				}
-				$sql = preg_replace ('/=-=-/', '\\?', $sql);
-				break;
+			//case 'sqlrelay' :
+			//	$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
+			//	for ( $i=0; $i<$r; $i++ ) {
+			//		$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql);
+			//	}
+			//	$sql = preg_replace ('/=-=-/', '\\?', $sql);
+			//	break;
 		}
 
 		return $r;
