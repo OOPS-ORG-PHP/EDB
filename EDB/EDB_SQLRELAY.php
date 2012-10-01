@@ -429,7 +429,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 							$params[$i]->data,
 							$params[$i]->len
 						);
-						break
+						break;
 					case 'c' :
 						sqlr_inputBindClob (
 							$this->result,
@@ -437,7 +437,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 							$params[$i]->data,
 							$params[$i]->len
 						);
-						break
+						break;
 					default :
 						$func ($this->result, 'param' . $i, $params[$i]);
 				}
