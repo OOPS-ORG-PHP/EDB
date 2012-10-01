@@ -82,7 +82,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
-		if ( ! extension_loaded ('sqlrelay') )
+		if ( ! extension_loaded ('sql_relay') )
 			throw new EDBException ('SQLRELAY extension is not loaded on PHP!', E_ERROR);
 
 		$o = (object) array (
@@ -105,7 +105,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 
 		try {
 			$this->db = sqlrcon_alloc ($o->host, $o->port, $o->sock, $o->user, $o->pass, 0, 1);
-			$this->result  = sqlrcur_alloc ($this->con);
+			$this->result  = sqlrcur_alloc ($this->db);
 
 			if ( ! sqlrcon_ping ($this->db) )
 				throw new EDBException (sqlrcur_errorMessage ($this->db), E_ERROR);
@@ -229,10 +229,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 		try {
 			$r = sqlrcur_getRowAssoc ($this->result, $this->rowid++);
 
-			if ( $r === null )
-				$r = false;
-
-			return (object) $r;
+			return $r ? (object) $r : false;
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
@@ -258,7 +255,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 		}
 
 		if ( $free )
-			$this->free_reesult ();
+			$this->free_result ();
 
 		return $row;
 	}
@@ -281,7 +278,16 @@ Class EDB_SQLRELAY extends EDB_Common {
 				return true;
 
 			$this->rowid = 0;
-			return sqlrcur_closeResultSet ($this->result);
+
+			// until current version (0.46)
+			// missing sqlrcur_closeResultSet api on sqlrelay php api.
+			// If you wnat to use this api, see also php-sqlrelay package
+			// on AnNyung LInux 2.
+			if ( function_exists ('sqlrcur_closeResultSet') )
+				return sqlrcur_closeResultSet ($this->result);
+
+			unset ($this->result);
+			return true;
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
@@ -387,10 +393,11 @@ Class EDB_SQLRELAY extends EDB_Common {
 	 */
 	private function no_bind_query ($sql) {
 		try {
-			$r = sqlrcur_sendQuery ($this->result, $sql);
-			sqlrcon_endSession ($this->db);
-			if ( ! $r )
+			if ( ! sqlrcur_sendQuery ($this->result, $sql) ) {
 				throw new EDBException (sqlrcur_errorMessage ($this->result), E_WARNING);
+				return false;
+			}
+			sqlrcon_endSession ($this->db);
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -417,21 +424,25 @@ Class EDB_SQLRELAY extends EDB_Common {
 		}
 
 		try {
-			sqlr_prepareQuery ($this->result, $sql);
+			sqlrcur_prepareQuery ($this->result, $sql);
 
-			//sqlr_clearBinds ($this->result);
 			for ( $i=1; $i<$this->pno; $i++ ) {
 				switch ($params[0][$i-1]) {
 					case 'b' :
-						sqlr_inputBindBlob (
-							$this->result,
-							'param' . $i,
-							$params[$i]->data,
-							$params[$i]->len
-						);
-						break;
 					case 'c' :
-						sqlr_inputBindClob (
+						// is binary safe strlen on blob?
+						if ( ! is_object ($params[$i]) ) {
+							$buf = $params[$i];
+							unset ($params[$i]);
+
+							$params->data = $buf;
+							$params->len  = strlen ($buf);
+						}
+
+						$func = ( $params[0][$i-1] == 'b') ?
+								'sqlrcur_inputBindBlob' : 'sqlrcur_inputBindClob';
+
+						$func (
 							$this->result,
 							'param' . $i,
 							$params[$i]->data,
@@ -439,11 +450,18 @@ Class EDB_SQLRELAY extends EDB_Common {
 						);
 						break;
 					default :
-						$func ($this->result, 'param' . $i, $params[$i]);
+						sqlrcur_inputBind ($this->result, $i, $params[$i]);
 				}
 			}
 
-			sqlr_executeQuery ($this->result);
+			if ( ! sqlrcur_executeQuery ($this->result) ) {
+				sqlrcur_clearBinds ($this->result);
+				sqlrcon_endSession ($this->db);
+				throw new EDBException (sqlrcur_errorMessage ($this->result), E_WARNING);
+				return false;
+			}
+
+			sqlrcur_clearBinds ($this->result);
 			sqlrcon_endSession ($this->db);
 
 			$this->switch_freemark ();
