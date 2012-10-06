@@ -1,1 +1,3 @@
-oracle support
+1. need pgsql / mssql test
+2. clob/blob test
+3. oracle support
