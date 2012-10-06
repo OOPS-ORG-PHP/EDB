@@ -142,13 +142,13 @@ Class EDB_Common {
 			$no = $i + 1;
 			switch ($type[$i]) {
 				case 'i' : // integer
-					if ( gettype ($param[$i]) != "integer" ) {
+					if ( is_numeric ($param[$i]) === false ) {
 						throw new EDBException ("The ${no}th parameter type of query is not numeric type", E_ERROR);
 						return false;
 					}
 					break;
 				case 'f' : // float, double
-					if ( gettype ($param[$i]) != "double" ) {
+					if ( is_numeric ($param[$i]) !== false && is_float ($param[$i]) !== false ) {
 						throw new EDBException ("The ${no}th parameter type of query is not double type", E_ERROR);
 						return false;
 					}
@@ -159,6 +159,8 @@ Class EDB_Common {
 						return false;
 					}
 					break;
+				case 'b' : // blob
+				case 'c' : // clob
 				case 's' : // string. by pass
 					break;
 				default :
