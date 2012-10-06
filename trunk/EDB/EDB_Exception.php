@@ -23,6 +23,22 @@
  * @package EDB
  */
 class EDBException extends Exception {
+	// {{{ properties
+	/**#@+
+	 * @access private
+	 */
+	/**
+	 * Previous exception
+	 * @var    object
+	 */
+	private $previous = null;
+	/**
+	 * mark of early 5.3.0
+	 */
+	private $early53 = false;
+	/**#@-*/
+	// }}}
+
 	// {{{ (object) EDBException::__construct ($message, $code, Exception $previous = null)
 	/** 
 	 * Initialize EDBException class
@@ -34,24 +50,13 @@ class EDBException extends Exception {
 	 * @param  string previous exception object
 	 */
 	public function __construct($message, $code = 0, Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-	}
-	// }}}
-
-	// {{{ (array) EDBException::EDB_getTrace (void)
-	/**
-	 * Returns the Exception stack trace.
-	 *
-	 * @access public
-	 * @return array  Returns the Exception stack trace as an array.
-	 * @param  void
-	 */
-	function EDB_getTrace () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			return $r->getTrace();
-
-		return $this->getTrace ();
+		if ( version_compare (PHP_VERSION, '5.3.0', '>=') )
+			parent::__construct($message, $code, $previous);
+		else {
+			$this->early53 = true;
+			$this->previous = $previous;
+			parent::__construct($message, $code);
+		}
 	}
 	// }}}
 
@@ -64,11 +69,24 @@ class EDBException extends Exception {
 	 * @param  void
 	 */
 	function EDB_getPrevious () {
-		$r = $this->getPrevious ();
-		if ( $r instanceof Exception )
-			return $r->getPrevious ();
+		return $this->early53 ? $this->previous : $this->getPrevious ();
+	}
+	// }}}
 
-		return $this->getPrevious ();
+	// {{{ (array) EDBException::EDB_getTrace (void)
+	/**
+	 * Returns the Exception stack trace.
+	 *
+	 * @access public
+	 * @return array  Returns the Exception stack trace as an array.
+	 * @param  void
+	 */
+	function EDB_getTrace () {
+		$r = $this->EDB_getPrevious ();
+		if ( $r instanceof Exception )
+			return $r->getTrace();
+
+		return $this->getTrace ();
 	}
 	// }}}
 
@@ -81,7 +99,7 @@ class EDBException extends Exception {
 	 * @param  void
 	 */
 	function EDB_getTraceAsString () {
-		$r = $this->getPrevious ();
+		$r = $this->EDB_getPrevious ();
 		if ( $r instanceof Exception )
 			return $r->getTraceAsString ();
 
@@ -98,7 +116,7 @@ class EDBException extends Exception {
 	 * @param  void
 	 */
 	function EDB_getTraceAsArray () {
-		$r = $this->getPrevious ();
+		$r = $this->EDB_getPrevious ();
 		if ( $r instanceof Exception )
 			$str = $r->getTraceAsString ();
 		else
