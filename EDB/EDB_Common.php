@@ -169,7 +169,7 @@ Class EDB_Common {
 	}
 	// }}}
 
-	// {{{ (string) EDB_Common::bind_query ($sql, $param)
+	// {{{ (string) EDB_Common::bind_param ($sql, $param)
 	/**
 	 * replace bind parameters to parameter's value
 	 * 
