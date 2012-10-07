@@ -145,6 +145,21 @@ Class EDB_SQLRELAY extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_SQLRELAY::escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * Attention! This method always returns original string.
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	function escape ($string) {
+		return $string;
+	}
+	// }}}
+
 	// {{{ (int) EDB_SQLRELAY::query ($query, $param_type, $param1, $param2 ...)
 	/** 
 	 * Performs a query on the database

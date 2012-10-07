@@ -127,6 +127,19 @@ Class EDB_MSSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MSSQL::escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	function escape ($string) {
+		return preg_replace ('/\'/', '\'\'', $string);
+	}
+	// }}}
+
 	// {{{ (int) EDB_MSSQL::query ($query, $param_type, $param1, $param2 ...)
 	/** 
 	 * Performs a query on the database

@@ -150,6 +150,19 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MYSQLI::escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	function escape ($string) {
+		return $this->db->real_escape_string ($string);
+	}
+	// }}}
+
 	// {{{ (int) EDB_MYSQLI::query ($query, $param_type, $param1, $param2 ...)
 	/** 
 	 * Performs a query on the database
@@ -420,16 +433,26 @@ Class EDB_MYSQLI extends EDB_Common {
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->free_result ();
-			throw new EDBExeption ('Number of elements in query doesn\'t match number of bind variables', E_WARNING);
+			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables', E_WARNING);
 			return false;
 		}
 
-		$param[] = array_shift ($params);
-		for ( $i=0; $i<count ($params); $i++ )
-			$param[] = &$params[$i];
+		$blobs = array ();
+		for ( $i=0; $i<count ($params); $i++ ) {
+			$param[$i] = &$params[$i];
+			if ( $i > 0 && $params[0][$i-1] == 'b' ) {
+				$blobs[$i-1] = $params[$i];
+				$params[$i] = null;
+			}
+		}
 
 		try {
 			call_user_func_array (array ($this->result, 'bind_param'), $param);
+
+			# for blob data
+			foreach ( $blobs as $key => $val )
+				$this->result->send_long_data ($key, $val);
+
 			$this->result->execute ();
 		} catch ( Exception $e ) {
 			$this->free_result ();

@@ -95,24 +95,20 @@ Class EDB_Common {
 	 * @param  string Bind query string
 	 */
 	function get_param_number (&$sql, $type = '') {
+		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
 		$r = strlen (preg_replace ('/[^?]/', '', $sql));
 
 		switch ($type) {
 			case 'pgsql' :
-				$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-				for ( $i=0; $i<$r; $i++ ) {
+				for ( $i=0; $i<$r; $i++ )
 					$sql = preg_replace ('/\?/', '$' . ($i+1), $sql);
-				}
-				$sql = preg_replace ('/=-=-/', '\\?', $sql);
 				break;
 			//case 'sqlrelay' :
-			//	$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-			//	for ( $i=0; $i<$r; $i++ ) {
+			//	for ( $i=0; $i<$r; $i++ )
 			//		$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql);
-			//	}
-			//	$sql = preg_replace ('/=-=-/', '\\?', $sql);
 			//	break;
 		}
+		$sql = preg_replace ('/=-=-/', '\?', $sql);
 
 		return $r;
 	}
@@ -186,13 +182,15 @@ Class EDB_Common {
 		if ( ! is_array ($params) )
 			return $sql;
 
-		array_shift ($params);
+		$types = array_shift ($params);
 		$c = count ($params);
 
 		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-		for ( $i=0; $i<$c; $i++ )
-			$sql = preg_replace ('/\?/', "'{$params[$i]}'", $sql, 1);
-		$sql = preg_replace ('/=-=-/', '\\?', $sql);
+		for ( $i=0; $i<$c; $i++ ) {
+			$buf = preg_replace ('/\?/', "'%s'", $sql, 1);
+			$sql = sprintf ($buf, $params[$i]);
+		}
+		$sql = preg_replace ('/=-=-/', '\?', $sql);
 
 		return $sql;
 	}

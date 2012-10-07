@@ -53,7 +53,7 @@ require_once 'EDB/EDB_Common.php';
  * - PostgreSQL (Not yet testing)
  * - SQLite2
  * - SQLite3
- * - SQLRelay (Not yet testing)
+ * - SQLRelay
  *
  * @package     EDB
  */
@@ -89,6 +89,9 @@ Class EDB
 	function __construct () {
 		$argc = func_num_args ();
 		$argv = func_get_args ();
+
+		$iniset = function_exists ('___ini_set') ? '___ini_set' : 'ini_set';
+		$iniset ('magic_quotes_gpc', false);
 
 		if ( preg_match ('!^([^:]+)://!', $argv[0], $matches) ) {
 			$dbtype = 'EDB_' . strtoupper ($matches[1]);
@@ -139,6 +142,30 @@ Class EDB
 	 */
 	function set_charset ($char = 'utf8') {
 		return $this->db->set_charset ($char);
+	}
+	// }}}
+
+	// {{{ (string) EDB::escape ($string)
+	/**
+	 * SQL 문에 사용이 되어지는 특수 문자를 에스케이프 시킨다.
+	 *
+	 * DB API에서 지원을 할 경우 해당 API의 escape api를 사용하며, 지원하지
+	 * 않을 경우, addslashes를 사용한다.
+	 *
+	 * SQLRELAY와 PGSQL의 경우 원 문자열을 그대로 반환한다. SQL RELAY의 경우
+	 * 해당 DB의 escape function을 이용해야 하며, PGSQL의 경우 PGSQL에서 지원
+	 * 하는 data type의 escape function을 사용하도록 한다.
+	 *
+	 * 권고사항!
+	 * 이 함수를 사용해야 하는 경우라면, 이 함수를 사용하는것 보다 bind query
+	 * 를 사용하는 것을 권장한다!
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string The string to be escaped.
+	 */
+	function escape ($string) {
+		return $this->db->escape ($string);
 	}
 	// }}}
 
