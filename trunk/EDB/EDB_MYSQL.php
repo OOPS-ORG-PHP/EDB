@@ -424,8 +424,12 @@ Class EDB_MYSQL extends EDB_Common {
 
 		$parano = strlen ($params[0]);
 		for ( $i=0, $j=1; $i<$parano; $i++, $j++ ) {
-			if ( $params[0][$i] == 'b' )
-				$params[$j] = $this->escape ($params[$j]);
+			switch ($params[0][$i]) {
+				case 'c' :
+				case 'b' :
+					$params[$j] = $this->escape ($params[$j]);
+					break;
+			}
 		}
 
 		$query = $this->bind_param ($sql, $params);
