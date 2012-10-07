@@ -373,12 +373,18 @@ Class EDB_SQLITE2 extends EDB_Common {
 	private function no_bind_query ($sql) {
 		try {
 			$this->result = sqlite_query ($this->db, $sql, SQLITE_ASSOC);
-			$this->free = true;
+			if ( ! is_resource ($this->result) ) {
+				$this->free = false;
+				throw new EDBException (sqlite_last_error ($this->db), E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
+
+		$this->switch_freemark ();
 
 		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) )
 			return sqlite_changes ($this->db);

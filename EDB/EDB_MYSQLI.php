@@ -390,10 +390,14 @@ Class EDB_MYSQLI extends EDB_Common {
 	private function no_bind_query ($sql) {
 		try {
 			$this->result = $this->db->query ($sql);
+			if ( $this->db->errno ) {
+				$this->free = false;
+				throw new EDBException ($this->db->error, E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			$err = $this->db->errno ? $this->db->error : $e->getMessage ();
-			throw new EDBException ($err, $e->getCode(), $e);
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 

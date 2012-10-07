@@ -392,10 +392,14 @@ Class EDB_CUBRID extends EDB_Common {
 	private function no_bind_query ($sql) {
 		try {
 			$this->result = cubrid_query ($sql, $this->db);
+			if ( cubrid_error_code () ) {
+				$this->free = false;
+				throw new EDBException (cubrid_error_msg (), E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			$err = cubrid_error_code () ? cubrid_error_msg () : $e->getMessage ();
-			throw new EDBException ($err, $e->getCode(), $e);
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
