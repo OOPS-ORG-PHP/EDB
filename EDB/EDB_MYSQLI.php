@@ -444,9 +444,17 @@ Class EDB_MYSQLI extends EDB_Common {
 		$blobs = array ();
 		for ( $i=0; $i<count ($params); $i++ ) {
 			$param[$i] = &$params[$i];
-			if ( $i > 0 && $params[0][$i-1] == 'b' ) {
-				$blobs[$i-1] = $params[$i];
-				$params[$i] = null;
+			if ( $i == 0 )
+				continue;
+
+			switch ($params[0][$i-1]) {
+				case 'c' :
+					// don't support clob type mysqli_bind_params
+					$params[0][$i-1] = 'b';
+				case 'b' :
+					$blobs[$i-1] = $params[$i];
+					$params[$i]  = null;
+					break;
 			}
 		}
 
