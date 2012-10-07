@@ -143,6 +143,19 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MYSQL::escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	function escape ($string) {
+		return mysql_real_escape_string ($string, $this->db);
+	}
+	// }}}
+
 	// {{{ (int) EDB_MYSQL::query ($query, $param_type, $param1, $param2 ...)
 	/** 
 	 * Performs a query on the database
@@ -370,10 +383,14 @@ Class EDB_MYSQL extends EDB_Common {
 	private function no_bind_query ($sql) {
 		try {
 			$this->result = mysql_query ($sql, $this->db);
+			if ( mysql_errno ($this->db) ) {
+				$this->free = false;
+				throw new EDBException (mysql_error ($this->db), E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			$err = mysql_errno ($this->db) ? mysql_error ($this->db) : $e->getMessage ();
-			throw new EDBException ($err, $e->getCode(), $e);
+			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -403,6 +420,12 @@ Class EDB_MYSQL extends EDB_Common {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
 			return false;
+		}
+
+		$parano = strlen ($params[0]);
+		for ( $i=0, $j=1; $i<$parano; $i++, $j++ ) {
+			if ( $params[0][$i] == 'b' )
+				$params[$j] = $this->escape ($params[$j]);
 		}
 
 		$query = $this->bind_param ($sql, $params);

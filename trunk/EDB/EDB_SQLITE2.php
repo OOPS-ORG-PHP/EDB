@@ -135,6 +135,19 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_SQLITE2::escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	function escape ($string) {
+		return sqlite_escape_string ($string);
+	}
+	// }}}
+
 	// {{{ (int) EDB_SQLITE2::query ($query, $param_type, $param1, $param2 ...)
 	/** 
 	 * Performs a query on the database
