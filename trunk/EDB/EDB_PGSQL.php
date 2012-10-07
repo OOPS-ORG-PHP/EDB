@@ -446,8 +446,11 @@ Class EDB_PGSQL extends EDB_Common {
 	 */
 	private function no_bind_query ($sql) {
 		try {
-			$this->result = $this->db->query ($sql);
-			$this->result = pg_query ($this->db, $sql);
+			if ( ($this->result = pg_query ($this->db, $sql)) === false ) {
+				$this->free = false;
+				throw new EDBException (pg_last_error ($this->db), E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode (), $e);
@@ -481,11 +484,17 @@ Class EDB_PGSQL extends EDB_Common {
 			return false;
 		}
 
-		array_shift ($params);
-		$this->result = pg_query_params ($this->db, $sql, $params);
-		if ( ! is_resource ($this->result) ) {
+		try {
+			array_shift ($params);
+			$this->result = pg_query_params ($this->db, $sql, $params);
+			if ( ! is_resource ($this->result) ) {
+				$this->free = false;
+				throw new EDBExeption (pg_last_error ($this->db), E_WARNING);
+				return false;
+			}
+		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBExeption (pg_last_error ($this->db), E_WARNING);
+			throw new EDBException ($e->getMessage (), $e->getCode (), $e);
 			return false;
 		}
 
