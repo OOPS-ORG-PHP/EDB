@@ -72,6 +72,9 @@ Class EDB_MSSQL extends EDB_Common {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
+		$iniset = function_exists ('___ini_set') ? '___ini_set' : 'ini_set';
+		$iniset ('magic_quotes_sybase', 'Off');
+
 		if ( ! extension_loaded ('mssql') )
 			throw new EDBException ('MSSQL extension is not loaded on PHP!', E_ERROR);
 
@@ -136,7 +139,7 @@ Class EDB_MSSQL extends EDB_Common {
 	 * @param  string  The string that is to be escaped.
 	 */
 	function escape ($string) {
-		return preg_replace ('/\'/', '\'\'', $string);
+		return preg_replace ('/[\']/', '\'\'', $string);
 	}
 	// }}}
 
@@ -242,7 +245,7 @@ Class EDB_MSSQL extends EDB_Common {
 			$row[] = $r;
 
 		if ( $free )
-			$this->free_reesult ();
+			$this->free_result ();
 
 		return $row;
 	}
@@ -363,7 +366,11 @@ Class EDB_MSSQL extends EDB_Common {
 	 */
 	private function no_bind_query ($sql) {
 		try {
-			$this->result = mssql_query ($sql, $this->db);
+			if ( ($this->result = mssql_query ($sql, $this->db)) === false ) {
+				$this->free = false;
+				throw new EDBException (mssql_get_last_message (), E_WARNING);
+				return false;
+			}
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -392,8 +399,35 @@ Class EDB_MSSQL extends EDB_Common {
 			return false;
 		}
 
+		$parano = strlen ($params[0]);
+		for ( $i=0, $j=1; $i<$parano; $i++, $j++ ) {
+			switch ($params[0][$i]) {
+				case 'b' :
+					if ( is_object ($params[$j]) )
+						$params[$j] = $params[$j]->data;
+					$params[$j] = 'unquote:' . $this->escape_bin ($params[$j]);
+					break;
+				case 'c' :
+					$params[0][$i] = 's';
+					break;
+			}
+		}
+
 		$query = $this->bind_param ($sql, $params);
 		return $this->no_bind_query ($query);
+	}
+	// }}}
+
+	// {{{ priavet (string) EDB_MSSQL::binary_escape ($string)
+	/** 
+	 * Escape special characters in a string for use in an SQL statement
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string  The string that is to be escaped.
+	 */
+	private function escape_bin ($bin) {
+		return '0x' . bin2hex ($bin);
 	}
 	// }}}
 

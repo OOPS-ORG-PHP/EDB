@@ -187,7 +187,11 @@ Class EDB_Common {
 
 		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
 		for ( $i=0; $i<$c; $i++ ) {
-			$buf = preg_replace ('/\?/', "'%s'", $sql, 1);
+			if ( ! strncmp ('unquote:', $params[$i], 8) ) {
+				$params[$i] = substr ($params[$i], 8);
+				$buf = preg_replace ('/\?/', '%s', $sql, 1);
+			} else
+				$buf = preg_replace ('/\?/', "'%s'", $sql, 1);
 			$sql = sprintf ($buf, $params[$i]);
 		}
 		$sql = preg_replace ('/=-=-/', '\?', $sql);
