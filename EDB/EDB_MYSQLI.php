@@ -452,7 +452,7 @@ Class EDB_MYSQLI extends EDB_Common {
 					// don't support clob type mysqli_bind_params
 					$params[0][$i-1] = 'b';
 				case 'b' :
-					$blobs[$i-1] = $params[$i];
+					$blobs[$i-1] = is_object ($params[$i]) ? $params[$i]->data : $params[$i];
 					$params[$i]  = null;
 					break;
 			}
