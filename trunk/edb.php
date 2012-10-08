@@ -47,7 +47,7 @@ require_once 'EDB/EDB_Common.php';
  * 이 패키지는 다음의 DB 추상화 계층을 제공한다.
  *
  * - CUBRID
- * - MSSQL ((Not yet testing)
+ * - MSSQL
  * - MYSQL
  * - MYSQLi
  * - PostgreSQL (Not yet testing)
@@ -201,6 +201,9 @@ Class EDB
 	 *         <code>
 	 *         $param = (object) array ('data' => 'value', 'len' => 'value');
 	 *         </code>
+	 *
+	 *         또한, blob 데이터 insert/update 시에 bind query를 사용하면
+	 *         binary data를 escape 할 필요가 없다.
 	 *
 	 * @param  mixed   $param1 (optional) 첫번째 bind 파라미터 값
 	 * @param  mixed   $param2,... (optional) 두번째 bind 파라미터 값
