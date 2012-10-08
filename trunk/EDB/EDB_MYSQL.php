@@ -427,6 +427,8 @@ Class EDB_MYSQL extends EDB_Common {
 			switch ($params[0][$i]) {
 				case 'c' :
 				case 'b' :
+					if ( is_object ($params[$j]) )
+						$params[$j] = $params[$j]->data;
 					$params[$j] = $this->escape ($params[$j]);
 					break;
 			}

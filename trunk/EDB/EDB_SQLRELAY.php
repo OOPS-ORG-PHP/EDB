@@ -445,13 +445,13 @@ Class EDB_SQLRELAY extends EDB_Common {
 				switch ($params[0][$i-1]) {
 					case 'b' :
 					case 'c' :
-						// is binary safe strlen on blob?
+						// is strlen binary safe?
 						if ( ! is_object ($params[$i]) ) {
 							$buf = $params[$i];
 							unset ($params[$i]);
 
-							$params->data = $buf;
-							$params->len  = strlen ($buf);
+							$params[$i]->data = $buf;
+							$params[$i]->len  = strlen ($buf);
 						}
 
 						$func = ( $params[0][$i-1] == 'b') ?
