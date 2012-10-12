@@ -176,7 +176,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 
 		try {
 			$sql = array_shift ($argv);
-			$this->pno = $this->get_param_number ($sql);
+			$this->pno = count ($argv) ? $this->get_param_number ($sql) : 0;
 
 			if ( $this->free )
 				$this->free_result ();
@@ -184,7 +184,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 			/*
 			 * For no bind query
 			 */
-			if ( ! count ($argv) || $this->pno++ == 0 )
+			if ( $this->pno++ == 0 )
 				return $this->no_bind_query ($sql);
 
 			/*

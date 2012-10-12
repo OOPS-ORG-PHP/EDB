@@ -181,7 +181,7 @@ Class EDB_MYSQL extends EDB_Common {
 		$this->error = null;
 
 		$sql = array_shift ($argv);
-		$this->pno = $this->get_param_number ($sql);
+		$this->pno = count ($argv) ? $this->get_param_number ($sql) : 0;
 
 		if ( $this->free )
 			$this->free_result ();

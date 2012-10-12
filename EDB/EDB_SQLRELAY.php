@@ -185,7 +185,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 
 		try {
 			$sql = array_shift ($argv);
-			$this->pno = $this->get_param_number ($sql, 'sqlrelay');
+			$this->pno = count ($argv) ? $this->get_param_number ($sql, 'sqlrelay') : 0;
 
 			if ( $this->free )
 				$this->free_result ();

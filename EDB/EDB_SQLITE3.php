@@ -173,7 +173,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		try {
 			$sql = array_shift ($argv);
-			$this->pno = $this->get_param_number ($sql);
+			$this->pno = count ($argv) ? $this->get_param_number ($sql) : 0;
 
 			if ( $this->free )
 				$this->free_result ();
