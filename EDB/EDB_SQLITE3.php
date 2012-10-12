@@ -241,7 +241,8 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	function fetch () {
 		try {
-			return $this->result->fetchArray (SQLITE3_ASSOC);
+			$r = $this->result->fetchArray (SQLITE3_ASSOC);
+			return is_array ($r) ? (object) $r : false;
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
@@ -264,7 +265,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		try {
 			while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
-				$rows[] = $row;
+				$rows[] = (object) $row;
 
 			if ( $free )
 				$this->free_result ();
@@ -493,7 +494,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 				switch ($param[0][$i-1]) {
 					case 'b' :
 					case 'c' :
-						$this->stmt->bindParam ($i, $param[$i], SQLITE3_BLOB);
+						$data = is_object ($param[$i]) ? $param[$i]->data : $param[$i];
+						$this->stmt->bindParam ($i, $data, SQLITE3_BLOB);
+						unset ($data);
 						break;
 					case 'i' :
 						$this->stmt->bindParam ($i, $param[$i], SQLITE3_INTEGER);
