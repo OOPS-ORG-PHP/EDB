@@ -237,7 +237,7 @@ Class EDB_CUBRID extends EDB_Common {
 	 */
 	function fetch () {
 		try {
-			$r = cubrid_fetch ($this->result, CUBRID_OBJECT);
+			$r = cubrid_fetch ($this->result, CUBRID_OBJECT | CUBIRD_LOB);
 
 			if ( $r === null )
 				$r = false;
@@ -266,7 +266,7 @@ Class EDB_CUBRID extends EDB_Common {
 			$row[] = $r;
 
 		if ( $free )
-			$this->free_reesult ();
+			$this->free_result ();
 
 		return $row;
 	}
