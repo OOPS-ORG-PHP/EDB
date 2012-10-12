@@ -233,7 +233,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 		try {
 			$sql = array_shift ($argv);
-			$this->pno = $this->get_param_number ($sql, 'pgsql');
+			$this->pno = count ($argv) ? $this->get_param_number ($sql, 'pgsql') : 0;
 
 			if ( $this->free )
 				$this->free_result ();
