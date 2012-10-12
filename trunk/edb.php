@@ -173,6 +173,9 @@ Class EDB
 	/**
 	 * 데이터베이스상에서 쿼리를 실행한다.
 	 *
+	 * blob 데이터 (binary data) 입력시에는 가능한 bind query를 사용하는
+	 * 것을 권장한다.
+	 *
 	 * @access public
 	 * @return integer|false   실제 적용된 row 수
 	 * @param  string  $query  실행할 쿼리

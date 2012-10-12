@@ -184,7 +184,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 			/*
 			 * For no bind query
 			 */
-			if ( $this->pno++ == 0 )
+			if ( ! count ($argv) || $this->pno++ == 0 )
 				return $this->no_bind_query ($sql);
 
 			/*
@@ -408,6 +408,18 @@ Class EDB_SQLITE2 extends EDB_Common {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
 			return false;
+		}
+
+		$parano = strlen ($params[0]);
+		for ( $i=0, $j=1; $i<$parano; $i++, $j++ ) {
+			switch ($params[0][$i]) {
+				case 'c' :
+				case 'b' :
+					if ( is_object ($params[$j]) )
+						$params[$j] = $params[$j]->data;
+					$params[$j] = $this->escape ($params[$j]);
+					break;
+			}
 		}
 
 		$query = $this->bind_param ($sql, $params);
