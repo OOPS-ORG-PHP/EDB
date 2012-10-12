@@ -1,12 +1,28 @@
 <?php
 /*
- * pear_EDB mysql tests
+ * pear_EDB sqlrelay tests
  *
- * $Id: mysql.php 56 2012-09-29 20:30:10Z oops $
+ * This is test of mysql backend
+ *
+ * $Id$
  */
 
 require_once './test-common.php';
 require_once 'edb.php';
+
+function get_charset () {
+	$r = $GLOBALS['db']->query ('SHOW variables WHERE Variable_name = ?', 's', 'character_set_client');
+	if ( $r != 1 )
+		return 'Unsupport';
+
+	$row = $GLOBALS['db']->fetch ();
+	$GLOBALS['db']->free_result ();
+	return $row->Value;
+}
+
+function set_charset ($char) {
+	return $GLOBALS['db']->query ("SET NAMES {$char}");
+}
 
 $scheme = <<<EOF
 CREATE TABLE edb_test (
@@ -19,10 +35,10 @@ CREATE TABLE edb_test (
 ) CHARSET=utf8;
 EOF;
 
-$host = 'mysql://localhost:/var/run/mysqld/mysql.sock';
-$user = 'user';
-$pass = 'password';
-$db   = 'database';
+$host = 'sqlrelay://172.16.13.3:9000';
+$user = 'sqlr';
+$pass = 'sqlr';
+$db   = 'WebBoard';
 
 try {
 
@@ -33,11 +49,11 @@ try {
 	# Charset test
 	##############################################################################
 	echo "*** Charset test\n";
-	printf ("   + Current Charset : %s\n", $db->get_charset ());
-	$db->set_charset ('euckr');
-	printf ("   + Change charset  : %s\n", $db->get_charset ());
-	$db->set_charset ('utf8');
-	printf ("   + Change charset  : %s\n", $db->get_charset ());
+	printf ("   + Current Charset : %s\n", get_charset ());
+	set_charset ('euckr');
+	printf ("   + Change charset  : %s\n", get_charset ());
+	set_charset ('utf8');
+	printf ("   + Change charset  : %s\n", get_charset ());
 
 
 	##############################################################################
@@ -46,12 +62,8 @@ try {
 
 	$r = $db->query ('SHOW TABLES WHERE Tables_in_WebBoard = ?', 's', 'edb_test');
 	$db->free_result ();
-	if ( $r == 1 ) {
-		$r = $db->query ("DROP TABLE edb_test");
-		$db->free_result ();
-	}
 
-	if ( $scheme ) {
+	if ( $scheme && ! $r ) {
 		echo "\n\n*** Create table\n";
 		$r = $db->query ($scheme);
 		printf ("    => Affected Rows is %d\n", $r);
@@ -72,13 +84,14 @@ try {
 
 	$img->data = $imgs;
 	$img->len = filesize ('./test.png');
-	for ( $i=0; $i<2; $i++ ) {
+	for ( $i=0; $i<4; $i++ ) {
 		$n = $db->query ($sql, 'ssb', 'cid_' . $i, $db->escape ('c\'name_' . $i), $img);
 		$db->free_result ();
 		$r += $n;
 	}
 
-	# insert static query test
+	# SQLRelay don't support static query with blob data !!!!!
+	/*
 	for ( $i=2; $i<4; $i++ ) {
 		$sql = sprintf (
 			'INSERT INTO edb_test (cid, cname, bdata) VALUES (\'%s\', \'%s\', \'%s\')',
@@ -97,6 +110,7 @@ try {
 		$db->free_result ();
 		$r += $n;
 	}
+	 */
 
 	printf ("    => Affected Rows is %d\n", $r);
 
@@ -189,10 +203,14 @@ try {
 	##############################################################################
 	# Delete table
 	##############################################################################
+	/*
+	 * SQLRelay가 붙어 있는 동안 mysql table drop이 안된다! 
+	 *
 	echo "\n\n*** Delete table\n";
 	$r = $db->query ("DROP TABLE edb_test");
 	printf ("*** Affected Rows is %d\n", $r);
 	$db->free_result ();
+	 */
 
 } catch ( EDBException $e ) {
 	fprintf (

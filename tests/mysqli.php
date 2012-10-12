@@ -8,46 +8,14 @@
 require_once './test-common.php';
 require_once 'edb.php';
 
-function get_bind_select () {
-	global $db;
-
-	$n = $db->query ('SELECT * FROM ttt WHERE no > ? ORDER by no DESC', 'i', 0);
-
-	echo '*** Current columns are';
-	$no = $db->num_fields ();
-	for ( $i=0; $i<$no; $i++ )
-		echo ' ' . $db->field_name ($i) . '(' . $db->field_type ($i, 'ttt') . ')';
-	echo "\n\n";
-
-	echo "*** move data couror to 2\n";
-	$db->seek (2);
-	$r = $db->fetch_all ();
-	$db->free_result ();
-
-	print_r ($r);
-	echo "*** selected affected Rows is $n\n";
-}
-
-function get_select () {
-	global $db;
-
-	$n = $db->query ('SELECT * FROM ttt WHERE no > 0 ORDER by no DESC');
-	$r = array ();
-	while ( ($f = $db->fetch ()) )
-		$r[] = $f;
-	$db->free_result ();
-
-	print_r ($r);
-	echo "*** selected affected Rows is $n\n";
-}
-
-$create_table = <<<EOF
-CREATE TABLE ttt (
-	no int(6) NOT NULL auto_increment,
-	nid char(30) NOT NULL default '',
-	name char(30) NOT NULL default '',
-	PRIMARY KEY  (no),
-	UNIQUE KEY nid (nid)
+$scheme = <<<EOF
+CREATE TABLE edb_test (
+	num  int(6) NOT NULL auto_increment,
+	cid char(30) NOT NULL default '',
+	cname char(30) NOT NULL default '',
+	bdata blob,
+	PRIMARY KEY  (num),
+	UNIQUE KEY nid (cid)
 ) CHARSET=utf8;
 EOF;
 
@@ -55,7 +23,6 @@ $host = 'mysqli://localhost:/var/run/mysqld/mysql.sock';
 $user = 'user';
 $pass = 'password';
 $db   = 'database';
-
 
 try {
 
@@ -76,57 +43,147 @@ try {
 	##############################################################################
 	# Create table test
 	##############################################################################
-	echo "\n\n*** Create table\n";
-	#$r = $db->query ('drop table ttt');
-	$r = $db->query ($create_table);
-	printf ("*** Affected Rows is %d\n", $r);
+
+	$r = $db->query ('SHOW TABLES WHERE Tables_in_WebBoard = ?', 's', 'edb_test');
+	$db->free_result ();
+	if ( $r == 1 ) {
+		$r = $db->query ("DROP TABLE edb_test");
+		$db->free_result ();
+	}
+
+	if ( $scheme ) {
+		echo "\n\n*** Create table\n";
+		$r = $db->query ($scheme);
+		printf ("    => Affected Rows is %d\n", $r);
+	}
 
 
 	##############################################################################
 	# Insert test
 	##############################################################################
 	echo "\n\n*** Insert test\n";
-	for ( $i=0; $i<4; $i++ )
-		$r = $db->query (
-			"INSERT INTO ttt (nid, name) values (?, ?)",
-			'ss',
-			"Blah Blah~$i",
-			'admin@host.com'
-		);
-	printf ("*** Affected Rows is %d\n", $r);
-	$db->free_result ();
+	$r = 0;
 
-	get_select ();
+	# get blob data
+	$imgs = file_get_contents ('./test.png');
+
+	# insert bind query test
+	$sql = 'INSERT INTO edb_test (cid, cname, bdata) VALUES (?, ?, ?)';
+
+	$img->data = $imgs;
+	$img->len = filesize ('./test.png');
+	for ( $i=0; $i<2; $i++ ) {
+		$n = $db->query ($sql, 'ssb', 'cid_' . $i, $db->escape ('c\'name_' . $i), $img);
+		$db->free_result ();
+		$r += $n;
+	}
+
+	# insert static query test
+	for ( $i=2; $i<4; $i++ ) {
+		$sql = sprintf (
+			'INSERT INTO edb_test (cid, cname, bdata) VALUES (\'%s\', \'%s\', \'%s\')',
+			'cid_' . $i,
+			$db->escape ('c\'name_' . $i),
+			$db->escape ($imgs)
+		);
+		$n = $db->query ($sql);
+		$db->free_result ();
+		$r += $n;
+	}
+
+	printf ("    => Affected Rows is %d\n", $r);
+
+	##############################################################################
+	# Select test
+	##############################################################################
+	echo "\n\n*** Select test\n";
+	$r = $db->query ('SELECT * FROM edb_test WHERE num > ?', 'i', 0); 
+	printf ("    => Selected Rows is %d (Bind query)\n", $r);
+
+	printf ('    => Current columns are');
+	$fno = $db->num_fields ();
+	for ( $i=0; $i<$fno; $i++ )
+		printf (' %s (%s)', $db->field_name ($i), $db->field_type ($i, 'edb_test'));
+
+	printf ("\n    => Move data cousor to 2\n");
+	$db->seek (2);
+	$row = $db->fetch_all ();
+	printf ("    => Fetched data is %d lows\n\n", count ($row));
+
+	$db->free_result ();
+	unset ($row);
+
+	$r = $db->query ('SELECT * FROM edb_test WHERE num > 0'); 
+	printf ("    => Selected Rows is %d\n", $r);
+
+	for ( $i=0; $i<$r; $i++ ) {
+		$row[] = $db->fetch ();
+	}
+	printf ("    => Fetched data is %d lows\n\n", count ($row));
+
+	printf ("    => Original image's md5 is %s\n", md5_file ('test.png'));
+	$fp = fopen ('test_new.png', 'wb');
+	if ( is_resource ($fp) ) {
+		fwrite ($fp, $row[0]->bdata);
+		fclose ($fp);
+	}
+
+	if ( file_exists ('test_new.png') ) {
+		printf ("    =>  Selected data's md5 is %s\n", md5_file ('test_new.png'));
+		printf ("    =>  Selected data's size is %d\n", filesize ('test_new.png'));
+		unlink ('test_new.png');
+	}
+
+	$db->free_result ();
+	unset ($row);
+
 
 	##############################################################################
 	# Update test
 	##############################################################################
 	echo "\n\n*** Update date\n";
 	$r = $db->query (
-		"UPDATE ttt SET name = ? WHERE nid = ?",
+		"UPDATE edb_test SET cname = ? WHERE cid = ?",
 		'ss',
-		'Blar Blar~31',
-		'Blah Blah~3');
-	printf ("*** Affected Rows is %d\n", $r);
+		'cname_22',
+		'cid_2');
+	printf ("    => Affected Rows is %d\n", $r);
 	$db->free_result ();
 
-	get_bind_select ();
+	$r = $db->query ('SELECT * FROM edb_test WHERE cid = ?', 's', 'cid_2'); 
+	$row = $db->fetch ();
+
+	if ( $row->cname == 'cname_22' )
+		printf ("    => Changed data is %s\n", $row->cname);
+	else
+		printf ("    => Don't changed data is %s\n", $row->cname);
+
+	$db->free_result ();
+	unset ($row);
+
 
 	##############################################################################
 	# Delete test
 	##############################################################################
 	echo "\n\n*** Delete test\n";
-	$r = $db->query ("DELETE FROM ttt WHERE nid = ?", 's', 'Blah Blah~3');
-	printf ("*** Affected Rows is %d\n", $r);
+	$r = $db->query ("DELETE FROM edb_test WHERE cid = ?", 's', 'cid_2');
 	$db->free_result ();
+	printf ("    => Affected Rows is %d\n", $r);
 
-	get_select ();
+	$r = $db->query ('SELECT * FROM edb_test WHERE num > 0'); 
+	printf ("    => Selected Rows is %d\n", $r);
+
+	$row = $db->fetch_all ();
+	printf ("    => Fetched data is %d lows\n\n", count ($row));
+
+	$db->free_result ();
+	unset ($row);
 
 	##############################################################################
 	# Delete table
 	##############################################################################
 	echo "\n\n*** Delete table\n";
-	$r = $db->query ("DROP TABLE ttt");
+	$r = $db->query ("DROP TABLE edb_test");
 	printf ("*** Affected Rows is %d\n", $r);
 	$db->free_result ();
 
