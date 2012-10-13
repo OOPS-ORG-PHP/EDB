@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package version="2.0" packagerversion="1.7.2" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+	<!-- $Id: package.xml.tmpl 31 2011-08-03 15:46:29Z oops $ -->
+	<name>EDB</name>
+	<channel>pear.oops.org</channel>
+	<summary>Extended DB Abstraction Layer</summary>
+	<description>EDB is a database abstraction layer providing</description>
+	<lead>
+		<name>JoungKyun.Kim</name>
+		<user>joungkyun</user>
+		<email>joungkyun@gmail.com</email>
+		<active>yes</active>
+	</lead>
+	<date>2012-10-14</date>
+	<time>04:35:32</time>
+	<version>
+		<release>2.0.0</release>
+		<api>1.0.0</api>
+	</version>
+	<stability>
+		<release>stable</release>
+		<api>stable</api>
+	</stability>
+	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+	<notes>* add MySQL Engine
+* add SQLite2 Engine
+* add PostgreSQL Engine
+* add MSSQL Engine
+* add Cubrid Engine
+* add SQLRelay Engine
+* support BLOB data type
+* support escape, field_name, field_type, num_fields method
+* enhnaced seek, set_charset, get_chasret method
+* unificated type of return values
+</notes>
+	<contents>
+		<dir name="/">
+			<file role="php" md5sum="e9fd2f90aa84cbc74263e041c297b169" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="5db6c571bacd8d61752e6832ae1d44f2" name="EDB/EDB_Exception.php" />
+			<file role="php" md5sum="a721704d33d183e5c148e2a8d8956a81" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="92d09f03c87b12893b619b9b34eba35a" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="f1ec0f21a00b05a76778746c36fba891" name="EDB/EDB_MYSQL.php" />
+			<file role="php" md5sum="1861e83e4fe236f32ef97a1f185fcfc9" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="ba42b74b911c2ecb6980cc90f1b6c248" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="d01bd4f4ab51383307e8a4d5e5661241" name="EDB/EDB_SQLITE2.php" />
+			<file role="php" md5sum="c2094dcae1329502b69d431ed006236f" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="073eb65040453f280dd85a31ece7a720" name="EDB/EDB_SQLRELAY.php" />
+			<file role="php" md5sum="bfd3a19b9d99468840ede461c454b08c" name="edb.php" />
+		</dir>
+	</contents>
+	<dependencies>
+		<required>
+			<php>
+				<min>5.1.0</min>
+			</php>
+			<pearinstaller>
+				<min>1.4.3</min>
+			</pearinstaller>
+		</required>
+		<optional>
+			<package>
+				<name>cubrid</name>
+				<channel>pecl</channel>
+				<min>8.4.0.0003</min>
+			</package>
+			<package>
+				<name>mssql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>mysql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>mysqli</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>pgsql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlite2</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlite3</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlrelay</name>
+				<channel>firstworks</channel>
+			</package>
+		</optional>
+	</dependencies>
+	<phprelease />
+	<changelog>
+		<release>
+			<version>
+				<release>2.0.0</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-10-14</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* add MySQL Engine
+* add SQLite2 Engine
+* add PostgreSQL Engine
+* add MSSQL Engine
+* add Cubrid Engine
+* add SQLRelay Engine
+* support BLOB data type
+* support escape, field_name, field_type, num_fields method
+* enhnaced seek, set_charset, get_chasret method
+* unificated type of return values
+</notes>
+		</release>
+		<release>
+			<version>
+				<release>1.0.0</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-09-02</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* initialized
+</notes>
+		</release>
+	</changelog>
+</package>
