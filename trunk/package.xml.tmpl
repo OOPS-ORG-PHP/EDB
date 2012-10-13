@@ -14,7 +14,7 @@
 	<date>@curdate@</date>
 	<time>@curtime@</time>
 	<version>
-		<release>1.0.0</release>
+		<release>2.0.0</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,29 +22,108 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* initialized
+	<notes>* add MySQL Engine
+* add SQLite2 Engine
+* add PostgreSQL Engine
+* add MSSQL Engine
+* add Cubrid Engine
+* add SQLRelay Engine
+* support BLOB data type
+* support escape, field_name, field_type, num_fields method
+* enhnaced seek, set_charset, get_chasret method
+* unificated type of return values
 </notes>
 	<contents>
 		<dir name="/">
 			<file role="php" md5sum="@EDB/EDB_Common.php@" name="EDB/EDB_Common.php" />
 			<file role="php" md5sum="@EDB/EDB_Exception.php@" name="EDB/EDB_Exception.php" />
+			<file role="php" md5sum="@EDB/EDB_CUBRID.php@" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="@EDB/EDB_MSSQL.php@" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="@EDB/EDB_MYSQL.php@" name="EDB/EDB_MYSQL.php" />
 			<file role="php" md5sum="@EDB/EDB_MYSQLI.php@" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="@EDB/EDB_PGSQL.php@" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="@EDB/EDB_SQLITE2.php@" name="EDB/EDB_SQLITE2.php" />
 			<file role="php" md5sum="@EDB/EDB_SQLITE3.php@" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="@EDB/EDB_SQLRELAY.php@" name="EDB/EDB_SQLRELAY.php" />
 			<file role="php" md5sum="@edb.php@" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
 		<required>
 			<php>
-				<min>5.0.0</min>
+				<min>5.1.0</min>
 			</php>
 			<pearinstaller>
 				<min>1.4.3</min>
 			</pearinstaller>
 		</required>
+		<optional>
+			<package>
+				<name>cubrid</name>
+				<channel>pecl</channel>
+				<min>8.4.0.0003</min>
+			</package>
+			<package>
+				<name>mssql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>mysql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>mysqli</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>pgsql</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlite2</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlite3</name>
+				<channel>php</channel>
+				<min>5.1.0</min>
+			</package>
+			<package>
+				<name>sqlrelay</name>
+				<channel>firstworks</channel>
+			</package>
+		</optional>
 	</dependencies>
 	<phprelease />
 	<changelog>
+		<release>
+			<version>
+				<release>2.0.0</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>@curdate@</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* add MySQL Engine
+* add SQLite2 Engine
+* add PostgreSQL Engine
+* add MSSQL Engine
+* add Cubrid Engine
+* add SQLRelay Engine
+* support BLOB data type
+* support escape, field_name, field_type, num_fields method
+* enhnaced seek, set_charset, get_chasret method
+* unificated type of return values
+</notes>
+		</release>
 		<release>
 			<version>
 				<release>1.0.0</release>
@@ -54,7 +133,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>@curdate@</date>
+			<date>2012-09-02</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* initialized
 </notes>
