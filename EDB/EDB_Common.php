@@ -101,11 +101,11 @@ Class EDB_Common {
 		switch ($type) {
 			case 'pgsql' :
 				for ( $i=0; $i<$r; $i++ )
-					$sql = preg_replace ('/\?/', '$' . ($i+1), $sql);
+					$sql = preg_replace ('/\?/', '\$' . ($i+1), $sql, 1);
 				break;
 			//case 'sqlrelay' :
 			//	for ( $i=0; $i<$r; $i++ )
-			//		$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql);
+			//		$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql, 1);
 			//	break;
 		}
 		$sql = preg_replace ('/=-=-/', '\?', $sql);
