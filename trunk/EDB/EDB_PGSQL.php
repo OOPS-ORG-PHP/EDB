@@ -44,6 +44,11 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @var    integer
 	 */
 	private $field = array ();
+	/**
+	 * Bytea information
+	 * @var    array
+	 */
+	private $lob = array ();
 	/**#@-*/
 	// }}}
 
@@ -109,7 +114,7 @@ Class EDB_PGSQL extends EDB_Common {
 			'host' => preg_replace ('!^pgsql://!', '', $argv[0]),
 			'user' => $argv[1],
 			'pass' => $argv[2],
-			'db'   => $argv[3],
+			'dbname'   => $argv[3],
 			'options' => $argv[4]
 		);
 
@@ -202,8 +207,37 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @return string
 	 * @param  string  The string that is to be escaped.
 	 */
-	function escape ($string) {
-		return $string;
+	function escape ($buf, $type = 's') {
+		switch ($type) {
+			case 'b' :
+				return base64_encode ($buf);
+				#return pg_escape_bytea ($buf);
+			case 'i' :
+				return pg_escape_identifier ($buf);
+			case 'u' :
+				/*
+				 * bind query시에 ::bytea가 먹지를 않는다 --;
+				 * 그리고 base64가 용량이 가장 작다
+				if ( preg_match ('/::bytea$/', $buf) ) {
+					$buf = preg_replace (
+						array ('/\'\'/', '/::bytea/'),
+						array ('\'', ''),
+						$buf
+					);
+					return pg_unescape_bytea (stripslashes ($buf));
+				}
+				return pg_unescape_bytea ($buf);
+				 */
+				return base64_decode ($buf);
+			default:
+				/*
+				$pgver = pg_version ($this->db);
+				if ( version_compare ('8.3', $pgver['client'], '<') )
+					return pg_escape_literal ($buf);
+				else
+				 */
+				return pg_escape_string ($buf);
+		}
 	}
 	// }}}
 
@@ -253,6 +287,22 @@ Class EDB_PGSQL extends EDB_Common {
 				return 1;
 			}
 
+			# Only select
+			if ( preg_match ('/^select/i', trim ($sql)) ) {
+				$fno = $this->num_fields ();
+				for ( $i=0; $i<$fno; $i++ ) {
+					$type = $this->field_type ($i);
+					if ( $type == 'bytea' )
+						$lob .= ':' . $this->field_name ($i);
+				}
+
+				$lob = substr ($lob, 1);
+				if ( preg_match ('/:/', $lob) )
+					$this->lob = preg_split ('/:/', $lob);
+				else
+					$this->lob = array ($lob);
+			}
+
 			return pg_num_rows ($this->result);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -296,7 +346,13 @@ Class EDB_PGSQL extends EDB_Common {
 
 		try {
 			$r = pg_fetch_object ($this->result);
-			return is_object ($r) ? $r : false;
+			if ( ! is_object ($r) )
+				return false;
+
+			foreach ( $this->lob as $keyname )
+				$r->$keyname = $this->escape ($r->$keyname, 'u');
+
+			return $r;
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
@@ -336,6 +392,7 @@ Class EDB_PGSQL extends EDB_Common {
 	function free_result () {
 		if ( ! $this->free ) return true;
 		$this->free = false;
+		$this->lob = array ();
 
 		try {
 			if ( ! is_resource ($this->result) )
@@ -485,7 +542,15 @@ Class EDB_PGSQL extends EDB_Common {
 		}
 
 		try {
-			array_shift ($params);
+			$type = array_shift ($params);
+			foreach ($params as $key => $v) {
+				if ( is_object ($v) )
+					$params[$key] = $v->data;
+
+				if ( $type[$key] == 'b' || $type[$key] == 'c' )
+					$params[$key] = $this->escape ($params[$key], 'b');
+			}
+
 			$this->result = pg_query_params ($this->db, $sql, $params);
 			if ( ! is_resource ($this->result) ) {
 				$this->free = false;

@@ -6,13 +6,13 @@
  * 이 패키지는 다음의 DB 추상화 계층을 제공한다.
  *
  * - CUBRID
- * - MSSQL (Not yet testing)
+ * - MSSQL
  * - MYSQL
  * - MYSQLi
- * - PostgreSQL (Not yet testing)
+ * - PostgreSQL
  * - SQLite2
  * - SQLite3
- * - SQLRelay (Not yet testing)
+ * - SQLRelay
  *
  *
  * @category    Database
@@ -50,7 +50,7 @@ require_once 'EDB/EDB_Common.php';
  * - MSSQL
  * - MYSQL
  * - MYSQLi
- * - PostgreSQL (Not yet testing)
+ * - PostgreSQL
  * - SQLite2
  * - SQLite3
  * - SQLRelay
@@ -162,10 +162,17 @@ Class EDB
 	 *
 	 * @access public
 	 * @return string
-	 * @param  string The string to be escaped.
+	 * @param  string escape 되어질 원본 문자열
+	 * @param  string (optional) escape 형식. 이 파라미터는 PGSQL에서만 사용된다.
+	 *                <ul>
+	 *                    <li><b>i</b> - identifier</li>
+	 *                    <li><b>b</b> - bytea</li>
+	 *                    <li><b>s</b> - string (<b>기본값</b>)</li>
+	 *                    <li><b>u</b> - unescape bytea</li>
+	 *                </ul>
 	 */
-	function escape ($string) {
-		return $this->db->escape ($string);
+	function escape ($buf, $type = 's') {
+		return $this->db->escape ($buf, $type);
 	}
 	// }}}
 
