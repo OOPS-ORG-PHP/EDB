@@ -32,7 +32,7 @@ try {
 	##############################################################################
 	echo "*** Charset test\n";
 	printf ("   + Current Charset : %s\n", $db->get_charset ());
-	$db->set_charset ('euckr');
+	$db->set_charset ('EUC-KR');
 	printf ("   + Change charset  : %s\n", $db->get_charset ());
 	$db->set_charset ('utf8');
 	printf ("   + Change charset  : %s\n", $db->get_charset ());
@@ -77,7 +77,7 @@ try {
 		$sql = sprintf (
 			'INSERT INTO edb_test (cid, cname, bdata) VALUES (\'%s\', \'%s\', \'%s\')',
 			'cid_' . $i,
-			$db->escape ('c\'name_' . $i),
+			$db->escape ('한c\'name_' . $i),
 			$db->escape ($imgs, 'b')
 		);
 		$n = $db->query ($sql);
@@ -140,13 +140,16 @@ try {
 	$r = $db->query (
 		"UPDATE edb_test SET cname = ? WHERE cid = ?",
 		'ss',
-		'cname_22',
+		'한cname_22',
 		'cid_2');
 	printf ("    => Affected Rows is %d\n", $r);
 	$db->free_result ();
 
 	$r = $db->query ('SELECT * FROM edb_test WHERE cid = ?', 's', 'cid_2'); 
 	$row = $db->fetch ();
+
+	$row->bdata = '';
+	print_r ($row);
 
 	if ( $row->cname == 'cname_22' )
 		printf ("    => Changed data is %s\n", $row->cname);
