@@ -186,14 +186,8 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
-		return true;
-		/*
-		$string = "Unsupported method on MySQL engine.\n" .
-			"If you want to set your charset, use 5th parameter ".
-			"'options' of EDB::connect()";
-
-		throw new EDBException ($string, E_ERROR);
-		 */
+		$r = pg_set_client_encoding ($this->db, $char);
+		return $r ? false : true;
 	}
 	// }}}
 
