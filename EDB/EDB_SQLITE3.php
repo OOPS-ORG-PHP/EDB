@@ -1,82 +1,56 @@
 <?php
 /**
- * Project: EDB_SQLITE3 :: SQLITE3 abstraction layer
- * File:    EDB/EDB_SQLITE3.php
+ * PHP Version 5
  *
- * The EDB_SQLITE3 class is sqlite3 abstraction layer that used internally
- * on EDB class.
+ * Copyright (c) 1997-2012 JoungKyun.Kim
+ *
+ * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB
- * @subpackage  EDB_ABSTRACT
+ * @package     EDB_SQLITE3
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2012 JoungKyun.Kim
- * @license     BSD License
- * @version     $Id$
- * @link        http://pear.oops.org/package/EDB
- * @filesource
+ * @copyright   1997-2012 OOPS.org
+ * @license     BSD
+ * @version     SVN: $Id: EDB_SQLITE3.php 4 2012-08-31 19:14:39Z oops $
  */
 
-/**
- * SQLite3 engine for EDB API
- *
- * This class support abstracttion DB layer for SQLite3 Engine
- *
- * @package     EDB
- */
 Class EDB_SQLITE3 extends EDB_Common {
-	// {{{ properties
-	/**#@+
-	 * @access private
-	 */
 	/**
 	 * db handler of EDB_SQLITE3 class
+	 * @access private
 	 * @var    object
 	 */
 	private $db;
 	/**
 	 * SQLITE3 STMT object of EDB_SQLITE3 class
+	 * @access private
 	 * @var    object
 	 */
 	private $stmt;
 	/**
 	 * The number of query parameter
+	 * @access private
 	 * @var    integer
 	 */
 	private $pno = 0;
 	/**
 	 * The number of query parameter
+	 * @access private
 	 * @var    integer
 	 */
 	private $field = array ();
-	/**
-	 * number of query result rows
-	 * @var    integer
-	 */
-	private $nums = 0;
-	/**#@-*/
 	// }}}
 
-	// {{{ (object) EDB_SQLITE3::__construct ($path, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
+	// {{{ (void) EDB_SQLITE3::__construct ($path, $db, $flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE)
 	/** 
-	 * Instantiates an EDB_SQLITE3 object and opens an SQLite 3 database
-	 *
-	 * For examples:
-	 * <code>
-	 * $db = new EDB_SQLITE3 ('sqlite3:///path/file.db');
-	 * $db = new EDB_SQLITE3 ('sqlite3:///path/file.db', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-	 * $db = new EDB_SQLITE3 ('sqlite3://:memory:', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-	 * </code>
+	 * Initialize EDB_SQLITE3 class
 	 *
 	 * @access public
 	 * @return object
-	 * @param  string  $path  sqlite3 database file
-	 * @param  int     $flags (optinal) open flags of sqlite3. See also {@link http://manual.phpdoc.org/HTMLSmartyConverter/PHP/phpDocumentor/tutorial_tags.inlinelink.pkg.html SQLite3::__construct}.
+	 * @param  string  sqlite3 database file, format is 'sqlite3:///path/file.db'
+	 * @param  int     mysql database
 	 */
 	function __construct () {
-		if ( ! extension_loaded ('sqlite3') )
-			throw new EDBException ('sqlite3 extension is not loaded on PHP!', E_ERROR);
-
 		try {
 			$_argv = func_get_args ();
 			$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
@@ -89,10 +63,6 @@ Class EDB_SQLITE3 extends EDB_Common {
 			if ( ! $o->flag )
 				$o->flag = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE;
 
-			// for persistent connection. sqlite3 don't support
-			if ( preg_match ('!^p~!', $o->path) )
-				$o->path = preg_replace ('!^p~!', '', $o->path);
-
 			$this->db = new SQLite3 ($o->path, $o->flag);
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
@@ -100,18 +70,16 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (string) EDB_SQLITE3::get_charset (void)
+	// {{{ (array) EDB_SQLITE3::get_charset (void)
 	/** 
 	 * Get character set of current database
 	 *
-	 * This method is not allow on SQLite3 Engine
-	 *
 	 * @access public
 	 * @return string Current character set name
+	 * @param  void
 	 */
 	function get_charset () {
-		return 'Unsupport';
-		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -119,29 +87,12 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Set character set of current database
 	 *
-	 * This method is not allow on SQLite3 Engine, and always
-	 * returns true.
-	 *
 	 * @access public
-	 * @return bool   always retuns true
-	 * @param  string $char name of character set that supported from database
+	 * @return bool    The name of character set that is supported on database
+	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset () {
-		return true;
-		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
-	}
-	// }}}
-
-	// {{{ (string) EDB_SQLITE3::escape ($string)
-	/** 
-	 * Escape special characters in a string for use in an SQL statement
-	 *
-	 * @access public
-	 * @return string
-	 * @param  string  The string that is to be escaped.
-	 */
-	function escape ($string) {
-		return $this->db->escapeString ($string);
+		throw new EDBException ('Unsupport on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -149,86 +100,40 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/** 
 	 * Performs a query on the database
 	 *
-	 * Executes an SQL query, returning number of affected rows
+	 * http://www.php.net/manual/en/sqlite3stmt.bindparam.php
 	 *
 	 * @access public
-	 * @return integer The number of affected rows or false. If is not delete/insert/update 
-	 *                 query, always returns 0.
-	 * @param  string $query  The query strings
-	 * @param  string $type   (optional) Bind parameter type. See also
-	 * {@link http://www.php.net/manual/en/sqlite3stmt.bindparam.php SQLite3Stmt::bindparam()}.
-	 * <code>
-	 * i => integer SQLITE3_INTEGER
-	 * d => double  SQLITE3_FLOAT
-	 * s => string  SQLITE3_TEXT
-	 * b => blob    SQLITE3_BLOB
-	 * n => null    SQLITE3_NULL
-	 * </code>
-	 * @param  mixed  $param1 (optional) Bind parameter 1
-	 * @param  mixed  $param2,... (optional) Bind parameter 2 ..
+	 * @return integer The number of affected rows or false
+	 * @param  string  (optional) The query strings
+	 *                            i => integer SQLITE3_INTEGER
+	 *                            d => double  SQLITE3_FLOAT
+	 *                            s => string  SQLITE3_TEXT
+	 *                            b => blob    SQLITE3_BLOB
+	 *                            n => null    SQLITE3_NULL
+	 * @param  string  (optional) Bind parameter type
+	 * @param  mixed   (optional) Bind parameter 1
+	 * @param  mixed   (optional) Bind parameter 2 ..
 	 */
 	function query () {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
-		try {
-			$sql = array_shift ($argv);
-			$this->pno = count ($argv) ? $this->get_param_number ($sql) : 0;
+		$sql = array_shift ($argv);
+		$this->pno = $this->get_param_number ($sql);
 
-			if ( $this->free )
-				$this->free_result ();
+		if ( $this->free )
+			$this->free_result ();
 
-			/*
-			 * For no bind query
-			 */
-			if ( $this->pno++ == 0 )
-				return $this->no_bind_query ($sql);
+		/*
+		 * For no bind query
+		 */
+		if ( $this->pno++ == 0 )
+			return $this->no_bind_query ($sql);
 
-			/*
-			 * For bind query
-			 */
-			return $this->bind_query ($sql, $argv);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
-	// {{{ (bool) EDB_SQLITE3::seek ($offset)
-	/**
-	 * Adjusts the result pointer to an arbitrary row in the result
-	 *
-	 * @access public
-	 * @return boolean
-	 * @param  integer Must be between zero and the total number of rows minus one
-	 */
-	function seek ($offset) {
-		try {
-			if ( ! is_object ($this->result) )
-				return false;
-
-			$this->result->reset ();
-
-			if ( $offset == 0 )
-				return true;
-
-			if ( $offset >= $this->nums )
-				$offset = $this->nums;
-
-			$i = 0;
-			$offset--;
-			while ( $this->result->fetchArray (SQLITE3_ASSOC) !== false ) {
-				if ( $i == $offset )
-					break;
-				$i++;
-			}
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-
-		return true;
+		/*
+		 * For bind query
+		 */
+		return $this->bind_query ($sql, $argv);
 	}
 	// }}}
 
@@ -238,56 +143,44 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
+	 * @param  void
 	 */
 	function fetch () {
-		try {
-			$r = $this->result->fetchArray (SQLITE3_ASSOC);
-			return is_array ($r) ? (object) $r : false;
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
+		return $this->result->fetchArray ();
 	}
 	// }}}
 
-	// {{{ (array) EDB_SQLITE3::fetch_all ($free = true)
+	// {{{ (array) EDB_SQLITE3::fetch_all (void)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  boolean (optional) free result set after fetch.
-	 *                 Defaluts is true.
+	 * @param  void
 	 */
-	function fetch_all ($free = true) {
+	function fetch_all () {
 		$this->field = array ();
 		$rows = array ();
 
-		try {
-			while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
-				$rows[] = (object) $row;
+		while ( ($row = $this->result->fetchArray (SQLITE3_ASSOC)) !== false )
+			$rows[] = $row;
 
-			if ( $free )
-				$this->free_result ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return array ();
-		}
+		$this->free_result ();
 
 		return $rows;
 	}
 	// }}}
 
-	// {{{ (bool) EDB_SQLITE3::free_result (void)
+	// {{{ (void) EDB_SQLITE3::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return boolean always returns true
+	 * @return void
+	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return true;
-		$this->free = false;
+		if ( ! $this->free ) return;
 
 		try {
 			$this->result->finalize ();
@@ -295,88 +188,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 				$this->stmt->clear ();
 		} catch ( Exception $e ) {
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
 		}
 
-		return true;
-	}
-	// }}}
-
-	// {{{ (string) EDB_SQLITE3::field_name ($index)
-	/**
-	 * Returns the name of the column specified by the column_number.
-	 *
-	 * @access public
-	 * @return string|false
-	 * @param  integer The numeric zero-based index of the column.
-	 */
-	function field_name ($index) {
-		try {
-			if ( ! is_object ($this->result) )
-				return false;
-			return $this->result->columnName ($index);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
-	// {{{ (string) EDB_SQLITE3::field_type ($index)
-	/**
-	 * Get the type of the specified field in a result
-	 *
-	 * @access public
-	 * @return string|false
-	 * @param  integer The numeric zero-based index of the column.
-	 */
-	function field_type ($field_index) {
-		try {
-			if ( ! is_object ($this->result) )
-				return false;
-
-			$r = $this->result->columnType ($index);
-
-			switch ($r) {
-				case SQLITE3_INTEGER :
-					return 'int';
-				case SQLITE3_FLOAT :
-					return 'float';
-				case SQLITE3_TEXT :
-					return 'string';
-				case SQLITE3_BLOB :
-					return 'blob';
-				case SQLITE3_NULL :
-					return 'null';
-				default :
-					//throw new EDBException ('Unknown. This is libsqlite3 bug!', E_WARNING);
-					//return false;
-					return 'unknown, maybe libsqlite3 bug?';
-			}
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
-	// {{{ (int) EDB_SQLITE3::num_fields (void)
-	/**
-	 * Get number of fields in result
-	 *
-	 * @access public
-	 * @return integer|false
-	 */
-	function num_fields () {
-		try {
-			if ( ! is_object ($this->result) )
-				return false;
-
-			return $this->result->numColumns ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
+		$this->switch_freemark ();
 	}
 	// }}}
 
@@ -386,6 +200,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return void
+	 * @param  void
 	 */
 	function close () {
 		if ( is_object ($this->db) )
@@ -396,67 +211,29 @@ Class EDB_SQLITE3 extends EDB_Common {
 	/*
 	 * Priavte functions
 	 */
-
-	// {{{ private (int) EDB_SQLITE3::num_rows ()
-	/**
-	 * Returns the number of rows in the result set
-	 *
-	 * SQLite3 extension don't support num_rows method. Why???
-	 *
-	 * @access private
-	 * @return integer
-	 */
-	function num_rows () {
-		$this->nums = 0;
-
-		try {
-			$r = &$this->result;
-
-			$i = 0;
-			while ( ($r->fetchArray (SQLITE3_ASSOC)) !== false )
-				$this->nums++;
-
-			unset ($r);
-
-			return $this->nums;
-		} catch ( Exception $e ) {
-			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
 	// {{{ private (int) EDB_SQLITE3::no_bind_query ($sql)
 	/** 
 	 * Performs a query on the database
 	 *
 	 * @access private
 	 * @return integer The number of affected rows or false only update|insert|delete.
-	 *                 other row is returned -1.
+	 *                 selected row is returned -1.
 	 * @param  string  The query strings
 	 */
 	private function no_bind_query ($sql) {
 		try {
-			if ( ($this->result = $this->db->query ($sql)) === false ) {
-				$this->free = false;
-				throw new EDBException ($this->db->lastErrorMsg (), E_WARNING);
-				return false;
-			}
+			$this->result = $this->db->query ($sql);
+			$this->free = true;
 		} catch ( Exception $e ) {
 			$this->free = false;
 			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
-		$this->switch_freemark ();
-
-		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) )
+		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return $this->db->changes ();
-		else if ( preg_match ('/^create|drop/i', trim ($sql)) ) 
-			return 1;
 
-		return $this->num_rows ();
+		return -1;
 	}
 	// }}}
 
@@ -490,28 +267,8 @@ Class EDB_SQLITE3 extends EDB_Common {
 			$param[] = &$params[$i];
 
 		try {
-			for ( $i=1; $i<$this->pno+1; $i++ ) {
-				switch ($param[0][$i-1]) {
-					case 'b' :
-					case 'c' :
-						$data = is_object ($param[$i]) ? $param[$i]->data : $param[$i];
-						$this->stmt->bindParam ($i, $data, SQLITE3_BLOB);
-						unset ($data);
-						break;
-					case 'i' :
-						$this->stmt->bindParam ($i, $param[$i], SQLITE3_INTEGER);
-						break;
-					case 'd' :
-					case 'f' :
-						$this->stmt->bindParam ($i, $param[$i], SQLITE3_FLOAT);
-						break;
-					case 'n' :
-						$this->stmt->bindParam ($i, $param[$i], SQLITE3_NULL);
-						break;
-					default :
-						$this->stmt->bindParam ($i, $param[$i]);
-				}
-			}
+			for ( $i=1; $i<$this->pno+1; $i++ )
+				$this->stmt->bindParam ($i, $param[$i]);
 
 			$this->result = $this->stmt->execute ();
 		} catch ( Exception $e ) {
@@ -522,22 +279,20 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 		$this->switch_freemark ();
 
-		if ( preg_match ('/^(create|update|insert|delete)/i', trim ($sql)) )
+		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return $this->db->changes ();
-		else if ( preg_match ('/^create/i', trim ($sql)) )
-			return 1;
 
-		return $this->num_rows ();
+		return -1;
 	}
 	// }}}
 
 	function __destruct () {
-		try {
-			@$this->free_result ();
-			$this->close ();
-		} catch ( Exception $e ) { }
+		@$this->free_result ();
+		$this->close ();
 	}
 }
+
+
 
 /*
  * Local variables:

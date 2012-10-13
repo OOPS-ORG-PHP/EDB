@@ -1,27 +1,19 @@
 <?php
 /**
- * Project: EDB_Common :: Common API for EDB class
- * File:    EDB/EDB_Common.php
+ * PHP Version 5
  *
- * The EDB_Common class is common api that used internally
- * on EDB class.
+ * Copyright (c) 1997-2012 JoungKyun.Kim
+ *
+ * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB
- * @subpackage  EDB_Common
+ * @package     EDB_Common
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2012 JoungKyun.Kim
- * @license     BSD License
- * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
- * @link        http://pear.oops.org/package/EDB
- * @filesource
+ * @copyright   1997-2012 OOPS.org
+ * @license     BSD
+ * @version     SVN: $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
  */
 
-/**
- * Common API of EDB
- *
- * @package EDB
- */
 Class EDB_Common {
 	// {{{ properties
 	/**
@@ -94,23 +86,8 @@ Class EDB_Common {
 	 * @return integer The number of parameters
 	 * @param  string Bind query string
 	 */
-	function get_param_number (&$sql, $type = '') {
-		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-		$r = strlen (preg_replace ('/[^?]/', '', $sql));
-
-		switch ($type) {
-			case 'pgsql' :
-				for ( $i=0; $i<$r; $i++ )
-					$sql = preg_replace ('/\?/', '\$' . ($i+1), $sql, 1);
-				break;
-			//case 'sqlrelay' :
-			//	for ( $i=0; $i<$r; $i++ )
-			//		$sql = preg_replace ('/\?/', ':param' . ($i + 1), $sql, 1);
-			//	break;
-		}
-		$sql = preg_replace ('/=-=-/', '\?', $sql);
-
-		return $r;
+	function get_param_number ($sql) {
+		return strlen (preg_replace ('/[^?]/', '', $sql));
 	}
 	// }}}
 
@@ -137,27 +114,27 @@ Class EDB_Common {
 		for ( $i=0; $i<$len; $i++ ) {
 			$no = $i + 1;
 			switch ($type[$i]) {
-				case 'i' : // integer
-					if ( is_numeric ($param[$i]) === false ) {
+				case 'i' :
+					if ( gettype ($param[$i]) != "integer" ) {
 						throw new EDBException ("The ${no}th parameter type of query is not numeric type", E_ERROR);
 						return false;
 					}
 					break;
-				case 'f' : // float, double
-					if ( is_numeric ($param[$i]) !== false && is_float ($param[$i]) !== false ) {
+				case 'd' : // for mysql
+				case 'f' : // for sqlite
+					if ( gettype ($param[$i]) != "double" ) {
 						throw new EDBException ("The ${no}th parameter type of query is not double type", E_ERROR);
 						return false;
 					}
 					break;
-				case 'n' : // null
+				case 'b' :
+				case 's' :
+					break;
+				case 'n' :
 					if ( $param[$i] ) {
 						throw new EDBException ("The ${no}th parameter type of query is not null type", E_ERROR);
 						return false;
 					}
-					break;
-				case 'b' : // blob
-				case 'c' : // clob
-				case 's' : // string. by pass
 					break;
 				default :
 					throw new EDBException ("The ${no}th parameter type of query is unsupported type", E_ERROR);
@@ -166,37 +143,6 @@ Class EDB_Common {
 		}
 
 		return true;
-	}
-	// }}}
-
-	// {{{ (string) EDB_Common::bind_param ($sql, $param)
-	/**
-	 * replace bind parameters to parameter's value
-	 * 
-	 * @access public
-	 * @return string
-	 * @param  string SQL query statement
-	 * @param  array  array of parameter values
-	 */
-	function bind_param ($sql, $params) {
-		if ( ! is_array ($params) )
-			return $sql;
-
-		$types = array_shift ($params);
-		$c = count ($params);
-
-		$sql = preg_replace ('/[\x5c]\?/', '=-=-', $sql);
-		for ( $i=0; $i<$c; $i++ ) {
-			if ( ! strncmp ('unquote:', $params[$i], 8) ) {
-				$params[$i] = substr ($params[$i], 8);
-				$buf = preg_replace ('/\?/', '%s', $sql, 1);
-			} else
-				$buf = preg_replace ('/\?/', "'%s'", $sql, 1);
-			$sql = sprintf ($buf, $params[$i]);
-		}
-		$sql = preg_replace ('/=-=-/', '\?', $sql);
-
-		return $sql;
 	}
 	// }}}
 }

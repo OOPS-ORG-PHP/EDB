@@ -1,84 +1,54 @@
 <?php
 /**
- * Project: EDB_MYSQLI :: MySQLi abstraction layer
- * File:    EDB/EDB_MYSQLI.php
+ * PHP Version 5
  *
- * The EDB_MYSQLI class is mysqli abstraction layer that used internally
- * on EDB class.
+ * Copyright (c) 1997-2012 JoungKyun.Kim
+ *
+ * LICENSE: BSD
  *
  * @category    Database
- * @package     EDB
- * @subpackage  EDB_ABSTRACT
+ * @package     EDB_MYSQLI
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2012, JoungKyun.Kim
- * @license     BSD License
- * @version     $Id$
- * @link        http://pear.oops.org/package/EDB
- * @filesource
+ * @copyright   1997-2012 OOPS.org
+ * @license     BSD
+ * @version     SVN: $Id$
  */
 
-/**
- * MySQLi engine for EDB API
- *
- * This class support abstracttion DB layer for MySQLi Engine
- *
- * @package     EDB
- */
 Class EDB_MYSQLI extends EDB_Common {
-	// {{{ properties
-	/**#@+
-	 * @access private
-	 */
 	/**
 	 * db handler of EDB_MYSQLI class
+	 * @access private
 	 * @var    object
 	 */
 	private $db;
 	/**
 	 * The number of query parameter
+	 * @access private
 	 * @var    integer
 	 */
 	private $pno = 0;
 	/**
 	 * The number of query parameter
+	 * @access private
 	 * @var    integer
 	 */
 	private $field = array ();
-	/**#@-*/
 	// }}}
 
-	// {{{ (object) EDB_MYSQLI::__construct ($host, $user, $pass, $db)
+	// {{{ (void) EDB_MYSQLI::__construct ($host, $user, $pass, $db)
 	/** 
-	 * Instantiates an EDB_MYSQLI object and opens an mysql database
-	 *
-	 * For examples:
-	 * <code>
-	 * $db = new EDB_MYSQLI ('mysqli://localhost', 'user', 'host', 'database');
-	 * $db = new EDB_MYSQLI ('mysqli://localhost:3306', 'user', 'host', 'database');
-	 * $db = new EDB_MYSQLI ('mysqli://localhost:/var/run/mysqld/mysql.socl', 'user', 'host', 'database');
-	 * </code>
-	 *
-	 * If you add prefix 'p~' before host, you can connect with persistent
-	 * connection.
-	 *
-	 * For Examples:
-	 * <code>
-	 * $db = new EDB_MYSQLI ('mysqli://p~localhost', 'user', 'host', 'database');
-	 * </code>
+	 * Initialize EDB_MYSQLI class
 	 *
 	 * @access public
 	 * @return object
-	 * @param  string  $hostname mysql host
-	 * @param  string  $user     mysql user
-	 * @param  string  $password mysql password
-	 * @param  string  $database mysql database
+	 * @param  string  mysql host, format is 'mysqli://localhost[:[port|sockfile]]'
+	 * @param  string  mysql user
+	 * @param  string  mysql password
+	 * @param  string  mysql database
 	 */
 	function __construct () {
 		$_argv = func_get_args ();
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
-
-		if ( ! extension_loaded ('mysqli') )
-			throw new EDBException ('MySQLi extension is not loaded on PHP!', E_ERROR);
 
 		$o = (object) array (
 			'host' => preg_replace ('!^mysqli://!', '', $argv[0]),
@@ -99,34 +69,23 @@ Class EDB_MYSQLI extends EDB_Common {
 		} else
 			$o->sock = null;
 
-		// set persistent connect
-		$o->host = preg_replace ('/^p~/', 'p:', $o->host);
-
-		try {
-			$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
-		} catch ( Exception $e ) {
-			if ( mysqli_connect_error () )
-				throw new EDBException (mysqli_connect_error (), E_ERROR);
-			else
-				throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-		}
+		$this->db = new mysqli ($o->host, $o->user, $o->pass, $o->db, $o->port, $o->sock);
+		if ( mysqli_connect_error () )
+			throw new EDBException (mysqli_connect_error (), E_ERROR);
 	}
 	// }}}
 
-	// {{{ (string) EDB_MYSQLI::get_charset (void)
+	// {{{ (array) EDB_MYSQLI::get_charset (void)
 	/** 
 	 * Get character set of current database
 	 *
 	 * @access public
-	 * @return string Current character set name on DB
+	 * @return string Current character set name
+	 * @param  void
 	 */
 	function get_charset () {
-		try {
+		if ( $this->db instanceof mysqli )
 			return $this->db->character_set_name ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
 	}
 	// }}}
 
@@ -139,27 +98,14 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  name of character set that supported from database
 	 */
 	function set_charset ($char) {
-		try {
-			if ( ! is_object ($this->db) )
-				return false;
-			return $this->db->set_charset ($char);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
+		$r = false;
 
-	// {{{ (string) EDB_MYSQLI::escape ($string)
-	/** 
-	 * Escape special characters in a string for use in an SQL statement
-	 *
-	 * @access public
-	 * @return string
-	 * @param  string  The string that is to be escaped.
-	 */
-	function escape ($string) {
-		return $this->db->real_escape_string ($string);
+		if ( is_object ($this->db) ) {
+			if ( ($r = $this->db->set_charset ($char)) === false )
+				$this->error = $this->db->error;
+		}
+
+		return $r;
 	}
 	// }}}
 
@@ -167,19 +113,18 @@ Class EDB_MYSQLI extends EDB_Common {
 	/** 
 	 * Performs a query on the database
 	 *
+	 * See also http://php.net/manual/en/mysqli-stmt.bind-param.php
+	 *
 	 * @access public
 	 * @return integer The number of affected rows or false
-	 * @param  string  $query The query strings
-	 * @param  string  $type  (optional) Bind parameter type. See also
-	 * {@link http://php.net/manual/en/mysqli-stmt.bind-param.php mysqli_stmt::bind_param}.
-	 * <code>
-	 * i => integer
-	 * d => double
-	 * s => string
-	 * b => blob
-	 * </code>
-	 * @param  mixed   $param1 (optional) Bind parameter 1
-	 * @param  mixed   $param2,... (optional) Bind parameter 2 ..
+	 * @param  string  The query strings
+	 * @param  string  (optional) Bind parameter type
+	 *                            i => integer
+	 *                            d => double
+	 *                            s => string
+	 *                            b => blob
+	 * @param  mixed   (optional) Bind parameter 1
+	 * @param  mixed   (optional) Bind parameter 2 ..
 	 */
 	function query () {
 		$_argv = func_get_args ();
@@ -188,7 +133,7 @@ Class EDB_MYSQLI extends EDB_Common {
 		$this->error = null;
 
 		$sql = array_shift ($argv);
-		$this->pno = count ($argv) ? $this->get_param_number ($sql) : 0;
+		$this->pno = $this->get_param_number ($sql);
 
 		if ( $this->free )
 			$this->free_result ();
@@ -205,27 +150,6 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (bool) EDB_MYSQLI::seek ($offset)
-	/**
-	 * Adjusts the result pointer to an arbitrary row in the result
-	 *
-	 * @access public
-	 * @return boolean
-	 * @param  integer Must be between zero and the total number of rows minus one
-	 */
-	function seek ($offset) {
-		if ( ! is_object ($this->result) )
-			return false;
-
-		try {
-			return $this->result->data_seek ($offset);
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
 	// {{{ (object) EDB_MYSQLI::fetch (void)
 	/**
 	 * Fetch a result row as an associative object
@@ -235,130 +159,49 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function fetch () {
-		try {
-			if ( $this->result instanceof mysqli_result )
-				return $this->fetch_result ();
-			else if ( $this->result instanceof mysqli_stmt )
-				return $this->fetch_stmt ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
+		if ( $this->result instanceof mysqli_result )
+			return $this->fetch_result ();
+		else if ( $this->result instanceof mysqli_stmt )
+			return $this->fetch_stmt ();
 		return false;
 	}
 	// }}}
 
-	// {{{ (array) EDB_MYSQLI::fetch_all ($free = true)
+	// {{{ (array) EDB_MYSQLI::fetch_all (void)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  boolean (optional) free result set after fetch.
-	 *                 Defaluts is true.
+	 * @param  void
 	 */
-	function fetch_all ($free = true) {
-		try {
-			if ( $this->result instanceof mysqli_result ) {
-				return $this->fetch_result_all ($free);
-			} else if ( $this->result instanceof mysqli_stmt ) {
-				return $this->fetch_stmt_all ($free);
-			}
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return array ();
+	function fetch_all () {
+		if ( $this->result instanceof mysqli_result ) {
+			return $this->fetch_result_all ();
+		} else if ( $this->result instanceof mysqli_stmt ) {
+			return $this->fetch_stmt_all ();
 		}
 
 		return array ();
 	}
 	// }}}
 
-	// {{{ (bool) EDB_MYSQLI::free_result (void)
+	// {{{ (void) EDB_MYSQLI::free_result (void)
 	/**
 	 * Frees stored result memory for the given statement handle
 	 *
 	 * @access public
-	 * @return boolean
+	 * @return void
 	 * @param  void
 	 */
 	function free_result () {
-		if ( ! $this->free ) return true;
-		$this->free = false;
+		if ( ! $this->free ) return;
 
-		try {
-			if ( is_object ($this->result) )
-				$this->result->free_result ();
+		$this->result->free_result ();
+		if ( $this->result instanceof mysqli_stmt )
+			$this->result->close ();
 
-			if ( $this->result instanceof mysqli_stmt )
-				$this->result->close ();
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-
-		return true;
-	}
-	// }}}
-
-	// {{{ (string) EDB_MYSQLI::field_name ($index)
-	/**
-	 * Get the name of the specified field in a result
-	 *
-	 * @access public
-	 * @return string|false
-	 * @param  integer The field number. This value must be in the
-	 *                 range from 0 to number of fields - 1.
-	 */
-	function field_name ($index) {
-		try {
-			$r = $this->field_info ($index, 'type');
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-
-		return $r;
-	}
-	// }}}
-
-	// {{{ (string) EDB_MYSQLI::field_type ($index)
-	/**
-	 * Get the type of the specified field in a result
-	 *
-	 * @access public
-	 * @return string|false
-	 * @param  integer The numerical field offset. The field_offset starts
-	 *                 at 0. If field_offset does not exist, return false
-	 *                 and an error of level E_WARNING is also issued.
-	 * @see http://php.net/manual/en/mysqli.constants.php Predefined Constants
-	 */
-	function field_type ($index) {
-		try {
-			$r = $this->field_info ($index, 'type');
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-
-		return $this->file_type_string ($r);
-	}
-	// }}}
-
-	// {{{ (int) EDB_MYSQLI::num_fields (void)
-	/**
-	 * Returns the number of columns for the most recent query
-	 *
-	 * @access public
-	 * @return integer An integer representing the number of fields in a result set.
-	 * @see http://php.net/manual/en/mysqli.field-count.php mysqli::$field_count
-	 */
-	function num_fields () {
-		try {
-			return $this->db->field_count;
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
+		$this->switch_freemark ();
 	}
 	// }}}
 
@@ -388,26 +231,17 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  string  The query strings
 	 */
 	private function no_bind_query ($sql) {
-		try {
-			$this->result = $this->db->query ($sql);
-			if ( $this->db->errno ) {
-				$this->free = false;
-				throw new EDBException ($this->db->error, E_WARNING);
-				return false;
-			}
-		} catch ( Exception $e ) {
-			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+		$this->result = $this->db->query ($sql);
+		if ( $this->db->errno ) {
+			throw new EDBException ($e->getMessage (), E_WARNING);
 			return false;
 		}
 
 		$this->switch_freemark ();
 
-		if ( preg_match ('/^(update|insert|delete|replace)/i', trim ($sql)) ) {
+		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) ) {
 			/* Insert or update, or delete query */
 			return $this->db->affected_rows;
-		} else if ( preg_match ('/create|drop/i', trim ($sql)) ) {
-			return 1;
 		}
 
 		return $this->result->num_rows;
@@ -437,38 +271,23 @@ Class EDB_MYSQLI extends EDB_Common {
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->free_result ();
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables', E_WARNING);
+			throw new EDBExeption ('Number of elements in query doesn\'t match number of bind variables', E_WARNING);
 			return false;
 		}
 
-		$blobs = array ();
-		for ( $i=0; $i<count ($params); $i++ ) {
-			$param[$i] = &$params[$i];
-			if ( $i == 0 )
-				continue;
+		$param[] = array_shift ($params);
+		for ( $i=0; $i<count ($params); $i++ )
+			$param[] = &$params[$i];
 
-			switch ($params[0][$i-1]) {
-				case 'c' :
-					// don't support clob type mysqli_bind_params
-					$params[0][$i-1] = 'b';
-				case 'b' :
-					$blobs[$i-1] = is_object ($params[$i]) ? $params[$i]->data : $params[$i];
-					$params[$i]  = null;
-					break;
-			}
+		if ( call_user_func_array (array ($this->result, 'bind_param'), $param) === false ) {
+			$this->free_result ();
+			throw new EDBException ($this->result->error, E_WARNING);
+			return false;
 		}
 
-		try {
-			call_user_func_array (array ($this->result, 'bind_param'), $param);
-
-			# for blob data
-			foreach ( $blobs as $key => $val )
-				$this->result->send_long_data ($key, $val);
-
-			$this->result->execute ();
-		} catch ( Exception $e ) {
+		if ( $this->result->execute () === false ) {
 			$this->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new EDBException ($this->result->error, E_WARNING);
 			return false;
 		}
 
@@ -490,20 +309,17 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return;
 
-		try {
-			$this->result->store_result ();
-			$var = array ();
-			$meta = $this->result->result_metadata ();
+		$this->result->store_result ();
+		$var = array ();
+		$meta = $this->result->result_metadata ();
 
-			while ( $fields = $meta->fetch_field () )
-				$var[] = &$this->field[$fields->name];
+		while ( $fields = $meta->fetch_field () )
+			$var[] = &$this->field[$fields->name];
 
-			$meta->free ();
-			call_user_func_array(array($this->result, 'bind_result'), $var);
-		} catch ( Exception $e ) {
+		$meta->free ();
+		if ( call_user_func_array(array($this->result, 'bind_result'), $var) === false ) {
 			$this->free_result ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
+			throw new EDBException ($this->result->error, E_WARNING);
 		}
 	}
 	// }}}
@@ -545,16 +361,15 @@ Class EDB_MYSQLI extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ private (array) EDB_MYSQLI::fetch_result_all ($free = true)
+	// {{{ private (array) EDB_MYSQLI::fetch_result_all (void)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access private 
 	 * @return array The fetched result rows
-	 * @param  boolean (optional) free result set after fetch.
-	 *                 Defaluts is true.
+	 * @param  void
 	 */
-	private function fetch_result_all ($free = true) {
+	private function fetch_result_all () {
 		if ( ! $this->result instanceof mysqli_result )
 			return array ();
 
@@ -564,22 +379,20 @@ Class EDB_MYSQLI extends EDB_Common {
 		while ( ($row = $this->result->fetch_object ()) !== null )
 			$rows[] = $row;
 
-		if ( $free )
-			$this->free_result ();
+		$this->free_result ();
 		return $rows;
 	}
 	// }}}
 
-	// {{{ private (array) EDB_MYSQLI::fetch_stmt_all ($free = true)
+	// {{{ private (array) EDB_MYSQLI::fetch_stmt_all (void)
 	/**
 	 * Fetch all result rows as an associative object
 	 *
 	 * @access public
 	 * @return array The fetched result rows
-	 * @param  boolean (optional) free result set after fetch.
-	 *                 Defaluts is true.
+	 * @param  void
 	 */
-	private function fetch_stmt_all ($free = true) {
+	private function fetch_stmt_all () {
 		if ( ! $this->result instanceof mysqli_stmt )
 			return array ();
 
@@ -592,127 +405,15 @@ Class EDB_MYSQLI extends EDB_Common {
 			$i++;
 		}
 
-		if ( $free)
-			$this->free_result ();
+		$this->free_result ();
 
 		return $r;
 	}
 	// }}}
 
-	// {{{ private (mixed) EDB_MYSQLI::field_info ($index)
-	/**
-	 * Get the type of the specified field in a result
-	 *
-	 * @access private
-	 * @return mixed|false
-	 * @param  integer The numerical field offset. The field_offset starts
-	 *                 at 0. If field_offset does not exist, return false
-	 *                 and an error of level E_WARNING is also issued.
-	 */
-	private function field_info ($index, $type = 'name') {
-		try {
-			$r = false;
-
-			if ( $this->result instanceof mysqli_result ) {
-				if ( ($o = $this->result->fetch_field_direct ($index)) === false )
-					return false;
-				$r = $o->$type;
-			} else if ( $this->result instanceof mysqli_stmt ) {
-				if ( ($result = $this->result->result_metadata ()) === false )
-					return false;
-
-				for ( $i=0; $i<=$index; $i++ )
-					$o = $result->fetch_field ();
-				$r = $o->$type;
-				$result->free_result ();
-			}
-
-			return $r;
-		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
-			return false;
-		}
-	}
-	// }}}
-
-	// {{{ private (string) file_type_string ($type) {
-	/**
-	 * change mysqli filed type to strings
-	 *
-	 * @access private
-	 * @return string
-	 * @param  integer mysqli field type
-	 */
-	private function file_type_string ($type) {
-		switch ($type) {
-			case MYSQLI_TYPE_DECIMAL :
-				return 'DECIMAL';
-			//Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up)
-			case MYSQLI_TYPE_NEWDECIMAL :
-				return 'NUMERIC';
-			case MYSQLI_TYPE_BIT :
-				return 'BIT (MySQL 5.0.3 and up)';
-			case MYSQLI_TYPE_TINY :
-				return 'TINYINT';
-			case MYSQLI_TYPE_SHORT :
-				return 'SMALLINT';
-			case MYSQLI_TYPE_LONG :
-				return 'INT';
-			case MYSQLI_TYPE_FLOAT :
-				return 'FLOAT';
-			case MYSQLI_TYPE_DOUBLE :
-				return 'DOUBLE';
-			case MYSQLI_TYPE_NULL :
-				return 'DEFAULT NULL';
-			case MYSQLI_TYPE_TIMESTAMP :
-				return 'TIMESTAMP';
-			case MYSQLI_TYPE_LONGLONG :
-				return 'BIGINT';
-			case MYSQLI_TYPE_INT24 :
-				return 'MEDIUMINT';
-			case MYSQLI_TYPE_DATE :
-				return 'DATE';
-			case MYSQLI_TYPE_TIME :
-				return 'TIME';
-			case MYSQLI_TYPE_DATETIME :
-				return 'DATETIME';
-			case MYSQLI_TYPE_YEAR :
-				return 'YEAR';
-			case MYSQLI_TYPE_NEWDATE :
-				return 'DATE';
-			case MYSQLI_TYPE_INTERVAL :
-				return 'INTERVAL';
-			case MYSQLI_TYPE_ENUM :
-				return 'ENUM';
-			case MYSQLI_TYPE_SET :
-				return 'SET';
-			case MYSQLI_TYPE_TINY_BLOB :
-				return 'TINYBLOB';
-			case MYSQLI_TYPE_MEDIUM_BLOB :
-				return 'MEDIUMBLOB';
-			case MYSQLI_TYPE_LONG_BLOB :
-				return 'LONGBLOB';
-			case MYSQLI_TYPE_BLOB :
-				return 'BLOB';
-			case MYSQLI_TYPE_VAR_STRING :
-				return 'VARCHAR';
-			case MYSQLI_TYPE_STRING :
-				return 'STRING';
-			case MYSQLI_TYPE_CHAR :
-				return 'CHAR';
-			case MYSQLI_TYPE_GEOMETRY :
-				return 'GEOMETRY';
-			default:
-				return 'UNKNOWN';
-		}
-	}
-	// }}}
-
 	function __destruct () {
-		try {
-			$this->free_result ();
-			$this->close ();
-		} catch ( Exception $e ) { }
+		$this->free_result ();
+		$this->close ();
 	}
 }
 
