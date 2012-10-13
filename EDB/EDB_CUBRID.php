@@ -40,6 +40,11 @@ Class EDB_CUBRID extends EDB_Common {
 	 */
 	private $pno = 0;
 	/**#@-*/
+	/**
+	 * Blob information
+	 * @var    array
+	 */
+	private $lob = array ();
 	// }}}
 
 	// {{{ (object) EDB_CUBRID::__construct ($host, $user, $pass, $db)
@@ -199,6 +204,22 @@ Class EDB_CUBRID extends EDB_Common {
 			return 1;
 		}
 
+		# Only select
+		if ( preg_match ('/^select/i', trim ($sql)) ) {
+			$fno = $this->num_fields ();
+			for ( $i=0; $i<$fno; $i++ ) {
+				$type = $this->field_type ($i);
+				if ( $type == 'blob' || $type == 'clob' )
+					$lob .= ':' . $this->field_name ($i);
+			}
+
+			$lob = substr ($lob, 1);
+			if ( preg_match ('/:/', $lob) )
+				$this->lob = preg_split ('/:/', $lob);
+			else
+				$this->lob = array ($lob);
+		}
+
 		return cubrid_num_rows ($this->result);
 	}
 	// }}}
@@ -237,10 +258,17 @@ Class EDB_CUBRID extends EDB_Common {
 	 */
 	function fetch () {
 		try {
-			$r = cubrid_fetch ($this->result, CUBRID_OBJECT | CUBIRD_LOB);
+			$r = cubrid_fetch ($this->result, CUBRID_OBJECT | CUBRID_LOB);
 
 			if ( $r === null )
 				$r = false;
+
+			foreach ( $this->lob as $keyname ) {
+				if ( is_resource ($r->$keyname) ) {
+					$len = cubrid_lob2_size64 ($r->$keyname);
+					$r->$keyname = cubrid_lob2_read ($r->$keyname, $len);
+				}
+			}
 
 			return $r;
 		} catch ( Exception $e ) {
@@ -283,6 +311,7 @@ Class EDB_CUBRID extends EDB_Common {
 	function free_result () {
 		if ( ! $this->free ) return true;
 		$this->free = false;
+		$this->lob = array ();
 
 		try {
 			if ( ! is_resource ($this->result) )
