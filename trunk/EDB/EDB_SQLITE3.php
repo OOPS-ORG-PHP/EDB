@@ -75,7 +75,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	function __construct () {
 		if ( ! extension_loaded ('sqlite3') )
-			throw new EDBException ('sqlite3 extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('sqlite3 extension is not loaded on PHP!', E_USER_ERROR);
 
 		try {
 			$_argv = func_get_args ();
@@ -95,7 +95,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 			$this->db = new SQLite3 ($o->path, $o->flag);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -111,7 +111,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	function get_charset () {
 		return 'Unsupport';
-		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		#throw new myException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -128,7 +128,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 */
 	function set_charset () {
 		return true;
-		#throw new EDBException ('Unsupported method on SQLITE3 engine', E_ERROR);
+		#throw new myException ('Unsupported method on SQLITE3 engine', E_ERROR);
 	}
 	// }}}
 
@@ -189,7 +189,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			 */
 			return $this->bind_query ($sql, $argv);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -224,7 +224,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 				$i++;
 			}
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -244,7 +244,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			$r = $this->result->fetchArray (SQLITE3_ASSOC);
 			return is_array ($r) ? (object) $r : false;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -270,7 +270,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			if ( $free )
 				$this->free_result ();
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return array ();
 		}
 
@@ -294,7 +294,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			if ( $this->stmt instanceof SQLite3Stmt )
 				$this->stmt->clear ();
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -316,7 +316,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 				return false;
 			return $this->result->columnName ($index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -349,12 +349,12 @@ Class EDB_SQLITE3 extends EDB_Common {
 				case SQLITE3_NULL :
 					return 'null';
 				default :
-					//throw new EDBException ('Unknown. This is libsqlite3 bug!', E_WARNING);
+					//throw new myException ('Unknown. This is libsqlite3 bug!', E_USER_WARNING);
 					//return false;
 					return 'unknown, maybe libsqlite3 bug?';
 			}
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -374,7 +374,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 
 			return $this->result->numColumns ();
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -421,7 +421,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			return $this->nums;
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -440,12 +440,12 @@ Class EDB_SQLITE3 extends EDB_Common {
 		try {
 			if ( ($this->result = $this->db->query ($sql)) === false ) {
 				$this->free = false;
-				throw new EDBException ($this->db->lastErrorMsg (), E_WARNING);
+				throw new myException ($this->db->lastErrorMsg (), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -476,12 +476,15 @@ Class EDB_SQLITE3 extends EDB_Common {
 		try {
 			$this->stmt = $this->db->prepare ($sql);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->stmt->clear ();
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
+			throw new myException (
+				'Number of elements in query doesn\'t match number of bind variables',
+				E_USER_WARNING
+			);
 			return false;
 		}
 
@@ -516,7 +519,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 			$this->result = $this->stmt->execute ();
 		} catch ( Exception $e ) {
 			#$this->stmt->clear ();
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			#return false;
 		}
 

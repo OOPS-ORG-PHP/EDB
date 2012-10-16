@@ -14,7 +14,7 @@
 	<date>@curdate@</date>
 	<time>@curtime@</time>
 	<version>
-		<release>2.0.0</release>
+		<release>2.0.1</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,21 +22,11 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* add MySQL Engine
-* add SQLite2 Engine
-* add PostgreSQL Engine
-* add MSSQL Engine
-* add Cubrid Engine
-* add SQLRelay Engine
-* support BLOB data type
-* support escape, field_name, field_type, num_fields method
-* enhnaced seek, set_charset, get_chasret method
-* unificated type of return values
+	<notes>* change user define exception to myException pear package
 </notes>
 	<contents>
 		<dir name="/">
 			<file role="php" md5sum="@EDB/EDB_Common.php@" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="@EDB/EDB_Exception.php@" name="EDB/EDB_Exception.php" />
 			<file role="php" md5sum="@EDB/EDB_CUBRID.php@" name="EDB/EDB_CUBRID.php" />
 			<file role="php" md5sum="@EDB/EDB_MSSQL.php@" name="EDB/EDB_MSSQL.php" />
 			<file role="php" md5sum="@EDB/EDB_MYSQL.php@" name="EDB/EDB_MYSQL.php" />
@@ -56,6 +46,11 @@
 			<pearinstaller>
 				<min>1.4.3</min>
 			</pearinstaller>
+			<package>
+				<name>myException</name>
+				<channel>pear.oops.org</channel>
+				<min>1.0.0</min>
+			</package>
 		</required>
 		<optional>
 			<package>
@@ -103,6 +98,20 @@
 	<changelog>
 		<release>
 			<version>
+				<release>2.0.1</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-10-17</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* change user define exception to myException pear package
+</notes>
+		</release>
+		<release>
+			<version>
 				<release>2.0.0</release>
 				<api>1.0.0</api>
 			</version>
@@ -110,7 +119,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>@curdate@</date>
+			<date>2012-10-14</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* add MySQL Engine
 * add SQLite2 Engine

@@ -108,7 +108,7 @@ Class EDB_PGSQL extends EDB_Common {
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
 		if ( ! extension_loaded ('pgsql') )
-			throw new EDBException ('pgsql extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('pgsql extension is not loaded on PHP!', E_USER_ERROR);
 
 		$o = (object) array (
 			'host' => preg_replace ('!^pgsql://!', '', $argv[0]),
@@ -153,7 +153,7 @@ Class EDB_PGSQL extends EDB_Common {
 		try {
 			$this->db = $func ($cstring, PGSQL_CONNECT_FORCE_NEW);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -169,7 +169,7 @@ Class EDB_PGSQL extends EDB_Common {
 		try {
 			return pg_client_encoding ($this->db);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -299,7 +299,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 			return pg_num_rows ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -320,7 +320,7 @@ Class EDB_PGSQL extends EDB_Common {
 		try {
 			return pg_result_seek ($this->result, $offset);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -348,7 +348,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 			return $r;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -394,7 +394,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 			return pg_free_result ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -416,7 +416,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 			return pg_field_name ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -442,7 +442,7 @@ Class EDB_PGSQL extends EDB_Common {
 
 			return pg_field_type ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -462,7 +462,7 @@ Class EDB_PGSQL extends EDB_Common {
 				return false;
 			$r = pg_num_fields ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -499,12 +499,12 @@ Class EDB_PGSQL extends EDB_Common {
 		try {
 			if ( ($this->result = pg_query ($this->db, $sql)) === false ) {
 				$this->free = false;
-				throw new EDBException (pg_last_error ($this->db), E_WARNING);
+				throw new myException (pg_last_error ($this->db), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode (), $e);
+			throw new myException ($e->getMessage (), $e->getCode (), $e);
 			return false;
 		}
 
@@ -528,9 +528,9 @@ Class EDB_PGSQL extends EDB_Common {
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->free = false;
-			throw new EDBExeption (
+			throw new myExeption (
 				'Number of elements in query doesn\'t match number of bind variables',
-				E_WARNING
+				E_USER_WARNING
 			);
 			return false;
 		}
@@ -548,12 +548,12 @@ Class EDB_PGSQL extends EDB_Common {
 			$this->result = pg_query_params ($this->db, $sql, $params);
 			if ( ! is_resource ($this->result) ) {
 				$this->free = false;
-				throw new EDBExeption (pg_last_error ($this->db), E_WARNING);
+				throw new myExeption (pg_last_error ($this->db), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode (), $e);
+			throw new myException ($e->getMessage (), $e->getCode (), $e);
 			return false;
 		}
 

@@ -33,9 +33,9 @@
  */
 
 /**
- * import EDBException class
+ * import myException class
  */
-require_once 'EDB/EDB_Exception.php';
+require_once 'myException.php';
 /**
  * import EDB_Common class
  */
@@ -96,7 +96,7 @@ Class EDB
 		if ( preg_match ('!^([^:]+)://!', $argv[0], $matches) ) {
 			$dbtype = 'EDB_' . strtoupper ($matches[1]);
 			if ( ! EDB_Common::file_exists ("EDB/{$dbtype}.php") ) {
-				throw new EDBException ('Unsupported DB Engine');
+				throw new myException ('Unsupported DB Engine', E_USER_ERROR);
 				return;
 			}
 		} else
@@ -345,7 +345,7 @@ Class EDB
 		try {
 			$this->db->free_result ();
 			$this->db->close ();
-		} catch ( Exception $e ) { }
+		} catch ( myException $e ) { }
 	}
 	// }}}
 }

@@ -71,7 +71,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 */
 	function __construct () {
 		if ( ! extension_loaded ('sqlite') )
-			throw new EDBException ('sqlite extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('sqlite extension is not loaded on PHP!', E_USER_ERROR);
 
 		try {
 			$_argv = func_get_args ();
@@ -95,9 +95,9 @@ Class EDB_SQLITE2 extends EDB_Common {
 			$this->db = $func ($o->path, $o->mode, $error);
 		} catch ( Exception $e ) {
 			if ( $error )
-				throw new EDBException ($error, $e->getCode(), $e);
+				throw new myException ($error, $e->getCode(), $e);
 			else
-				throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+				throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -115,7 +115,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 		if ( function_exists ('sqlite_libencoding') )
 			return sqlite_libencoding ();
 		else
-			throw new EDBException ('Unsupported method on SQLITE2 engine', E_ERROR);
+			throw new myException ('Unsupported method on SQLITE2 engine', E_USER_ERROR);
 	}
 	// }}}
 
@@ -192,7 +192,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 			 */
 			return $this->bind_query ($sql, $argv);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -213,7 +213,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 		try {
 			return sqlite_seek ($this->result, $offset);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -230,7 +230,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 		try {
 			return sqlite_fetch_object ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -253,7 +253,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 
 			return $rows;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return array ();
 		}
 	}
@@ -297,7 +297,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 				return false;
 			return sqlite_field_name ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -320,7 +320,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 
 			return $r[$index];
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -340,7 +340,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 
 			return sqlite_num_fields ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -375,12 +375,12 @@ Class EDB_SQLITE2 extends EDB_Common {
 			$this->result = sqlite_query ($this->db, $sql, SQLITE_ASSOC);
 			if ( ! is_resource ($this->result) ) {
 				$this->free = false;
-				throw new EDBException (sqlite_last_error ($this->db), E_WARNING);
+				throw new myException (sqlite_last_error ($this->db), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -406,7 +406,10 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 */
 	private function bind_query ($sql, $params) {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
+			throw new myException (
+				'Number of elements in query doesn\'t match number of bind variables',
+				E_USER_WARNING
+			);
 			return false;
 		}
 

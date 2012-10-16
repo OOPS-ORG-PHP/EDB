@@ -73,7 +73,7 @@ Class EDB_MYSQL extends EDB_Common {
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
 		if ( ! extension_loaded ('mysql') )
-			throw new EDBException ('MySQL extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('MySQL extension is not loaded on PHP!', E_USER_ERROR);
 
 		$o = (object) array (
 			'host' => preg_replace ('!^mysql://!', '', $argv[0]),
@@ -98,7 +98,7 @@ Class EDB_MYSQL extends EDB_Common {
 			$this->db = $func ($o->host, $o->user, $o->pass);
 			mysql_select_db ($o->db, $this->db);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -141,7 +141,7 @@ Class EDB_MYSQL extends EDB_Common {
 
 			return $r;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -217,7 +217,7 @@ Class EDB_MYSQL extends EDB_Common {
 		try {
 			return mysql_data_seek ($this->result, $offset);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -238,7 +238,7 @@ Class EDB_MYSQL extends EDB_Common {
 		try {
 			return mysql_fetch_object ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -284,7 +284,7 @@ Class EDB_MYSQL extends EDB_Common {
 		try {
 			return mysql_free_result ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -308,7 +308,7 @@ Class EDB_MYSQL extends EDB_Common {
 
 			return mysql_field_name ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -332,7 +332,7 @@ Class EDB_MYSQL extends EDB_Common {
 
 			return mysql_field_type ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -353,7 +353,7 @@ Class EDB_MYSQL extends EDB_Common {
 
 			return mysql_num_fields ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -389,12 +389,12 @@ Class EDB_MYSQL extends EDB_Common {
 			$this->result = mysql_query ($sql, $this->db);
 			if ( mysql_errno ($this->db) ) {
 				$this->free = false;
-				throw new EDBException (mysql_error ($this->db), E_WARNING);
+				throw new myException (mysql_error ($this->db), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -422,7 +422,10 @@ Class EDB_MYSQL extends EDB_Common {
 	 */
 	private function bind_query ($sql, $params) {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
+			throw new myException (
+				'Number of elements in query doesn\'t match number of bind variables',
+				E_USER_WARNING
+			);
 			return false;
 		}
 
