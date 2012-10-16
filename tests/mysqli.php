@@ -8,6 +8,8 @@
 require_once './test-common.php';
 require_once 'edb.php';
 
+set_error_handler('myException::myErrorHandler');
+
 $scheme = <<<EOF
 CREATE TABLE edb_test (
 	num  int(6) NOT NULL auto_increment,
@@ -187,17 +189,13 @@ try {
 	printf ("*** Affected Rows is %d\n", $r);
 	$db->free_result ();
 
-} catch ( EDBException $e ) {
-	fprintf (
-		STDERR, "Error: %s [%s:%d]\n",
-		$e->getMessage (),
-		preg_replace ('!.*/!', '', $e->getFile ()),
-		$e->getLine ()
-	);
+} catch ( myException $e ) {
+	fprintf (STDERR, "%s\n", $e->Message ());
 	#print_r ($e);
-	#print_r ($e->EDB_getTrace ());
-	#echo $e->EDB_getTraceAsString () . "\n";
-	print_r ($e->EDB_getTraceAsArray ()) . "\n";
+	#print_r ($e->Trace ());
+	#echo $e->TraceAsString () . "\n";
+	print_r ($e->TraceAsArray ()) . "\n";
+	$e->finalize ();
 }
 
 /*

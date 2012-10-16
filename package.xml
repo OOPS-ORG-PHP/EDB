@@ -11,10 +11,10 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-10-14</date>
-	<time>04:35:32</time>
+	<date>2012-10-17</date>
+	<time>02:56:04</time>
 	<version>
-		<release>2.0.0</release>
+		<release>2.0.1</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,30 +22,20 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* add MySQL Engine
-* add SQLite2 Engine
-* add PostgreSQL Engine
-* add MSSQL Engine
-* add Cubrid Engine
-* add SQLRelay Engine
-* support BLOB data type
-* support escape, field_name, field_type, num_fields method
-* enhnaced seek, set_charset, get_chasret method
-* unificated type of return values
+	<notes>* change user define exception to myException pear package
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="e9fd2f90aa84cbc74263e041c297b169" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="5db6c571bacd8d61752e6832ae1d44f2" name="EDB/EDB_Exception.php" />
-			<file role="php" md5sum="a721704d33d183e5c148e2a8d8956a81" name="EDB/EDB_CUBRID.php" />
-			<file role="php" md5sum="92d09f03c87b12893b619b9b34eba35a" name="EDB/EDB_MSSQL.php" />
-			<file role="php" md5sum="f1ec0f21a00b05a76778746c36fba891" name="EDB/EDB_MYSQL.php" />
-			<file role="php" md5sum="1861e83e4fe236f32ef97a1f185fcfc9" name="EDB/EDB_MYSQLI.php" />
-			<file role="php" md5sum="ba42b74b911c2ecb6980cc90f1b6c248" name="EDB/EDB_PGSQL.php" />
-			<file role="php" md5sum="d01bd4f4ab51383307e8a4d5e5661241" name="EDB/EDB_SQLITE2.php" />
-			<file role="php" md5sum="c2094dcae1329502b69d431ed006236f" name="EDB/EDB_SQLITE3.php" />
-			<file role="php" md5sum="073eb65040453f280dd85a31ece7a720" name="EDB/EDB_SQLRELAY.php" />
-			<file role="php" md5sum="bfd3a19b9d99468840ede461c454b08c" name="edb.php" />
+			<file role="php" md5sum="2e72d5d76005012998350f48dccd4c8d" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="1232f0ce8e73e94f6c0c716b5e6d1203" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="5521eaa9907dee9b49ed87a8fbb7b05a" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="2b58cf5de362a601cce93868663db2ea" name="EDB/EDB_MYSQL.php" />
+			<file role="php" md5sum="b372e926d5d6a13dfce71cbf390a77a2" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="9548709e060445887d0cdd693e5fb777" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="f5db1e078af9d28cd5b0bb4bcfe89e56" name="EDB/EDB_SQLITE2.php" />
+			<file role="php" md5sum="f2b976cac85757ba5617a099fdccee6c" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="24bdadc64776cbfd920d017a4d922108" name="EDB/EDB_SQLRELAY.php" />
+			<file role="php" md5sum="94290b977248645221b7afd80aae2c31" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -56,6 +46,11 @@
 			<pearinstaller>
 				<min>1.4.3</min>
 			</pearinstaller>
+			<package>
+				<name>myException</name>
+				<channel>pear.oops.org</channel>
+				<min>1.0.0</min>
+			</package>
 		</required>
 		<optional>
 			<package>
@@ -101,6 +96,20 @@
 	</dependencies>
 	<phprelease />
 	<changelog>
+		<release>
+			<version>
+				<release>2.0.1</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-10-17</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* change user define exception to myException pear package
+</notes>
+		</release>
 		<release>
 			<version>
 				<release>2.0.0</release>

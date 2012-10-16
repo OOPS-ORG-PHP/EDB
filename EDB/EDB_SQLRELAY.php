@@ -83,7 +83,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
 		if ( ! extension_loaded ('sql_relay') )
-			throw new EDBException ('SQLRELAY extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('SQLRELAY extension is not loaded on PHP!', E_USER_ERROR);
 
 		$o = (object) array (
 			'host' => preg_replace ('!^sqlrelay://!', '', $argv[0]),
@@ -108,9 +108,9 @@ Class EDB_SQLRELAY extends EDB_Common {
 			$this->result  = sqlrcur_alloc ($this->db);
 
 			if ( ! sqlrcon_ping ($this->db) )
-				throw new EDBException (sqlrcur_errorMessage ($this->db), E_ERROR);
+				throw new myException (sqlrcur_errorMessage ($this->db), E_USER_ERROR);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -212,7 +212,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 			$this->rownum = sqlrcur_rowCount ($this->result);
 			return $this->rownum;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -246,7 +246,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 
 			return $r ? (object) $r : false;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -304,7 +304,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 			unset ($this->result);
 			return true;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -326,7 +326,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 				return false;
 			return sqlrcur_getColumnName ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -349,7 +349,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 
 			return sqlrcur_getColumnType ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -368,7 +368,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 				return false;
 			return sqlrcur_colCount ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -409,13 +409,13 @@ Class EDB_SQLRELAY extends EDB_Common {
 	private function no_bind_query ($sql) {
 		try {
 			if ( ! sqlrcur_sendQuery ($this->result, $sql) ) {
-				throw new EDBException (sqlrcur_errorMessage ($this->result), E_WARNING);
+				throw new myException (sqlrcur_errorMessage ($this->result), E_USER_WARNING);
 				return false;
 			}
 			sqlrcon_endSession ($this->db);
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -434,7 +434,10 @@ Class EDB_SQLRELAY extends EDB_Common {
 	 */
 	private function bind_query ($sql, $params) {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
+			throw new myException (
+				'Number of elements in query doesn\'t match number of bind variables',
+				E_USER_WARNING
+			);
 			return false;
 		}
 
@@ -472,7 +475,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 			if ( ! sqlrcur_executeQuery ($this->result) ) {
 				sqlrcur_clearBinds ($this->result);
 				sqlrcon_endSession ($this->db);
-				throw new EDBException (sqlrcur_errorMessage ($this->result), E_WARNING);
+				throw new myException (sqlrcur_errorMessage ($this->result), E_USER_WARNING);
 				return false;
 			}
 
@@ -481,7 +484,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 
 			$this->switch_freemark ();
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}

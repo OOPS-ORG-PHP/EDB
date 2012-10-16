@@ -78,7 +78,7 @@ Class EDB_CUBRID extends EDB_Common {
 		$argv = is_array ($_argv[0]) ? $_argv[0] : $_argv;;
 
 		if ( ! extension_loaded ('cubrid') )
-			throw new EDBException ('CUBRID extension is not loaded on PHP!', E_ERROR);
+			throw new myException ('CUBRID extension is not loaded on PHP!', E_USER_ERROR);
 
 		$o = (object) array (
 			'host' => preg_replace ('!^cubrid://!', '', $argv[0]),
@@ -109,7 +109,7 @@ Class EDB_CUBRID extends EDB_Common {
 		try {
 			$this->db = $func ($url, $o->user, $o->pass);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
 	}
 	// }}}
@@ -127,7 +127,7 @@ Class EDB_CUBRID extends EDB_Common {
 		try {
 			return cubrid_get_charset ($this->db);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -242,7 +242,7 @@ Class EDB_CUBRID extends EDB_Common {
 			//return cubrid_move_cursor ($this->result, $offset, CUBRID_CURSOR_FIRST);
 			return cubrid_data_seek ($this->result, $offset);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -272,7 +272,7 @@ Class EDB_CUBRID extends EDB_Common {
 
 			return $r;
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -320,7 +320,7 @@ Class EDB_CUBRID extends EDB_Common {
 			#return cubrid_free_result ($this->result);
 			return cubrid_close_request ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -343,7 +343,7 @@ Class EDB_CUBRID extends EDB_Common {
 				return false;
 			return cubrid_field_name ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -367,7 +367,7 @@ Class EDB_CUBRID extends EDB_Common {
 
 			return cubrid_field_type ($this->result, $index);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -387,7 +387,7 @@ Class EDB_CUBRID extends EDB_Common {
 				return false;
 			return cubrid_num_cols ($this->result);
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}
@@ -423,12 +423,12 @@ Class EDB_CUBRID extends EDB_Common {
 			$this->result = cubrid_query ($sql, $this->db);
 			if ( cubrid_error_code () ) {
 				$this->free = false;
-				throw new EDBException (cubrid_error_msg (), E_WARNING);
+				throw new myException (cubrid_error_msg (), E_USER_WARNING);
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$this->free = false;
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 
@@ -447,7 +447,10 @@ Class EDB_CUBRID extends EDB_Common {
 	 */
 	private function bind_query ($sql, $params) {
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
-			throw new EDBException ('Number of elements in query doesn\'t match number of bind variables');
+			throw new myBException (
+				'Number of elements in query doesn\'t match number of bind variables',
+				E_USER_WARNING
+			);
 			return false;
 		}
 
@@ -481,7 +484,7 @@ Class EDB_CUBRID extends EDB_Common {
 
 			$this->switch_freemark ();
 		} catch ( Exception $e ) {
-			throw new EDBException ($e->getMessage (), $e->getCode(), $e);
+			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
 	}

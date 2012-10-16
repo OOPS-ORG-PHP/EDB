@@ -139,19 +139,28 @@ Class EDB_Common {
 			switch ($type[$i]) {
 				case 'i' : // integer
 					if ( is_numeric ($param[$i]) === false ) {
-						throw new EDBException ("The ${no}th parameter type of query is not numeric type", E_ERROR);
+						throw new myException (
+							"The ${no}th parameter type of query is not numeric type",
+							E_USER_ERROR
+						);
 						return false;
 					}
 					break;
 				case 'f' : // float, double
 					if ( is_numeric ($param[$i]) !== false && is_float ($param[$i]) !== false ) {
-						throw new EDBException ("The ${no}th parameter type of query is not double type", E_ERROR);
+						throw new myException (
+							"The ${no}th parameter type of query is not double type",
+							E_USER_ERROR
+						);
 						return false;
 					}
 					break;
 				case 'n' : // null
 					if ( $param[$i] ) {
-						throw new EDBException ("The ${no}th parameter type of query is not null type", E_ERROR);
+						throw new myException (
+							"The ${no}th parameter type of query is not null type",
+							E_USER_ERROR
+						);
 						return false;
 					}
 					break;
@@ -160,7 +169,10 @@ Class EDB_Common {
 				case 's' : // string. by pass
 					break;
 				default :
-					throw new EDBException ("The ${no}th parameter type of query is unsupported type", E_ERROR);
+					throw new myException (
+						"The ${no}th parameter type of query is unsupported type",
+						E_USER_ERROR
+					);
 					return false;
 			}
 		}
