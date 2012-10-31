@@ -49,6 +49,7 @@ try {
 	# insert bind query test
 	$sql = 'INSERT INTO edb_test (cid, cname, bdata) VALUES (?, ?, ?)';
 
+	$img = new stdClass;
 	$img->data = $imgs;
 	$img->len = filesize ('./test.png');
 	for ( $i=0; $i<2; $i++ ) {

@@ -57,7 +57,7 @@ require_once 'EDB/EDB_Common.php';
  *
  * @package     EDB
  */
-Class EDB
+Class EDB extends EDB_Common
 {
 	// {{{ prpperties
 	/**
@@ -95,7 +95,7 @@ Class EDB
 
 		if ( preg_match ('!^([^:]+)://!', $argv[0], $matches) ) {
 			$dbtype = 'EDB_' . strtoupper ($matches[1]);
-			if ( ! EDB_Common::file_exists ("EDB/{$dbtype}.php") ) {
+			if ( ! parent::file_exists ("EDB/{$dbtype}.php") ) {
 				throw new myException ('Unsupported DB Engine', E_USER_ERROR);
 				return;
 			}
