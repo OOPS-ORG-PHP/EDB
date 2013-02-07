@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-11-01</date>
-	<time>00:55:45</time>
+	<date>2013-02-08</date>
+	<time>03:29:48</time>
 	<version>
 		<release>2.0.2</release>
 		<api>1.0.0</api>
@@ -23,6 +23,7 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 	<notes>* fixed E_STRICT and undeclear object problems on PHP 5.4
+* fixed don't reset result of bind query
 </notes>
 	<contents>
 		<dir name="/">
@@ -30,12 +31,12 @@
 			<file role="php" md5sum="49078878d3f69983c8a32101c798b3bc" name="EDB/EDB_CUBRID.php" />
 			<file role="php" md5sum="30df6a1e3b5675657edf5bc2fc360f3a" name="EDB/EDB_MSSQL.php" />
 			<file role="php" md5sum="2b58cf5de362a601cce93868663db2ea" name="EDB/EDB_MYSQL.php" />
-			<file role="php" md5sum="6209e5b12fe789b6de83ed99c8298056" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="e2961892d115235eb5998d6d2bdf0280" name="EDB/EDB_MYSQLI.php" />
 			<file role="php" md5sum="9548709e060445887d0cdd693e5fb777" name="EDB/EDB_PGSQL.php" />
 			<file role="php" md5sum="6027afe63c19c44c548e2802b84e22aa" name="EDB/EDB_SQLITE2.php" />
 			<file role="php" md5sum="705e862ba6a0fae0cc9b59910abfb3b2" name="EDB/EDB_SQLITE3.php" />
 			<file role="php" md5sum="c7ba14c38f393c579a637f33168bc30c" name="EDB/EDB_SQLRELAY.php" />
-			<file role="php" md5sum="37ae242e32444558698d18b369e69cdf" name="edb.php" />
+			<file role="php" md5sum="425066339d96e810742ee9bd94ba61a7" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -105,9 +106,10 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2012-11-01</date>
+			<date>2013-02-08</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed E_STRICT and undeclear object problems on PHP 5.4
+* fixed don't reset result of bind query
 </notes>
 		</release>
 		<release>

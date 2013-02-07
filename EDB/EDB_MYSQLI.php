@@ -192,6 +192,7 @@ Class EDB_MYSQLI extends EDB_Common {
 
 		if ( $this->free )
 			$this->free_result ();
+
 		/*
 		 * For no bind query
 		 */
@@ -291,6 +292,9 @@ Class EDB_MYSQLI extends EDB_Common {
 
 			if ( $this->result instanceof mysqli_stmt )
 				$this->result->close ();
+
+			unset ($this->field);
+			$this->field = array ();
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
@@ -428,12 +432,13 @@ Class EDB_MYSQLI extends EDB_Common {
 			unset ($param);
 
 		$this->result = $this->db->prepare ($sql);
-		$this->switch_freemark ();
 
 		if ( $this->db->errno || ! is_object ($this->result) ) {
 			throw new myException ($this->db->error, E_USER_WARNING);
 			return false;
 		}
+
+		$this->switch_freemark ();
 
 		if ( $this->pno != count ($params) || $this->check_param ($params) === false ) {
 			$this->free_result ();
@@ -492,6 +497,9 @@ Class EDB_MYSQLI extends EDB_Common {
 	private function bind_result ($sql) {
 		if ( preg_match ('/^(update|insert|delete)/i', trim ($sql)) )
 			return;
+
+		unset ($this->field);
+		$this->field = array ();
 
 		try {
 			$this->result->store_result ();
@@ -561,7 +569,7 @@ Class EDB_MYSQLI extends EDB_Common {
 		if ( ! $this->result instanceof mysqli_result )
 			return array ();
 
-		$this->field = array ();
+		//$this->field = array ();
 		$rows = array ();
 
 		while ( ($row = $this->result->fetch_object ()) !== null )
