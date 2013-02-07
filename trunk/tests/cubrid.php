@@ -19,15 +19,15 @@ CREATE TABLE edb_test (
 )
 EOF;
 
-$host = 'cubrid://localhost:33000';
-$user = 'dba';
-#$pass = 'password';
-$db   = 'EDB_TEST';
+$host   = 'cubrid://localhost:33000';
+$user   = 'dba';
+#$pass   = 'password';
+$dbname = 'EDB_TEST';
 
 try {
 
 	$i=0;
-	$db = new EDB ($host, $user, $pass, $db);
+	$db = new EDB ($host, $user, $pass, $dbname);
 
 	##############################################################################
 	# Charset test
