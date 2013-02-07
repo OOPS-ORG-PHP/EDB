@@ -21,15 +21,15 @@ CREATE TABLE edb_test (
 ) CHARSET=utf8;
 EOF;
 
-$host = 'mysql://localhost:/var/run/mysqld/mysql.sock';
-$user = 'user';
-$pass = 'password';
-$db   = 'database';
+$host   = 'mysql://localhost:/var/run/mysqld/mysql.sock';
+$user   = 'user';
+$pass   = 'password';
+$dbname = 'database';
 
 try {
 
 	$i=0;
-	$db = new EDB ($host, $user, $pass, $db);
+	$db = new EDB ($host, $user, $pass, $dbname);
 
 	##############################################################################
 	# Charset test
@@ -46,7 +46,7 @@ try {
 	# Create table test
 	##############################################################################
 
-	$r = $db->query ('SHOW TABLES WHERE Tables_in_WebBoard = ?', 's', 'edb_test');
+	$r = $db->query ("SHOW TABLES WHERE Tables_in_{$dbname} = ?", 's', 'edb_test');
 	$db->free_result ();
 	if ( $r == 1 ) {
 		$r = $db->query ("DROP TABLE edb_test");

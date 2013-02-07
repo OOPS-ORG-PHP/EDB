@@ -19,15 +19,15 @@ CREATE TABLE edb_test (
 )
 EOF;
 
-$host = 'pgsql://localhost';
-$user = 'postgres';
-$pass = '';
-$db   = 'template1';
+$host   = 'pgsql://localhost';
+$user   = 'postgres';
+$pass   = '';
+$dbname = 'template1';
 
 try {
 
 	$i=0;
-	$db = new EDB ($host, $user, $pass, $db);
+	$db = new EDB ($host, $user, $pass, $dbname);
 
 	##############################################################################
 	# Charset test

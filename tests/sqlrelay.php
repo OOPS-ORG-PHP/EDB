@@ -37,15 +37,15 @@ CREATE TABLE edb_test (
 ) CHARSET=utf8;
 EOF;
 
-$host = 'sqlrelay://172.16.13.3:9000';
-$user = 'sqlr';
-$pass = 'sqlr';
-$db   = 'WebBoard';
+$host   = 'sqlrelay://172.16.13.3:9000';
+$user   = 'sqlr';
+$pass   = 'sqlr';
+$dbname = 'dbname';
 
 try {
 
 	$i=0;
-	$db = new EDB ($host, $user, $pass, $db);
+	$db = new EDB ($host, $user, $pass, $dbname);
 
 	##############################################################################
 	# Charset test
@@ -62,7 +62,7 @@ try {
 	# Create table test
 	##############################################################################
 
-	$r = $db->query ('SHOW TABLES WHERE Tables_in_WebBoard = ?', 's', 'edb_test');
+	$r = $db->query ("SHOW TABLES WHERE Tables_in_{$dbname} = ?", 's', 'edb_test');
 	$db->free_result ();
 
 	if ( $scheme && ! $r ) {

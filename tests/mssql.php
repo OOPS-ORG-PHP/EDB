@@ -19,15 +19,15 @@ set_error_handler('myException::myErrorHandler');
 #)
 #EOF;
 
-$host = 'mssql://localhost:1433';
-$user = 'user';
-$pass = 'password';
-$db   = 'database';
+$host   = 'mssql://localhost:1433';
+$user   = 'user';
+$pass   = 'password';
+$dbname = 'database';
 
 try {
 
 	$i=0;
-	$db = new EDB ($host, $user, $pass, $db);
+	$db = new EDB ($host, $user, $pass, $dbname);
 
 	##############################################################################
 	# Create table test
