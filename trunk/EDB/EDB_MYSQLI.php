@@ -547,6 +547,7 @@ Class EDB_MYSQLI extends EDB_Common {
 			return false;
 
 		if ( $fetch_check = $this->result->fetch () ) {
+			$retval = new stdClass;
 			foreach ( $this->field as $key => $val )
 				$retval->$key = $val;
 		} else
@@ -598,6 +599,7 @@ Class EDB_MYSQLI extends EDB_Common {
 
 		$i = 0;
 		while ( $this->result->fetch () ) {
+			$r[$i] = new stdClass;
 			foreach ( $this->field as $key => $val )
 				$r[$i]->$key = $val;
 			$i++;
