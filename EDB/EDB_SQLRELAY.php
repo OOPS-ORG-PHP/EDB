@@ -238,11 +238,15 @@ Class EDB_SQLRELAY extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object|false The object of fetched a result row or false
-	 * @param  void
+	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
+	 *                 (기본값: false) EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		try {
 			$r = sqlrcur_getRowAssoc ($this->result, $this->rowid++);
+
+			if ( $free )
+				$this->free_result ();
 
 			return $r ? (object) $r : false;
 		} catch ( Exception $e ) {

@@ -117,7 +117,7 @@ Class EDB_MYSQL extends EDB_Common {
 		if ( $r != 1 )
 			return 'Unsupport';
 
-		$row = $this->fetch ();
+		$row = $this->fetch (true);
 		return $row->Value;
 	}
 	// }}}
@@ -229,14 +229,18 @@ Class EDB_MYSQL extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
-	 * @param  void
+	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
+	 *                 (기본값: false) EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		if ( ! is_resource ($this->result) )
 			return false;
 
 		try {
-			return mysql_fetch_object ($this->result);
+			$r = mysql_fetch_object ($this->result);
+			if ( $free )
+				$this->free_result ();
+			return $r;
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;

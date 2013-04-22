@@ -238,10 +238,14 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
+	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
+	 *                 (기본값: false) EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		try {
 			$r = $this->result->fetchArray (SQLITE3_ASSOC);
+			if ( $free )
+				$this->free_result ();
 			return is_array ($r) ? (object) $r : false;
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);

@@ -225,10 +225,15 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object The object of fetched a result row or false
+	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
+	 *                 (기본값: false) EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		try {
-			return sqlite_fetch_object ($this->result);
+			$r = sqlite_fetch_object ($this->result);
+			if ( $free )
+				$this->free_result ();
+			return $r;
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;

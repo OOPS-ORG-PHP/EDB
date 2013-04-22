@@ -254,9 +254,10 @@ Class EDB_CUBRID extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object|false The object of fetched a result row or false
-	 * @param  void
+	 * @param  boolean (optional) 수행후 result를 free 한다. 기본값: false
+	 *                 EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		try {
 			$r = cubrid_fetch ($this->result, CUBRID_OBJECT | CUBRID_LOB);
 
@@ -269,6 +270,9 @@ Class EDB_CUBRID extends EDB_Common {
 					$r->$keyname = cubrid_lob2_read ($r->$keyname, $len);
 				}
 			}
+
+			if ( $free )
+				$this->free_result ();
 
 			return $r;
 		} catch ( Exception $e ) {
