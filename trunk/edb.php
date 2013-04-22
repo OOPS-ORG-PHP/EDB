@@ -242,15 +242,17 @@ Class EDB extends EDB_Common
 	}
 	// }}}
 
-	// {{{ (object) EDB::fetch (void)
+	// {{{ (object) EDB::fetch ($free = false)
 	/**
 	 * associative 개체로 result row를 가져온다.
 	 *
 	 * @access public
 	 * @return object|false result row로 가져온 object
+	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
+	 *                 (기본값: false) EDB >= 2.0.3
 	 */
-	function fetch () {
-		return $this->db->fetch ();
+	function fetch ($free = false) {
+		return $this->db->fetch ($free);
 	}
 	// }}}
 

@@ -217,11 +217,15 @@ Class EDB_MSSQL extends EDB_Common {
 	 *
 	 * @access public
 	 * @return object|false The object of fetched a result row or false
-	 * @param  void
+	 * @param  boolean (optional) 수행 후 result를 free 한다. 기본값: false
+	 *                 EDB >= 2.0.3
 	 */
-	function fetch () {
+	function fetch ($free = false) {
 		try {
-			return mssql_fetch_object ($this->result);
+			$r = mssql_fetch_object ($this->result);
+			if ( $free )
+				$this->free_result ();
+			return $r;
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
