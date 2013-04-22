@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2012, JoungKyun.Kim
  * @license     BSD License
- * @version     $Id: EDB_PGSQL.php 32 2012-09-26 18:37:32Z oops $
+ * @version     $Id$
  * @link        http://pear.oops.org/package/EDB
  * @filesource
  */
