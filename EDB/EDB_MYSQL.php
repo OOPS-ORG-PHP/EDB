@@ -439,7 +439,7 @@ Class EDB_MYSQL extends EDB_Common {
 				case 'c' :
 				case 'b' :
 					if ( is_object ($params[$j]) )
-						$params[$j] = $params[$j]->data;
+						$params[$j] = $this->escape ($params[$j]->data);
 					$params[$j] = $this->escape ($params[$j]);
 					break;
 			}
