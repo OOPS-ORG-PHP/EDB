@@ -69,7 +69,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_SQLITE3
 	 * @param  string  $path  sqlite3 database file
 	 * @param  int     $flags (optinal) open flags of sqlite3. See also {@link http://manual.phpdoc.org/HTMLSmartyConverter/PHP/phpDocumentor/tutorial_tags.inlinelink.pkg.html SQLite3::__construct}.
 	 */

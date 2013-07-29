@@ -67,7 +67,7 @@ Class EDB_CUBRID extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_CUBRID
 	 * @param  string  $hostname cubrid host
 	 * @param  string  $user     cubrid user
 	 * @param  string  $password cubrid password
@@ -253,7 +253,7 @@ Class EDB_CUBRID extends EDB_Common {
 	 * Fetch a result row as an associative object
 	 *
 	 * @access public
-	 * @return object|false The object of fetched a result row or false
+	 * @return stdClass|false The object of fetched a result row or false
 	 * @param  boolean (optional) 수행후 result를 free 한다. 기본값: false
 	 *                 EDB >= 2.0.3
 	 */

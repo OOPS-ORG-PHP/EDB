@@ -62,7 +62,7 @@ Class EDB_MYSQL extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_MYSQL
 	 * @param  string  $hostname mysql host
 	 * @param  string  $user     mysql user
 	 * @param  string  $password mysql password

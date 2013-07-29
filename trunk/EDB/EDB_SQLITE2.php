@@ -61,7 +61,7 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_SQLITE2
 	 * @param  string  $path  sqlite2 database file
 	 * @param  integer $mode  The mode of the file. Intended to be used to open
 	 *                        the database in read-only mode. Presently, this
