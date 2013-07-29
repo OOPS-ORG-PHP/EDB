@@ -72,7 +72,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_SQLRELAY
 	 * @param  string  $hostname SQLRELAY host
 	 * @param  string  $user     SQLRELAY user
 	 * @param  string  $password SQLRELAY password

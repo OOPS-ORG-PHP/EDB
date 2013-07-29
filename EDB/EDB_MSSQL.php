@@ -62,7 +62,7 @@ Class EDB_MSSQL extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_MSSQL
 	 * @param  string  $hostname MSSQL host
 	 * @param  string  $user     MSSQL user
 	 * @param  string  $password MSSQL password

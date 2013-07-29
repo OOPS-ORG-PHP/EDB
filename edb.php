@@ -83,7 +83,7 @@ Class EDB extends EDB_Common
 	 * @see EDB_SQLITE2::__construct()
 	 * @see EDB_SQLITE3::__construct()
 	 * @access public
-	 * @return object
+	 * @return resource 지정한 DB extension resource
 	 * @param  string $host,... 데이터베이스 호스트
 	 */
 	function __construct () {
@@ -247,7 +247,7 @@ Class EDB extends EDB_Common
 	 * associative 개체로 result row를 가져온다.
 	 *
 	 * @access public
-	 * @return object|false result row로 가져온 object
+	 * @return stdClass|false result row로 가져온 object
 	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
 	 *                 (기본값: false) EDB >= 2.0.3
 	 */

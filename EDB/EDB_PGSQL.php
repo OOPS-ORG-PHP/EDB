@@ -96,7 +96,7 @@ Class EDB_PGSQL extends EDB_Common {
 	 * </code>
 	 *
 	 * @access public
-	 * @return object
+	 * @return EDB_PGSQL
 	 * @param  string  $hostname pgsql host[:port] 또는 unix socket 경로
 	 * @param  string  $user     pgsql DB 계정
 	 * @param  string  $password pgsql DB 암호
