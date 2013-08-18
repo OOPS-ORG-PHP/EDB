@@ -14,7 +14,7 @@ $ccwd = basename ($cwd);
 if ( $ccwd == 'tests' ) {
 	$oldpath = $iniget ('include_path');
 	$newpath = preg_replace ("!/{$ccwd}!", '', $cwd);
-	$iniset ('include_path', $oldpath . ':' . $newpath);
+	$iniset ('include_path', $newpath . ':' . $oldpath);
 }
 
 ?>
