@@ -190,6 +190,26 @@ Class EDB_MSSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_MSSQL::lastId (void)
+	/**
+	 * 가장 마지막 입력 row의 OID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return string|false
+	 */
+	function lastId () {
+		$id = 0;
+		if ( ($r = @mssql_query ('SELECT @@identity AS id')) === false )
+			return 0;
+
+		if ( $row = mssql_fetch_object ($r) )
+			$id = $row->id;
+
+		return $id;
+	}
+	// }}}
+
 	// {{{ (bool) EDB_MSSQL::seek ($offset)
 	/**
 	 * Move the cursor in the result

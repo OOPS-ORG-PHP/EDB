@@ -224,6 +224,19 @@ Class EDB_CUBRID extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_CUBRID::lastId (void)
+	/**
+	 * 가장 마지막 입력 row ID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return string|false
+	 */
+	function lastId () {
+		return qubrid_insert_id ($this->db);
+	}
+	// }}}
+
 	// {{{ (bool) EDB_CUBRID::seek ($offset)
 	/**
 	 * Move the cursor in the result
