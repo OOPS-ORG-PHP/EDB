@@ -11,10 +11,10 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2013-04-22</date>
-	<time>17:04:51</time>
+	<date>2013-08-18</date>
+	<time>21:48:46</time>
 	<version>
-		<release>2.0.3</release>
+		<release>2.0.4</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,21 +22,21 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* enhanced for php 5.4
-* add free argument on EDB::fetch()
+	<notes>* fixed blob update on MYSQL engine
+* add lastId API that returns value of row OID or Primary Key
 </notes>
 	<contents>
 		<dir name="/">
 			<file role="php" md5sum="2e72d5d76005012998350f48dccd4c8d" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="fd20ca354fe8ef882cab68483144df49" name="EDB/EDB_CUBRID.php" />
-			<file role="php" md5sum="830883dec2cbf95ac254c8afefc1ac69" name="EDB/EDB_MSSQL.php" />
-			<file role="php" md5sum="ee3eeeaeaf945a9437240e426b6877e9" name="EDB/EDB_MYSQL.php" />
-			<file role="php" md5sum="5edcad320c8f73f2f4b7c69911904f11" name="EDB/EDB_MYSQLI.php" />
-			<file role="php" md5sum="ae079e06501d91a23017f77d61e26324" name="EDB/EDB_PGSQL.php" />
-			<file role="php" md5sum="185368a98ed9e579756bdee0f4ad0785" name="EDB/EDB_SQLITE2.php" />
-			<file role="php" md5sum="cb0526d16754fe2ce30df8ea00db5999" name="EDB/EDB_SQLITE3.php" />
-			<file role="php" md5sum="a6edb0c9a2842d6810342c871602852f" name="EDB/EDB_SQLRELAY.php" />
-			<file role="php" md5sum="f2e89739b75cfbe17ca380fee32ee2de" name="edb.php" />
+			<file role="php" md5sum="8115e487d847a38c99753ab966a8639b" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="f3827a9fb2cc5519dbbf57141d1cd54a" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="0e817ade6265b17d1a50eba318353bc9" name="EDB/EDB_MYSQL.php" />
+			<file role="php" md5sum="e4823443b4c0cca86568d88970893452" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="641a49ca15e1b784cf5834371073aacf" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="6bd86ceb3cc8018ca1281692feb5fa1c" name="EDB/EDB_SQLITE2.php" />
+			<file role="php" md5sum="29987d5848a2428b5a9e183777f5ba85" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="cf89fc6fd1df979fdf73aaaa53812440" name="EDB/EDB_SQLRELAY.php" />
+			<file role="php" md5sum="0ba23f8a3822f5e72f1e1927388758db" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -99,6 +99,21 @@
 	<changelog>
 		<release>
 			<version>
+				<release>2.0.4</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2013-08-18</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* fixed blob update on MYSQL engine
+* add lastId API that returns value of row OID or Primary Key
+</notes>
+		</release>
+		<release>
+			<version>
 				<release>2.0.3</release>
 				<api>1.0.0</api>
 			</version>
@@ -106,7 +121,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2013-04-22</date>
+			<date>2013-08-18</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* enhanced for php 5.4
 * add free argument on EDB::fetch()
