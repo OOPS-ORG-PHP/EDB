@@ -198,6 +198,19 @@ Class EDB_SQLITE2 extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (int) EDB_SQLITE2::lastId (void)
+	/**
+	 * 가장 마지막 입력 row ID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return int|false
+	 */
+	function lastId () {
+		return sqlite_last_insert_rowid ($this->db);
+	}
+	// }}}
+
 	// {{{ (bool) EDB_SQLITE2::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result

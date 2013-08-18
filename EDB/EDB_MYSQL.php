@@ -202,6 +202,19 @@ Class EDB_MYSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (int) EDB_MYSQL::lastId (void)
+	/**
+	 * 마지막 실행한 쿼리에서 자동으로 생성된 ID(auto increment)값을 반환
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return integer|false
+	 */
+	function lastId () {
+		return mysql_insert_id ($this->db);
+	}
+	// }}}
+
 	// {{{ (boo) EDB_MYSQL::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result

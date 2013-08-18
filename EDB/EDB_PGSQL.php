@@ -305,6 +305,19 @@ Class EDB_PGSQL extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (string) EDB_PGSQL::lastId (void)
+	/**
+	 * 가장 마지막 입력 row의 OID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return string|false
+	 */
+	function lastId () {
+		return pg_last_oid ($this->db);
+	}
+	// }}}
+
 	// {{{ (bool) EDB_PGSQL::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result

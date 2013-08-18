@@ -224,6 +224,32 @@ Class EDB extends EDB_Common
 	}
 	// }}}
 
+	// {{{ (int) EDB::lastId (void)
+	/**
+	 * 마지막 실행한 쿼리에서 자동으로 생성된 키값(Primary Key) 또는
+	 * row OID 값을 반환한다.
+	 *
+	 * @since 2.0.4
+	 * @access public
+	 * @return integer row OID를 반환. 이전 query가 새로운 row id를 생성하지
+	 *                 않았을 경우나 실행 실패시에 0을 반환한다.
+	 * <pre>
+	 *     - cubrid   : returns inserted value of AUTO_INCREMENT column
+	 *     - mssql    : returns inserted row OID
+	 *     - mysql    : returns inserted value of Primary Key
+	 *     - mysqli   : returns inserted value of Primary key
+	 *     - pgsql    : returns inserted row OID
+	 *     - sqlite2  : returns inserted row OID
+	 *     - sqlite3  : returns inserted row OID
+	 *     - sqlrelay : returns inserted value of autoincrement column
+	 * </pre>
+	 */
+	function lastId () {
+		$r = $this->db->lastId ();
+		return $r ? $r : 0;
+	}
+	// }}}
+
 	// {{{ (bool) EDB::seek ($offset)
 	/**
 	 * result row 포인터를 이동한다.

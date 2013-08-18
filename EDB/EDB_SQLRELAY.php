@@ -218,6 +218,19 @@ Class EDB_SQLRELAY extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (int) EDB::SQLRELAY::lastId (void)
+	/**
+	 * 가장 마지막 입력 row ID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return int|false
+	 */
+	function lastId () {
+		return sqlrcon_getLastInsertId ($this->db);
+	}
+	// }}}
+
 	// {{{ (bool) EDB_SQLRELAY::seek ($offset)
 	/**
 	 * Move the cursor in the result

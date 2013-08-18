@@ -195,6 +195,19 @@ Class EDB_SQLITE3 extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (int) EDB_SQLITE3::lastId (void)
+	/**
+	 * 가장 마지막 입력 row ID를 반환한다.
+	 *
+	 * @since  2.0.4
+	 * @access public
+	 * @return int|false
+	 */
+	function lastId () {
+		return $this->db->lastInsertRowID ();
+	}
+	// }}}
+
 	// {{{ (bool) EDB_SQLITE3::seek ($offset)
 	/**
 	 * Adjusts the result pointer to an arbitrary row in the result
