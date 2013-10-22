@@ -486,13 +486,18 @@ Class EDB_MYSQLI extends EDB_Common {
 		}
 
 		try {
-			call_user_func_array (array ($this->result, 'bind_param'), $param);
+			$r = call_user_func_array (array ($this->result, 'bind_param'), $param);
+			if ( $r === false )
+				throw new myException ($this->result->error, E_USER_ERROR);
 
 			# for blob data
-			foreach ( $blobs as $key => $val )
-				$this->result->send_long_data ($key, $val);
+			foreach ( $blobs as $key => $val ) {
+				if ( $this->result->send_long_data ($key, $val) === false )
+					throw new myException ($this->result->error, E_USER_ERROR);
+			}
 
-			$this->result->execute ();
+			if ( $this->result->execute () === false )
+				throw new myException ($this->result->error, E_USER_ERROR);
 		} catch ( Exception $e ) {
 			$this->free_result ();
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
