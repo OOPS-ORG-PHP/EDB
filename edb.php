@@ -362,6 +362,7 @@ Class EDB extends EDB_Common
 	 *
 	 * @access public
 	 * @return void
+	 * @since 2.0.5
 	 */
 	function transaction_start () {
 		$this->db->trstart ();
@@ -375,6 +376,7 @@ Class EDB extends EDB_Common
 	 * @access public
 	 * @return void
 	 * @param bool false일경우 rollback을 수행한다.
+	 * @since 2.0.5
 	 */
 	function transaction_end (&$v = true) {
 		$this->db->trend (&$v);
