@@ -369,7 +369,7 @@ Class EDB extends EDB_Common
 	}
 	// }}}
 
-	// {{{ (void) EDB::transaction_end (&$v)
+	// {{{ (void) EDB::transaction_end ($v)
 	/**
 	 * DB transaction을 종료한다.
 	 *
@@ -378,7 +378,7 @@ Class EDB extends EDB_Common
 	 * @param bool false일경우 rollback을 수행한다.
 	 * @since 2.0.5
 	 */
-	function transaction_end (&$v = true) {
+	function transaction_end ($v = true) {
 		$this->db->trend (&$v);
 	}
 	// }}}
