@@ -391,6 +391,36 @@ Class EDB_SQLRELAY extends EDB_Common {
 	}
 	// }}}
 
+	// {{{ (void) EDB_SQLRELAY::trstart (void)
+	/**
+	 * DB transaction 을 시작한다.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function trstart () {
+		sqlrcon_autoCommitOff ($this->db);
+	}
+	// }}}
+
+	// {{{ (void) EDB_SQLRELAY::trend (&$v)
+	/**
+	 * DB transaction 을 종료한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param bool false일경우 rollback을 수행한다.
+	 */
+	function trend (&$v) {
+		if ( $v === false )
+			sqlrcon_rollback ($this->db);
+		else
+			sqlrcon_commit ($this->db);
+
+		sqlrcon_autoCommitOn ($this->db);
+	}
+	// }}}
+
 	// {{{ (void) EDB_SQLRELAY::close (void)
 	/**
 	 * Close the db handle

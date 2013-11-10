@@ -39,12 +39,17 @@ Class EDB_CUBRID extends EDB_Common {
 	 * @var    integer
 	 */
 	private $pno = 0;
-	/**#@-*/
 	/**
 	 * Blob information
 	 * @var    array
 	 */
 	private $lob = array ();
+	/**
+	 * Default transaction status
+	 * @var    bool
+	 */
+	private $trstatus = false;
+	/**#@-*/
 	// }}}
 
 	// {{{ (object) EDB_CUBRID::__construct ($host, $user, $pass, $db)
@@ -108,6 +113,7 @@ Class EDB_CUBRID extends EDB_Common {
 
 		try {
 			$this->db = $func ($url, $o->user, $o->pass);
+			$this->trstatus = cubrid_get_autocommit ($this->db);
 		} catch ( Exception $e ) {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 		}
@@ -407,6 +413,38 @@ Class EDB_CUBRID extends EDB_Common {
 			throw new myException ($e->getMessage (), $e->getCode(), $e);
 			return false;
 		}
+	}
+	// }}}
+
+	// {{{ (void) EDB_CUBRID::trstart (void)
+	/**
+	 * DB transaction을 시작한다.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function trstart () {
+		if ( $this->trstatus === true )
+			cubrid_set_autocommit ($this->db, CUBRID_AUTOCOMMIT_FALSE);
+	}
+	// }}}
+
+	// {{{ (void) EDB_CUBRID::trend (&$v)
+	/**
+	 * DB transaction을 종료한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param bool false일경우 rollback을 수행한다.
+	 */
+	function trend (&$v = true) {
+		if ( $v === true )
+			cubrid_commit ($this->db);
+		else
+			cubrid_rollback ($this->db);
+
+		$mode = ($this->trstatus === true) ? CUBRID_AUTOCOMMIT_TRUE : CUBRID_AUTOCOMMIT_FALSE;
+		cubrid_set_autocommit ($this->db, $mode);
 	}
 	// }}}
 
