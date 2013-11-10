@@ -356,6 +356,31 @@ Class EDB extends EDB_Common
 	}
 	// }}}
 
+	// {{{ (void) EDB::transaction_start (void)
+	/**
+	 * DB transaction을 시작한다.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function transaction_start () {
+		$this->db->trstart ();
+	}
+	// }}}
+
+	// {{{ (void) EDB::transaction_end (&$v)
+	/**
+	 * DB transaction을 종료한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param bool false일경우 rollback을 수행한다.
+	 */
+	function transaction_end (&$v = true) {
+		$this->db->trend (&$v);
+	}
+	// }}}
+
 	// {{{ (void) EDB::close (void)
 	/**
 	 * DB 핸들을 종료한다.
