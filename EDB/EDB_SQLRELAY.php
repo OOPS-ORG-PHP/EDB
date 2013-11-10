@@ -403,7 +403,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_SQLRELAY::trend (&$v)
+	// {{{ (void) EDB_SQLRELAY::trend ($v)
 	/**
 	 * DB transaction 을 종료한다.
 	 *
@@ -411,7 +411,7 @@ Class EDB_SQLRELAY extends EDB_Common {
 	 * @return void
 	 * @param bool false일경우 rollback을 수행한다.
 	 */
-	function trend (&$v) {
+	function trend ($v = true) {
 		if ( $v === false )
 			sqlrcon_rollback ($this->db);
 		else

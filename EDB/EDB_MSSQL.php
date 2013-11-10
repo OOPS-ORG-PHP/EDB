@@ -375,7 +375,7 @@ Class EDB_MSSQL extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_MSSQL::trend (&$v)
+	// {{{ (void) EDB_MSSQL::trend ($v)
 	/**
 	 * DB transaction 을 종료한다.
 	 *
@@ -383,7 +383,7 @@ Class EDB_MSSQL extends EDB_Common {
 	 * @return void
 	 * @param bool false일경우 rollback을 수행한다.
 	 */
-	function trend (&$v) {
+	function trend ($v = true) {
 		$sql = ($v === false) ? 'ROLLBACK' : 'COMMIT';
 		$this->db->query ($sql . ' TRANSACTION');
 	}

@@ -429,7 +429,7 @@ Class EDB_CUBRID extends EDB_Common {
 	}
 	// }}}
 
-	// {{{ (void) EDB_CUBRID::trend (&$v)
+	// {{{ (void) EDB_CUBRID::trend ($v)
 	/**
 	 * DB transaction을 종료한다.
 	 *
@@ -437,7 +437,7 @@ Class EDB_CUBRID extends EDB_Common {
 	 * @return void
 	 * @param bool false일경우 rollback을 수행한다.
 	 */
-	function trend (&$v = true) {
+	function trend ($v = true) {
 		if ( $v === true )
 			cubrid_commit ($this->db);
 		else
