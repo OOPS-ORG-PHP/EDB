@@ -393,7 +393,8 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @return void
 	 */
 	function trstart () {
-		$this->db->query ('BEGIN');
+		//$this->db->query ('BEGIN');
+		$this->db->query ('START TRANSACTION WITH CONSISTENT SNAPSHOT');
 	}
 	// }}}
 
