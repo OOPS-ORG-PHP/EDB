@@ -379,7 +379,7 @@ Class EDB extends EDB_Common
 	 * @since 2.0.5
 	 */
 	function transaction_end ($v = true) {
-		$this->db->trend (&$v);
+		$this->db->trend ($v);
 	}
 	// }}}
 
