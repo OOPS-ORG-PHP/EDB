@@ -10,7 +10,7 @@
  * @package     EDB
  * @subpackage  EDB_Common
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2012 JoungKyun.Kim
+ * @copyright   (c) 2014 JoungKyun.Kim
  * @license     BSD License
  * @version     $Id: EDB_Common.php 4 2012-08-31 19:14:39Z oops $
  * @link        http://pear.oops.org/package/EDB
