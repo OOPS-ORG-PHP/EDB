@@ -18,7 +18,7 @@
  * @category    Database
  * @package     EDB
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 1997-2012 OOPS.org
+ * @copyright   (c) 1997-2014 OOPS.org
  * @license     BSD License
  * @version     SVN: $Id$
  * @link        http://pear.oops.org/package/EDB
