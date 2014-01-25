@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>EDB</name>
+ <channel>pear.oops.org</channel>
+ <summary>Extended DB Abstraction Layer</summary>
+ <description>EDB is a database abstraction layer providing</description>
+ <lead>
+  <name>JoungKyun.Kim</name>
+  <user>joungkyun</user>
+  <email>joungkyun@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2014-01-25</date>
+ <time>17:20:49</time>
+ <version>
+  <release>2.0.5</release>
+  <api>1.0.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+ <notes>
+* fixed wrong return value of MYSQLI::bind_query
+* add simple transaction api (EDB::transaction_start, EDB::transaction_end)
+ </notes>
+ <contents>
+  <dir name="/">
+   <file md5sum="2e72d5d76005012998350f48dccd4c8d" name="EDB/EDB_Common.php" role="php" />
+   <file md5sum="5ddcb7bdc1b2b9544aab9eb998249a0c" name="EDB/EDB_CUBRID.php" role="php" />
+   <file md5sum="3ed362e08e1fd0398d5dda483749fa46" name="EDB/EDB_MSSQL.php" role="php" />
+   <file md5sum="392d0f86f0cc57944d373a8174afa922" name="EDB/EDB_MYSQL.php" role="php" />
+   <file md5sum="b7625f4b5dbea3af8e9906d5e40bfe17" name="EDB/EDB_MYSQLI.php" role="php" />
+   <file md5sum="b35db2ae51fed49f617ca544178b8009" name="EDB/EDB_PGSQL.php" role="php" />
+   <file md5sum="0cf9c5aaa8ba749655973697dc2c1d3a" name="EDB/EDB_SQLITE2.php" role="php" />
+   <file md5sum="6c5e66b27c39ab07a9acc8bed183813b" name="EDB/EDB_SQLITE3.php" role="php" />
+   <file md5sum="84e67544a57e508c2b42052a5a88f8fa" name="EDB/EDB_SQLRELAY.php" role="php" />
+   <file md5sum="1c22262f1d78605b6f3832dc43159c69" name="edb.php" role="php" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.1.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.3</min>
+   </pearinstaller>
+   <package>
+    <name>myException</name>
+    <channel>pear.oops.org</channel>
+    <min>1.0.0</min>
+   </package>
+  </required>
+  <optional>
+   <package>
+    <name>cubrid</name>
+    <channel>pecl</channel>
+    <min>8.4.0.0003</min>
+   </package>
+   <package>
+    <name>mssql</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>mysql</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>mysqli</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>pgsql</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>sqlite2</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>sqlite3</name>
+    <channel>php</channel>
+    <min>5.1.0</min>
+   </package>
+   <package>
+    <name>sqlrelay</name>
+    <channel>firstworks</channel>
+   </package>
+  </optional>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>2.0.5</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-11-10</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed wrong return value of MYSQLI::bind_query
+* add simple transaction api (EDB::transaction_start, EDB::transaction_end)
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0.4</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-08-18</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed blob update on MYSQL engine
+* add lastId API that returns value of row OID or Primary Key
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0.3</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-11-10</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* enhanced for php 5.4
+* add free argument on EDB::fetch()
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0.2</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-02-08</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed E_STRICT and undeclear object problems on PHP 5.4
+* fixed don&apos;t reset result of bind query
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0.1</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-10-17</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* change user define exception to myException pear package
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>2.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-10-14</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* add MySQL Engine
+* add SQLite2 Engine
+* add PostgreSQL Engine
+* add MSSQL Engine
+* add Cubrid Engine
+* add SQLRelay Engine
+* support BLOB data type
+* support escape, field_name, field_type, num_fields method
+* enhnaced seek, set_charset, get_chasret method
+* unificated type of return values
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-09-02</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* initialized
+   </notes>
+  </release>
+ </changelog>
+</package>
