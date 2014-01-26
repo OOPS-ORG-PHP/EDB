@@ -183,6 +183,9 @@ Class EDB extends EDB_Common
 	 * blob 데이터 (binary data) 입력시에는 가능한 bind query를 사용하는
 	 * 것을 권장한다.
 	 *
+	 * fetch가 필요 없는 query를 수행하더라고, 수행 후에는 free_result
+	 * method를 호출해 주어야 한다.
+	 *
 	 * @access public
 	 * @return integer|false   실제 적용된 row 수
 	 * @param  string  $query  실행할 쿼리
@@ -346,7 +349,9 @@ Class EDB extends EDB_Common
 
 	// {{{ (bool) EDB::free_result (void)
 	/**
-	 * 주어진 문장 핸들에 대하여 메모리에 저장된 결과를 해제
+	 * 주어진 문장 핸들에 대하여 메모리에 저장된 결과를 해제.
+	 * query mehtod가 호출이 되면, fetch 결과가 있던 없던, 무조건 이
+	 * method가 호출이 되어져야 한다.
 	 *
 	 * @access public
 	 * @return boolean sqlite, sqlite3, mysqli는 항상 true를 반환한다.
