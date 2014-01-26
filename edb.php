@@ -276,7 +276,8 @@ Class EDB extends EDB_Common
 	 * associative 개체로 result row를 가져온다.
 	 *
 	 * @access public
-	 * @return stdClass|false result row로 가져온 object
+	 * @return stdClass|false result row로 가져온 object.
+	 *                        result row가 0일 경우 false를 반환한다.
 	 * @param  boolean (optional) fetch 수행 후 result를 free한다.
 	 *                 (기본값: false) EDB >= 2.0.3
 	 */
@@ -294,7 +295,8 @@ Class EDB extends EDB_Common
 	 * 지정하도록 한다.
 	 *
 	 * @access public
-	 * @return array  associative object 배열
+	 * @return array  associative object 배열. result row가 0일 경우
+	 *                빈 배열을 반환한다.
 	 * @param  boolean (optional) fetch 수행후 result를 free 한다.
 	 *                 (기본값: true)
 	 */
