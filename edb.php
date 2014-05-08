@@ -110,6 +110,21 @@ Class EDB extends EDB_Common
 	}
 	// }}}
 
+	// {{{ (array) public EDB::exquried (void)
+	/**
+	 * 현재 세션에서 실행된 쿼리 목록을 반환
+	 *
+	 * @access public
+	 * @return array 실행 쿼리 목록을 배열로 반환.
+	 */
+	function exqueried () {
+		if ( $this->db->queryLog == null )
+			return array ();
+
+		return $this->db->queryLog;
+	}
+	// }}}
+
 	// {{{ (string) EDB::get_charset (void)
 	/**
 	 * Get current db charset.

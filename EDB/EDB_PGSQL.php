@@ -266,6 +266,9 @@ Class EDB_PGSQL extends EDB_Common {
 			if ( $this->free )
 				$this->free_result ();
 
+			// store query in log variable
+			$this->queryLog[] = $sql;
+
 			if ( $this->pno++ == 0 )
 				$r = $this->no_bind_query ($sql);
 			else
