@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2014-01-25</date>
-	<time>17:24:08</time>
+	<date>2014-05-08</date>
+	<time>23:56:35</time>
 	<version>
 		<release>2.0.6</release>
 		<api>1.0.0</api>
@@ -22,20 +22,20 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>
+	<notes>* added EDB::exquried api that returns list of excuted queries for current session
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="2e72d5d76005012998350f48dccd4c8d" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="5ddcb7bdc1b2b9544aab9eb998249a0c" name="EDB/EDB_CUBRID.php" />
-			<file role="php" md5sum="3ed362e08e1fd0398d5dda483749fa46" name="EDB/EDB_MSSQL.php" />
-			<file role="php" md5sum="392d0f86f0cc57944d373a8174afa922" name="EDB/EDB_MYSQL.php" />
-			<file role="php" md5sum="b7625f4b5dbea3af8e9906d5e40bfe17" name="EDB/EDB_MYSQLI.php" />
-			<file role="php" md5sum="b35db2ae51fed49f617ca544178b8009" name="EDB/EDB_PGSQL.php" />
-			<file role="php" md5sum="0cf9c5aaa8ba749655973697dc2c1d3a" name="EDB/EDB_SQLITE2.php" />
-			<file role="php" md5sum="6c5e66b27c39ab07a9acc8bed183813b" name="EDB/EDB_SQLITE3.php" />
-			<file role="php" md5sum="84e67544a57e508c2b42052a5a88f8fa" name="EDB/EDB_SQLRELAY.php" />
-			<file role="php" md5sum="1c22262f1d78605b6f3832dc43159c69" name="edb.php" />
+			<file role="php" md5sum="26100ee23125dfb43a8252c79c311f8d" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="e60675fe8dcc253710e6af8b36082346" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="8a8d6e63128d2acfe0e9017af0c2745b" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="d1b3d48f32838ce078a96f6751a05049" name="EDB/EDB_MYSQL.php" />
+			<file role="php" md5sum="276f5791d92663bdecbd2a6509f1ad0c" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="936084966e89e85eda385677874e03e2" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="2a0ab642c11c562ef545a2829d105ad6" name="EDB/EDB_SQLITE2.php" />
+			<file role="php" md5sum="9d7d9ffb0d5ccb889236888053858700" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="c1d22df993d6fd7349d64e7f04ad745b" name="EDB/EDB_SQLRELAY.php" />
+			<file role="php" md5sum="1b08155122175aa0d4faa0f8c5d31dfd" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -105,9 +105,9 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2014-01-25</date>
+			<date>2014-05-08</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-			<notes>
+			<notes>* added EDB::exquried api that returns list of excuted queries for current session
 </notes>
 		</release>
 		<release>
@@ -149,7 +149,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2014-01-25</date>
+			<date>2014-05-08</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* enhanced for php 5.4
 * add free argument on EDB::fetch()
