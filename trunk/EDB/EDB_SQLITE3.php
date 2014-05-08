@@ -178,6 +178,9 @@ Class EDB_SQLITE3 extends EDB_Common {
 			if ( $this->free )
 				$this->free_result ();
 
+			// store query in log variable
+			$this->queryLog[] = $sql;
+
 			/*
 			 * For no bind query
 			 */

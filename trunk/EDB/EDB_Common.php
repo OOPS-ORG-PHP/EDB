@@ -25,6 +25,12 @@
 Class EDB_Common {
 	// {{{ properties
 	/**
+	 * Store sql query in session
+	 * @access public
+	 * @var array
+	 */
+	public $queryLog = null;
+	/**
 	 * Result marking for free
 	 * @access private
 	 * @var    boolean

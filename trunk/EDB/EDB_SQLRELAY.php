@@ -190,6 +190,9 @@ Class EDB_SQLRELAY extends EDB_Common {
 			if ( $this->free )
 				$this->free_result ();
 
+			// store query in log variable
+			$this->queryLog[] = $sql;
+
 			// 얼마나 많은 라인을 받을 것인지.. 0은 무제한
 			//sqlrcur_setResultSetBufferSize ($this->result, 0);
 
