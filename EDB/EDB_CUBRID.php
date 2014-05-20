@@ -460,8 +460,10 @@ Class EDB_CUBRID extends EDB_Common {
 	 * @param  void
 	 */
 	function close () {
-		if ( is_resource ($this->db) )
+		if ( is_resource ($this->db) ) {
 			cubrid_disconnect ($this->db);
+			unset ($this->db);
+		}
 	}
 	// }}}
 

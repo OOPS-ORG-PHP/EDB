@@ -401,8 +401,10 @@ Class EDB_SQLITE2 extends EDB_Common {
 	 * @return void
 	 */
 	function close () {
-		if ( is_resource ($this->db) )
+		if ( is_resource ($this->db) ) {
 			sqlite_close ($this->db);
+			unset ($this->db);
+		}
 	}
 	// }}}
 
