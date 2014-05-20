@@ -434,8 +434,10 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return void
 	 */
 	function close () {
-		if ( is_object ($this->db) )
+		if ( is_object ($this->db) ) {
 			$this->db->close ();
+			unset ($this->db);
+		}
 	}
 	// }}}
 

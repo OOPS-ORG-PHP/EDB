@@ -401,8 +401,10 @@ Class EDB_MSSQL extends EDB_Common {
 	 * @param  void
 	 */
 	function close () {
-		if ( is_resource ($this->db) )
+		if ( is_resource ($this->db) ) {
 			mssql_close ($this->db);
+			unset ($this->db);
+		}
 	}
 	// }}}
 

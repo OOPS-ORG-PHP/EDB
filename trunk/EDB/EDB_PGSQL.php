@@ -525,8 +525,10 @@ Class EDB_PGSQL extends EDB_Common {
 	 * @param  void
 	 */
 	function close () {
-		if ( is_resource ($this->db) )
+		if ( is_resource ($this->db) ) {
 			pg_close ($this->db);
+			unset ($this->db);
+		}
 	}
 	// }}}
 

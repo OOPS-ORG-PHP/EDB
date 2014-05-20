@@ -424,8 +424,10 @@ Class EDB_MYSQLI extends EDB_Common {
 	 * @param  void
 	 */
 	function close () {
-		if ( is_object ($this->db) )
+		if ( is_object ($this->db) ) {
 			$this->db->close ();
+			unset ($this->db);
+		}
 	}
 	// }}}
 

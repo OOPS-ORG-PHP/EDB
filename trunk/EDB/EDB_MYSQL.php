@@ -418,8 +418,10 @@ Class EDB_MYSQL extends EDB_Common {
 	 * @param  void
 	 */
 	function close () {
-		if ( is_resource ($this->db) )
+		if ( is_resource ($this->db) ) {
 			mysql_close ($this->db);
+			unset ($this->db);
+		}
 	}
 	// }}}
 
