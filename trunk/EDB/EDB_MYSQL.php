@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2015, JoungKyun.Kim
  * @license     BSD License
- * @version     $Id: EDB_MYSQL.php 30 2012-09-26 18:02:58Z oops $
+ * @version     $Id$
  * @link        http://pear.oops.org/package/EDB
  * @filesource
  */
