@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2015-06-09</date>
-	<time>03:34:32</time>
+	<date>2016-01-07</date>
+	<time>06:37:27</time>
 	<version>
 		<release>2.0.7</release>
 		<api>1.0.0</api>
@@ -26,16 +26,16 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="3f1db921cea821621cba4e120b2fd942" name="EDB/EDB_Common.php" />
-			<file role="php" md5sum="70ffa272e65ff8d9d30734a34c65659a" name="EDB/EDB_CUBRID.php" />
-			<file role="php" md5sum="6e1a5ed6c67bcb70bead5ae7f982ef45" name="EDB/EDB_MSSQL.php" />
-			<file role="php" md5sum="360877f1144baf9ee8e486f7ecbf0d80" name="EDB/EDB_MYSQL.php" />
-			<file role="php" md5sum="709ed2f5929d7c429c51a560879e8b78" name="EDB/EDB_MYSQLI.php" />
-			<file role="php" md5sum="b1c56e3657e4227dedae6a4489235e6b" name="EDB/EDB_PGSQL.php" />
-			<file role="php" md5sum="aac8519079202dc88b46bc8a21de1e8a" name="EDB/EDB_SQLITE2.php" />
-			<file role="php" md5sum="08131fe0e67efc584fabba8a1a8c2fa5" name="EDB/EDB_SQLITE3.php" />
-			<file role="php" md5sum="4ef5420bb3da6e65bc9f22172146caf4" name="EDB/EDB_SQLRELAY.php" />
-			<file role="php" md5sum="6d356951705891b78934514d0dafcb36" name="edb.php" />
+			<file role="php" md5sum="c4dfd47d34a31c21f53844b96fd34f26" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="67c03b5714dc26017e2c88bcdd2faff8" name="EDB/EDB_CUBRID.php" />
+			<file role="php" md5sum="778d14b037cb54aa41645ead3f859b19" name="EDB/EDB_MSSQL.php" />
+			<file role="php" md5sum="2459f14a5b0877549933dc3933abd762" name="EDB/EDB_MYSQL.php" />
+			<file role="php" md5sum="f7de86620162dacd449fd4180278c72f" name="EDB/EDB_MYSQLI.php" />
+			<file role="php" md5sum="8079f65e6c284a33b73422483c053367" name="EDB/EDB_PGSQL.php" />
+			<file role="php" md5sum="a682fdccf26161e2c272634cfab8103f" name="EDB/EDB_SQLITE2.php" />
+			<file role="php" md5sum="ffde8a693b81e737c2873e7dd5b2812b" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="fc01ce6a94137287e8b547bc63fff478" name="EDB/EDB_SQLRELAY.php" />
+			<file role="php" md5sum="5a02e422df03a19f56056f20c689920b" name="edb.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -105,7 +105,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2015-06-09</date>
+			<date>2016-01-07</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>
 </notes>
@@ -163,7 +163,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2015-06-09</date>
+			<date>2016-01-07</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* enhanced for php 5.4
 * add free argument on EDB::fetch()
