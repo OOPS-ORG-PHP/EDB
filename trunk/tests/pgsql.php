@@ -100,7 +100,7 @@ try {
 	printf ('    => Current columns are');
 	$fno = $db->num_fields ();
 	for ( $i=0; $i<$fno; $i++ )
-		printf (' %s (%s)', $db->field_name ($i), $db->field_type ($i, 'edb_test'));
+		printf (' %s (%s)', $db->field_name ($i), $db->field_type ($i));
 
 	printf ("\n    => Move data cousor to 2\n");
 	$db->seek (2);

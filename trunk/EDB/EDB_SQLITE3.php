@@ -350,7 +350,7 @@ Class EDB_SQLITE3 extends EDB_Common {
 	 * @return string|false
 	 * @param  integer The numeric zero-based index of the column.
 	 */
-	function field_type ($field_index) {
+	function field_type ($index) {
 		try {
 			if ( ! is_object ($this->result) )
 				return false;
