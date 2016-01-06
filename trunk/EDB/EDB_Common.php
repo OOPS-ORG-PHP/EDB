@@ -66,7 +66,7 @@ Class EDB_Common {
 		}
 
 		$path = preg_split ('/:/', $buf);
-		array_shift ($path);
+		//array_shift ($path);
 		foreach ( $path as $dir ) {
 			if ( file_exists ($dir . '/' . $file) )
 				return true;
