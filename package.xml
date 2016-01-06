@@ -12,7 +12,7 @@
 		<active>yes</active>
 	</lead>
 	<date>2016-01-07</date>
-	<time>06:50:49</time>
+	<time>07:11:50</time>
 	<version>
 		<release>2.0.7</release>
 		<api>1.0.0</api>
@@ -26,14 +26,14 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="2d337405bac6c272ac6791046cd4d60e" name="EDB/EDB_Common.php" />
+			<file role="php" md5sum="3a958514778af4a5083e71afe4a84420" name="EDB/EDB_Common.php" />
 			<file role="php" md5sum="e17d45804fa8fe0860a3749a684dff9b" name="EDB/EDB_CUBRID.php" />
 			<file role="php" md5sum="0a31c4f5be9fa0c8fb8d45a3029d532b" name="EDB/EDB_MSSQL.php" />
 			<file role="php" md5sum="86a8cae79cf0dd72d900563f9ec0f15b" name="EDB/EDB_MYSQL.php" />
 			<file role="php" md5sum="cdbbd934c1d8718c7e58389ee1bfbd7f" name="EDB/EDB_MYSQLI.php" />
 			<file role="php" md5sum="fd88d5677420025455f1164589d5cc0d" name="EDB/EDB_PGSQL.php" />
 			<file role="php" md5sum="4a448f62a7d2fbcb6ee3f9a1d1b4d392" name="EDB/EDB_SQLITE2.php" />
-			<file role="php" md5sum="06edb473d8bd411f99658b904c2f21d6" name="EDB/EDB_SQLITE3.php" />
+			<file role="php" md5sum="44af154f7e1b31c78fadd5645241b913" name="EDB/EDB_SQLITE3.php" />
 			<file role="php" md5sum="41d3aacf7e34f0aeb14469d655e4fb7a" name="EDB/EDB_SQLRELAY.php" />
 			<file role="php" md5sum="045488af78f8c95f50595f34f47fdead" name="edb.php" />
 		</dir>
