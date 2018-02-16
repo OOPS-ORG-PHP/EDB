@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB pgsql tests
- *
- * $Id$
+ * EDB::PGSQL tests
  */
 
 require_once './test-common.php';

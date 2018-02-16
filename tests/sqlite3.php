@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB sqlite3 tests
- *
- * $Id$
+ * EDB::SQLITE3 tests
  */
 
 require_once './test-common.php';

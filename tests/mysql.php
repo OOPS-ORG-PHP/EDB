@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB mysql tests
- *
- * $Id: mysql.php 56 2012-09-29 20:30:10Z oops $
+ * EDB::MYSQL tests
  */
 
 require_once './test-common.php';

@@ -1,10 +1,7 @@
 <?php
 /*
- * pear_EDB sqlrelay tests
- *
- * This is test of mysql backend
- *
- * $Id$
+ * EDB::SQLRELAY tests
+ * This is test of sqlite backend
  */
 
 require_once './test-common.php';

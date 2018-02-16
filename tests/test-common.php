@@ -2,8 +2,6 @@
 
 /*
  * Test common codes
- *
- * $Id$
  */
 
 $iniget = function_exists ('___ini_get') ? '___ini_get' : 'ini_get';

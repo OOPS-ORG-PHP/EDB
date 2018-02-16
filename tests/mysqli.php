@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB mysqli tests
- *
- * $Id$
+ * EDB::MYSQLI tests
  */
 
 require_once './test-common.php';

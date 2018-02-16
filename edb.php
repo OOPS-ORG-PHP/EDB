@@ -18,17 +18,17 @@
  * @category    Database
  * @package     EDB
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 1997-2016 OOPS.org
+ * @copyright   (c) 1997-2018 OOPS.org
  * @license     BSD License
  * @version     SVN: $Id$
  * @link        http://pear.oops.org/package/EDB
  * @since       File available since release 0.0.1
- * @example	    pear_EDB/tests/cubrid.php Sample code of cubrid abstraction layer
- * @example	    pear_EDB/tests/mysql.php Sample code of mysql abstraction layer
- * @example	    pear_EDB/tests/mysqli.php Sample code of mysqli abstraction layer
- * @example	    pear_EDB/tests/pgsql.php Sample code of postgresql abstraction layer
- * @example	    pear_EDB/tests/sqlite2.php Sample code of sqlite2 abstraction layer
- * @example	    pear_EDB/tests/sqlite3.php Sample code of sqlite3 abstraction layer
+ * @example	    EDB/tests/cubrid.php Sample code of cubrid abstraction layer
+ * @example	    EDB/tests/mysql.php Sample code of mysql abstraction layer
+ * @example	    EDB/tests/mysqli.php Sample code of mysqli abstraction layer
+ * @example	    EDB/tests/pgsql.php Sample code of postgresql abstraction layer
+ * @example	    EDB/tests/sqlite2.php Sample code of sqlite2 abstraction layer
+ * @example	    EDB/tests/sqlite3.php Sample code of sqlite3 abstraction layer
  * @filesource
  */
 

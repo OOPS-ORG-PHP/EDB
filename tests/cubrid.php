@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB cubrid tests
- *
- * $Id$
+ * EDB::CUBRID tests
  */
 
 require_once './test-common.php';

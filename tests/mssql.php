@@ -1,8 +1,6 @@
 <?php
 /*
- * pear_EDB mssql tests
- *
- * $Id$
+ * EDB::MSSQL tests
  */
 
 require_once './test-common.php';
